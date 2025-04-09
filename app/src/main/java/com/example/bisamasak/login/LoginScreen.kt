@@ -174,7 +174,7 @@ fun LoginScreen(navController: NavController) {
         ) {
 
             Button(
-                onClick = { /* TODO: Handle Login */ },
+                onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

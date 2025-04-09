@@ -47,6 +47,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.forgot.ForgotScreen
+import com.example.bisamasak.kategori_BisaMasak.KategoriBisaMasak
+import com.example.bisamasak.kategori_resep_praktis.KategoriResepPraktis
+import com.example.bisamasak.kategori_spesial.KategoriSpesialUntukmu
+import com.example.bisamasak.kategori_terbaru.KategoriResepTerbaru
 import com.example.bisamasak.login.LoginScreen
 import com.example.bisamasak.new_password.NewPasswordScreen
 import com.example.bisamasak.register.RegisterScreen
@@ -72,7 +76,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "splash_screen") {
+    NavHost(navController = navController, startDestination = "kategori_spesial") {
         composable("splash_screen") {
             SplashScreen(navController = navController)
         }
@@ -91,8 +95,21 @@ fun Navigation() {
         composable("new_password_screen") {
             NewPasswordScreen(navController = navController)
         }
+        composable("kategori_resep_praktis") {
+            KategoriResepPraktis(navController = navController)
+        }
+        composable("kategori_BisaMasak") {
+            KategoriBisaMasak(navController = navController)
+        }
+        composable("kategori_terbaru") {
+            KategoriResepTerbaru(navController = navController)
+        }
+        composable("kategori_spesial") {
+            KategoriSpesialUntukmu(navController = navController)
+        }
     }
 }
+
 
 @Composable
 fun SplashScreen (navController: NavController, modifier: Modifier = Modifier) {

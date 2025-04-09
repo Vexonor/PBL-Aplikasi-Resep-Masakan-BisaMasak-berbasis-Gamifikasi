@@ -63,7 +63,7 @@ fun NewPasswordScreen(navController: NavController) {
 
                 Text(
                     text = "Lupa Kata Sandi",
-                    fontSize = 18.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = OutfitFont,
                     color = Color.Black
