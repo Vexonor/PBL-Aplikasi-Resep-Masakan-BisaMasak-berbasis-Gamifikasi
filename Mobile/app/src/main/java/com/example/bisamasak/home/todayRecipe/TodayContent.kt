@@ -1,5 +1,4 @@
-package com.example.bisamasak.kategori_spesial
-
+package com.example.bisamasak.home.todayRecipe
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -24,7 +23,7 @@ import com.example.bisamasak.ui.theme.OutfitFont
 
 
 @Composable
-fun KategoriSpesialUntukmu(navController: NavController) {
+fun TodayContent(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -55,7 +54,7 @@ fun KategoriSpesialUntukmu(navController: NavController) {
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    text = "Spesial Untukmu",
+                    text = "Menu BisaMasak Hari Ini",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = OutfitFont,
@@ -67,15 +66,15 @@ fun KategoriSpesialUntukmu(navController: NavController) {
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(19.dp), //
+                verticalArrangement = Arrangement.spacedBy(19.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(
                     top = 10.dp,
-                    bottom = 80.dp //
+                    bottom = 80.dp
                 ),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(DataProvider.ResepSpesial) { recipe ->
+                items(DataProvider.ResepBisaMasak) { recipe ->
                     RecipeCard(
                         foodImg = recipe.foodImg,
                         foodName = recipe.foodName,

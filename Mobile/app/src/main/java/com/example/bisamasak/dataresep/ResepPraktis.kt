@@ -1,7 +1,7 @@
 package com.example.bisamasak.dataresep
 
 data class ResepPraktis(
-    val name: String,
+    val foodImg: Int,
+    val foodName: String,
     val duration: Int,
-    val image: Int
 )

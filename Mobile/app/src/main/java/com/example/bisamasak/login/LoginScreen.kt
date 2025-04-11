@@ -174,7 +174,11 @@ fun LoginScreen(navController: NavController) {
         ) {
 
             Button(
-                onClick = {},
+                onClick = {
+                    navController.navigate("home_screen") {
+                        popUpTo("login_screen") { inclusive = true }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

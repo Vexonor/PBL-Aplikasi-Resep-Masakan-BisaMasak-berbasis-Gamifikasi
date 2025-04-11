@@ -26,18 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.bisamasak.home.HomeActivity
-import com.example.bisamasak.forgot.ForgotScreen
-import com.example.bisamasak.kategori_BisaMasak.KategoriBisaMasak
-import com.example.bisamasak.kategori_resep_praktis.KategoriResepPraktis
-import com.example.bisamasak.kategori_spesial.KategoriSpesialUntukmu
-import com.example.bisamasak.kategori_terbaru.KategoriResepTerbaru
-import com.example.bisamasak.login.LoginScreen
-import com.example.bisamasak.new_password.NewPasswordScreen
-import com.example.bisamasak.register.RegisterScreen
 import com.example.bisamasak.ui.theme.BisaMasakTheme
 import com.example.bisamasak.ui.theme.OutfitTypography
 import kotlinx.coroutines.delay
@@ -58,52 +46,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "login_screen") {
-        composable("splash_screen") {
-            SplashScreen(navController = navController)
-        }
-        composable("onBoarding_screen") {
-            OnBoardingScreen(navController = navController)
-        }
-        composable("login_screen") {
-            LoginScreen(navController = navController)
-        }
-        composable("register_screen") {
-            RegisterScreen(navController = navController)
-        }
-        composable("forgot_screen") {
-            ForgotScreen(navController = navController)
-        }
-        composable("new_password_screen") {
-            NewPasswordScreen(navController = navController)
-        }
-        composable("kategori_resep_praktis") {
-            KategoriResepPraktis(navController = navController)
-        }
-        composable("kategori_BisaMasak") {
-            KategoriBisaMasak(navController = navController)
-        }
-        composable("kategori_terbaru") {
-            KategoriResepTerbaru(navController = navController)
-        }
-        composable("kategori_spesial") {
-            KategoriSpesialUntukmu(navController = navController)
-        composable ("home_screen") {
-            HomeActivity()
-        }
-    }
-}
-
-
-@Composable
 fun SplashScreen (navController: NavController, modifier: Modifier = Modifier) {
     val image = painterResource(R.drawable.ic_app_logo)
     val scale = remember {
         Animatable(0f)
     }
-    LaunchedEffect (key1 = true) {
+    LaunchedEffect(key1 = true) {
         scale.animateTo(
             targetValue = 1.3f,
             animationSpec = tween(
@@ -114,10 +62,7 @@ fun SplashScreen (navController: NavController, modifier: Modifier = Modifier) {
             )
         )
         delay(3000L)
-        navController.navigate("onBoarding_screen") {
-            popUpTo("splash_screen") { inclusive = true }
-            launchSingleTop = true
-        }
+        navController.navigate("onBoarding_screen")
     }
 
     Column(
@@ -147,4 +92,3 @@ fun SplashScreen (navController: NavController, modifier: Modifier = Modifier) {
         }
     }
 }
-

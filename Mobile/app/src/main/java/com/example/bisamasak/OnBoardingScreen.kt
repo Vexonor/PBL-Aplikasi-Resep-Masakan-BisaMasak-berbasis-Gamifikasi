@@ -155,7 +155,7 @@ fun OnBoardingScreen (navController: NavController, modifier: Modifier = Modifie
 
                     Button(
                         onClick = {
-                            navController.navigate("home_screen") {
+                            navController.navigate("login_screen") {
                                 popUpTo("onBoarding_screen") { inclusive = true }
                             }
                         },

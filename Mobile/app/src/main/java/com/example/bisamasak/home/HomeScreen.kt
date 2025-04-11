@@ -21,7 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.BottomBar
+import com.example.bisamasak.home.practiceRecipe.PracticeRecipe
+import com.example.bisamasak.home.todayRecipe.TodayRecipe
 import com.example.bisamasak.home.ui.theme.BisaMasakTheme
 
 class HomeScreen : ComponentActivity() {
@@ -30,19 +34,27 @@ class HomeScreen : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BisaMasakTheme(darkTheme = false) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    HomeActivity()
-                }
+                val navController = rememberNavController()
+                HomeActivity(
+                    navController = navController
+                )
             }
         }
     }
 }
 
 @Composable
-fun HomeActivity() {
+fun HomeActivity(navController: NavController) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        HomeComponent(navController = navController)
+    }
+}
+
+@Composable
+fun HomeComponent(navController: NavController) {
     var selectedIndex by remember { mutableIntStateOf(0) }
 //    val searchQuery = remember { mutableStateOf(TextFieldValue("")) }
 //    val dummyResults = listOf("Sate Ayam", "Nasi Goreng", "Mie Ayam")
@@ -88,7 +100,8 @@ fun HomeActivity() {
             )
             PracticeRecipe(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp),
+                navController = navController
             )
             TodayRecipe(
                 modifier = Modifier

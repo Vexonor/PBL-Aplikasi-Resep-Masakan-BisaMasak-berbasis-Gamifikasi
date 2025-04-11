@@ -1,4 +1,4 @@
-package com.example.bisamasak.home
+package com.example.bisamasak.home.practiceRecipe
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -29,11 +29,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun PracticeRecipe(modifier: Modifier = Modifier) {
+fun PracticeRecipe(navController: NavController, modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -48,7 +49,9 @@ fun PracticeRecipe(modifier: Modifier = Modifier) {
                 style = OutfitTypography.titleLarge,
             )
             Button(
-                onClick = {},
+                onClick = {
+                    navController.navigate("practice_content")
+                },
                 colors = ButtonColors(
                     containerColor = Color.Transparent,
                     contentColor = Color(0xE6ED453A),
@@ -107,7 +110,7 @@ fun RecipeCard(foodImg: Int, foodName: String, duration: String, modifier: Modif
         ) {
             Box (
                 modifier = Modifier
-                    .width(150.dp)
+                    .fillMaxWidth()
                     .height(100.dp),
                 contentAlignment = Alignment.Center
             ) {
