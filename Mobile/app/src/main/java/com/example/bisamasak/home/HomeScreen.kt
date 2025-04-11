@@ -23,7 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.bisamasak.BottomBar
+import com.example.bisamasak.component.BottomBar
+import com.example.bisamasak.home.latestRecipe.LatestRecipe
 import com.example.bisamasak.home.practiceRecipe.PracticeRecipe
 import com.example.bisamasak.home.todayRecipe.TodayRecipe
 import com.example.bisamasak.home.ui.theme.BisaMasakTheme
@@ -105,11 +106,13 @@ fun HomeComponent(navController: NavController) {
             )
             TodayRecipe(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                navController = navController
             )
             LatestRecipe(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp),
+                navController = navController
             )
         }
     }

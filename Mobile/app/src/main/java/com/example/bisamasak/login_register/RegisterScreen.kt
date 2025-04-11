@@ -1,4 +1,4 @@
-package com.example.bisamasak.login
+package com.example.bisamasak.login_register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,10 +25,12 @@ import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitFont
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPassword by remember { mutableStateOf("") }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -81,7 +83,7 @@ fun LoginScreen(navController: NavController) {
             )
 
             Text(
-                text = "Selamat Datang di BisaMasak!",
+                text = "Daftar Akunmu di BisaMasak!",
                 fontFamily = OutfitFont,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
@@ -123,6 +125,41 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier.align(Alignment.Start)
             )
             OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                textStyle = TextStyle(fontFamily = OutfitFont),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (confirmPasswordVisible) R.drawable.baseline_visibility_off_24
+                                else R.drawable.baseline_visibility_24
+                            ),
+                            contentDescription = if (confirmPasswordVisible) "Sembunyikan Kata Sandi" else "Lihat Kata Sandi"
+                        )
+                    }
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Red,
+                    focusedBorderColor = Color.Red
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Konfirmasi Kata Sandi",
+                fontFamily = OutfitFont,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black,
+                modifier = Modifier.align(Alignment.Start)
+            )
+            OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -149,19 +186,6 @@ fun LoginScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-
-            Text(
-                text = "Lupa Kata Sandi?",
-                fontFamily = OutfitFont,
-                fontSize = 12.sp,
-                color = Color(0xFFED453A),
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .clickable {
-                        navController.navigate("forgot_screen")
-                    }
-            )
-
             Spacer(modifier = Modifier.weight(1f))
         }
 
@@ -174,11 +198,7 @@ fun LoginScreen(navController: NavController) {
         ) {
 
             Button(
-                onClick = {
-                    navController.navigate("home_screen") {
-                        popUpTo("login_screen") { inclusive = true }
-                    }
-                },
+                onClick = { /* TODO: Handle Register */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -186,7 +206,7 @@ fun LoginScreen(navController: NavController) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFED453A))
             ) {
                 Text(
-                    text = "Masuk",
+                    text = "Daftar",
                     fontFamily = OutfitFont,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -198,24 +218,23 @@ fun LoginScreen(navController: NavController) {
 
             Row {
                 Text(
-                    text = "Belum punya akun? ",
+                    text = "Sudah punya akun? ",
                     fontFamily = OutfitFont,
                     fontSize = 12.sp,
                     color = Color.Black
                 )
                 Text(
-                    text = "Daftar",
+                    text = "Masuk",
                     fontFamily = OutfitFont,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFFED453A),
                     modifier = Modifier.clickable {
-                        println("Navigasi ke register_screen")
-                        navController.navigate("register_screen")
+                        println("Navigasi ke login_screen")
+                        navController.navigate("login_screen")
                     }
                 )
             }
         }
     }
 }
-

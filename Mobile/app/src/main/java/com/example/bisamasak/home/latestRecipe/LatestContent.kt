@@ -1,4 +1,4 @@
-package com.example.bisamasak.home.todayRecipe
+package com.example.bisamasak.home.latestRecipe
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,7 +26,7 @@ import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.ui.theme.OutfitFont
 
 @Composable
-fun TodayContent(navController: NavController) {
+fun LatestContent(navController: NavController) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -58,7 +58,7 @@ fun TodayContent(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Menu BisaMasak Hari Ini",
+                    text = "Resep Terbaru",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = OutfitFont,
@@ -81,7 +81,7 @@ fun TodayContent(navController: NavController) {
                 modifier = Modifier
                     .background(Color.White)
             ) {
-                items(DataProvider.ResepBisaMasak) { recipe ->
+                items(DataProvider.ResepTerbaru) { recipe ->
                     RecipeCard(
                         foodImg = recipe.foodImg,
                         foodName = recipe.foodName,
@@ -92,3 +92,7 @@ fun TodayContent(navController: NavController) {
         }
     }
 }
+
+
+
+

@@ -1,4 +1,4 @@
-package com.example.bisamasak
+package com.example.bisamasak.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.tween
@@ -22,6 +22,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Teleport

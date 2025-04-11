@@ -21,7 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.bisamasak.dataresep.DataProvider
+import com.example.bisamasak.component.RecipeCard
+import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.ui.theme.OutfitFont
 
 

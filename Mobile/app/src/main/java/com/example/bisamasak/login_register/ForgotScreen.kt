@@ -1,4 +1,4 @@
-package com.example.bisamasak.forgot
+package com.example.bisamasak.login_register
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

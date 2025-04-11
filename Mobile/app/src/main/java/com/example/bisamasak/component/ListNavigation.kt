@@ -1,18 +1,19 @@
-package com.example.bisamasak
+package com.example.bisamasak.component
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.bisamasak.forgot.ForgotScreen
+import com.example.bisamasak.OnBoardingScreen
+import com.example.bisamasak.SplashScreen
+import com.example.bisamasak.login_register.ForgotScreen
 import com.example.bisamasak.home.HomeActivity
 import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
-import com.example.bisamasak.kategori_spesial.KategoriSpesialUntukmu
-import com.example.bisamasak.kategori_terbaru.KategoriResepTerbaru
-import com.example.bisamasak.login.LoginScreen
-import com.example.bisamasak.new_password.NewPasswordScreen
-import com.example.bisamasak.register.RegisterScreen
+import com.example.bisamasak.home.latestRecipe.LatestContent
+import com.example.bisamasak.login_register.LoginScreen
+import com.example.bisamasak.login_register.NewPasswordScreen
+import com.example.bisamasak.login_register.RegisterScreen
 
 @Composable
 fun Navigation() {
@@ -42,11 +43,8 @@ fun Navigation() {
         composable("today_content") {
             TodayContent(navController = navController)
         }
-        composable("kategori_terbaru") {
-            KategoriResepTerbaru(navController = navController)
-        }
-        composable("kategori_spesial") {
-            KategoriSpesialUntukmu(navController = navController)
+        composable("latest_content") {
+            LatestContent(navController = navController)
         }
         composable("home_screen") {
             HomeActivity(navController = navController)

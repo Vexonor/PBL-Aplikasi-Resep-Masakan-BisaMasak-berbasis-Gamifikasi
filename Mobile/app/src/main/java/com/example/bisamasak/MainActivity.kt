@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bisamasak.component.Navigation
 import com.example.bisamasak.ui.theme.BisaMasakTheme
 import com.example.bisamasak.ui.theme.OutfitTypography
 import kotlinx.coroutines.delay

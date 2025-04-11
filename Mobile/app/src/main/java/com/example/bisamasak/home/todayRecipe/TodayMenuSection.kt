@@ -13,12 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.bisamasak.R
-import com.example.bisamasak.home.practiceRecipe.RecipeCard
+import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun TodayRecipe(modifier: Modifier = Modifier) {
+fun TodayRecipe(navController: NavController, modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -33,7 +34,9 @@ fun TodayRecipe(modifier: Modifier = Modifier) {
                 style = OutfitTypography.titleLarge,
             )
             Button(
-                onClick = {},
+                onClick = {
+                    navController.navigate("today_content")
+                },
                 colors = ButtonColors(
                     containerColor = Color.Transparent,
                     contentColor = Color(0xE6ED453A),
