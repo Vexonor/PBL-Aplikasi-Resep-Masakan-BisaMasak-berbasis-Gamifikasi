@@ -13,6 +13,21 @@
         android:theme="@style/Theme.BisaMasak"
         tools:targetApi="31">
         <activity
+            android:name=".profile.ProfileScreen"
+            android:exported="false"
+            android:label="@string/title_activity_profile_screen"
+            android:theme="@style/Theme.BisaMasak" />
+        <activity
+            android:name=".ingredient.IngredientScreen"
+            android:exported="false"
+            android:label="@string/title_activity_ingredient_screen"
+            android:theme="@style/Theme.BisaMasak" />
+        <activity
+            android:name=".menu.MenuActivity"
+            android:exported="false"
+            android:label="@string/title_activity_menu"
+            android:theme="@style/Theme.BisaMasak" />
+        <activity
             android:name=".SplashScreen"
             android:exported="false"
             android:label="@string/title_activity_splash_screen"

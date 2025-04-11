@@ -1,4 +1,4 @@
-package com.example.bisamasak.home
+package com.example.bisamasak.ingredient
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -20,43 +19,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.component.BottomBar
-import com.example.bisamasak.home.latestRecipe.LatestRecipe
-import com.example.bisamasak.home.practiceRecipe.PracticeRecipe
-import com.example.bisamasak.home.todayRecipe.TodayRecipe
-import com.example.bisamasak.home.ui.theme.BisaMasakTheme
+import com.example.bisamasak.ingredient.ui.theme.BisaMasakTheme
 
-class HomeScreen : ComponentActivity() {
+class IngredientScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BisaMasakTheme(darkTheme = false) {
+            BisaMasakTheme {
                 val navController = rememberNavController()
-                HomeActivity(
-                    navController = navController
-                )
+                IngredientActivity(navController = navController)
             }
         }
     }
 }
 
 @Composable
-fun HomeActivity(navController: NavController) {
+fun IngredientActivity(navController: NavController) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        HomeComponent(navController = navController)
+        IngredientComponent(navController = navController)
     }
 }
 
 @Composable
-fun HomeComponent(navController: NavController) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
+fun IngredientComponent(navController: NavController) {
+    var selectedIndex by remember { mutableIntStateOf(2) }
 
     Scaffold(
         modifier = Modifier
@@ -84,35 +77,7 @@ fun HomeComponent(navController: NavController) {
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            Header(
-                name = "Shafiq",
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .wrapContentSize()
-            )
-            HeroSection(
-                level = 10,
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
-            CategoriesRecipe(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-            )
-            PracticeRecipe(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp),
-                navController = navController
-            )
-            TodayRecipe(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-                navController = navController
-            )
-            LatestRecipe(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp),
-                navController = navController
-            )
+
         }
     }
 }

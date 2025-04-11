@@ -11,9 +11,12 @@ import com.example.bisamasak.home.HomeActivity
 import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
 import com.example.bisamasak.home.latestRecipe.LatestContent
+import com.example.bisamasak.ingredient.IngredientActivity
 import com.example.bisamasak.login_register.LoginScreen
 import com.example.bisamasak.login_register.NewPasswordScreen
 import com.example.bisamasak.login_register.RegisterScreen
+import com.example.bisamasak.menu.MenuActivity
+import com.example.bisamasak.profile.ProfileActivity
 
 @Composable
 fun Navigation() {
@@ -46,8 +49,18 @@ fun Navigation() {
         composable("latest_content") {
             LatestContent(navController = navController)
         }
+//        Main Screen
         composable("home_screen") {
             HomeActivity(navController = navController)
+        }
+        composable("menu_screen") {
+            MenuActivity(navController = navController)
+        }
+        composable("ingredient_screen") {
+            IngredientActivity(navController = navController)
+        }
+        composable("profile_screen") {
+            ProfileActivity(navController = navController)
         }
     }
 }
