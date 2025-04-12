@@ -36,15 +36,4 @@ object DataProvider {
         RecipeData(R.drawable.ayam, "Ayam Goreng Terasi", 45),
         RecipeData(R.drawable.jelly, "Es Jelly Yakult", 20),
     )
-
-    val ResepSpesial = listOf(
-        RecipeData(R.drawable.udang_mayo, "Udang Mayonaise", 50),
-        RecipeData(R.drawable.buntut, "Sop Buntut", 60),
-        RecipeData(R.drawable.doffle, "Doffle (Donat Waffle)", 35),
-        RecipeData(R.drawable.pudding, "Mango Pudding", 30),
-        RecipeData(R.drawable.roti, "Roti Bakar Coklat Keju", 35),
-        RecipeData(R.drawable.mentai, "Siomay Ayam Mentai", 45),
-        RecipeData(R.drawable.kenyal, "Donat Kenyal", 45),
-        RecipeData(R.drawable.pancake, "Pancake Avocado", 40),
-    )
 }

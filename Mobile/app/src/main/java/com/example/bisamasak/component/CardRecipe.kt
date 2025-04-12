@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -68,7 +69,7 @@ fun RecipeCard(foodImg: Int, foodName: String, duration: String, modifier: Modif
             }
             Spacer(
                 modifier = Modifier
-                    .height(12.dp)
+                    .height(4.dp)
             )
             Box (
                 modifier = Modifier
@@ -90,12 +91,13 @@ fun RecipeCard(foodImg: Int, foodName: String, duration: String, modifier: Modif
             )
             Box (
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(100.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Row (
                     modifier = Modifier
-                        .width(60.dp),
+                        .wrapContentWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {

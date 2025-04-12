@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,19 +28,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
-import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
-import com.google.accompanist.flowlayout.FlowMainAxisAlignment
-import com.google.accompanist.flowlayout.FlowRow
 
-
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun CategoriesRecipe(modifier: Modifier = Modifier) {
-    Column (
+fun CategoriesRecipe(modifier: Modifier = Modifier, windowSize: WindowSizeClass) {
+    Column(
         modifier = modifier
             .fillMaxWidth(),
         verticalArrangement = Arrangement.Center
     ) {
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -60,36 +62,20 @@ fun CategoriesRecipe(modifier: Modifier = Modifier) {
                 )
             }
         }
-        FlowRow (
-            modifier = Modifier
-                .fillMaxWidth(),
-            mainAxisAlignment = FlowMainAxisAlignment.Center,
-            crossAxisAlignment = FlowCrossAxisAlignment.Center,
-            mainAxisSpacing = 8.dp,
-            crossAxisSpacing = 8.dp,
-        ) {
-            CategoriesList(
-                image = R.drawable.ic_breakfast,
-                name = "Sarapan"
-            )
-            CategoriesList(
-                image = R.drawable.ic_lunch,
-                name = "Makan Siang"
-            )
-            CategoriesList(
-                image = R.drawable.ic_snack,
-                name = "Cemilan"
-            )
-            CategoriesList(
-                image = R.drawable.ic_dinner,
-                name = "Makan Malam"
-            )
+        when(windowSize.widthSizeClass) {
+            WindowWidthSizeClass.Compact -> {
+                PortraitList()
+            }
+            WindowWidthSizeClass.Expanded -> {
+                LandscapeList()
+            }
         }
+
     }
 }
 
 @Composable
-fun CategoriesList(image: Int, name: String, modifier: Modifier = Modifier) {
+fun CategoriesList (image: Int, name: String, modifier: Modifier = Modifier) {
     Button(
         onClick = { },
         shape = RoundedCornerShape(24.dp),
@@ -116,6 +102,82 @@ fun CategoriesList(image: Int, name: String, modifier: Modifier = Modifier) {
             Text(
                 text = name,
                 style = OutfitTypography.labelLarge
+            )
+        }
+    }
+}
+
+@Composable
+fun PortraitList() {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        contentPadding = PaddingValues(top = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+    ) {
+        item {
+            CategoriesList (
+                image = R.drawable.ic_breakfast,
+                name = "Sarapan"
+            )
+        }
+        item {
+            CategoriesList (
+                image = R.drawable.ic_lunch,
+                name = "Makan Siang"
+            )
+        }
+        item {
+            CategoriesList (
+                image = R.drawable.ic_snack,
+                name = "Cemilan"
+            )
+        }
+        item {
+            CategoriesList (
+                image = R.drawable.ic_dinner,
+                name = "Makan Malam"
+            )
+        }
+    }
+}
+
+@Composable
+fun LandscapeList() {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(1),
+        contentPadding = PaddingValues(top = 16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+    ) {
+        item {
+            CategoriesList (
+                image = R.drawable.ic_breakfast,
+                name = "Sarapan"
+            )
+        }
+        item {
+            CategoriesList (
+                image = R.drawable.ic_lunch,
+                name = "Makan Siang"
+            )
+        }
+        item {
+            CategoriesList (
+                image = R.drawable.ic_snack,
+                name = "Cemilan"
+            )
+        }
+        item {
+            CategoriesList (
+                image = R.drawable.ic_dinner,
+                name = "Makan Malam"
             )
         }
     }
