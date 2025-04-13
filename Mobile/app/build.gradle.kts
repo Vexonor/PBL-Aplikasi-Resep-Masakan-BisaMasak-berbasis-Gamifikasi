@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material3.window.size.class1)
+    implementation(libs.coil.compose)
 
     implementation(libs.accompanist.flowlayout)
     testImplementation(libs.junit)

@@ -27,11 +27,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun RecipeCard(foodImg: Int, foodName: String, duration: String, modifier: Modifier = Modifier) {
+fun RecipeCard(foodImg: String, foodName: String, duration: String, modifier: Modifier = Modifier) {
     Card (
         modifier = modifier
             .width(180.dp)
@@ -58,8 +59,8 @@ fun RecipeCard(foodImg: Int, foodName: String, duration: String, modifier: Modif
                     .height(100.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(foodImg),
+                AsyncImage(
+                    model = foodImg,
                     contentDescription = "Food Image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
