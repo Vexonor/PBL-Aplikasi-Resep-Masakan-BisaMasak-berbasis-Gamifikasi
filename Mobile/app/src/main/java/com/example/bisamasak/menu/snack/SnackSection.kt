@@ -1,10 +1,11 @@
-package com.example.bisamasak.home.practiceRecipe
+package com.example.bisamasak.menu.snack
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
@@ -16,13 +17,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.example.bisamasak.component.MenuTabs
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.ui.theme.OutfitTypography
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun PracticeRecipe(navController: NavController, modifier: Modifier = Modifier, windowSize: WindowSizeClass) {
+fun SnackSection(
+    modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
+    pagerState: PagerState,
+    scope: CoroutineScope
+) {
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -33,12 +41,14 @@ fun PracticeRecipe(navController: NavController, modifier: Modifier = Modifier, 
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Resep Praktis",
+                text = "Cemilan",
                 style = OutfitTypography.titleLarge,
             )
             Button(
                 onClick = {
-                    navController.navigate("practice_content")
+                    scope.launch {
+                        pagerState.animateScrollToPage(MenuTabs.Snack.ordinal)
+                    }
                 },
                 colors = ButtonColors(
                     containerColor = Color.Transparent,
@@ -56,19 +66,19 @@ fun PracticeRecipe(navController: NavController, modifier: Modifier = Modifier, 
         }
         when(windowSize.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                PortraitPractice()
+                PortraitSnack()
             }
             WindowWidthSizeClass.Expanded -> {
-                LandscapePractice()
+                LandscapeSnack()
             }
         }
     }
 }
 
 @Composable
-fun PortraitPractice() {
+fun PortraitSnack() {
     val randomRecipes = rememberSaveable {
-        DataProvider.ResepPraktis.shuffled().take(2)
+        DataProvider.ResepCemilan.shuffled().take(2)
     }
     Row (
         modifier = Modifier
@@ -87,9 +97,9 @@ fun PortraitPractice() {
 }
 
 @Composable
-fun LandscapePractice() {
+fun LandscapeSnack() {
     val randomRecipes = rememberSaveable {
-        DataProvider.ResepPraktis.shuffled().take(4)
+        DataProvider.ResepCemilan.shuffled().take(4)
     }
     Row (
         modifier = Modifier

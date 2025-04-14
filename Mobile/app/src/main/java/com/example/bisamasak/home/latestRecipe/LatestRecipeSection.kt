@@ -8,18 +8,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.bisamasak.R
 import com.example.bisamasak.component.RecipeCard
+import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun LatestRecipe(navController: NavController, modifier: Modifier = Modifier) {
+fun LatestRecipe(navController: NavController, modifier: Modifier = Modifier, windowSize: WindowSizeClass) {
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -51,21 +54,54 @@ fun LatestRecipe(navController: NavController, modifier: Modifier = Modifier) {
                 )
             }
         }
+        when(windowSize.widthSizeClass) {
+            WindowWidthSizeClass.Compact -> {
+                PortraitLatest()
+            }
+            WindowWidthSizeClass.Expanded -> {
+                LandscapeLatest()
+            }
+        }
+    }
+}
 
-        Row (
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+@Composable
+fun PortraitLatest() {
+    val randomRecipes = rememberSaveable {
+        DataProvider.ResepTerbaru.shuffled().take(2)
+    }
+    Row (
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        randomRecipes.forEach { recipe ->
             RecipeCard(
-                foodImg = R.drawable.img_food_4,
-                foodName = "Susu Kurma Madu",
-                duration = "20"
+                modifier = Modifier.weight(1f),
+                foodImg = recipe.foodImg,
+                foodName = recipe.foodName,
+                duration = recipe.duration.toString(),
             )
+        }
+    }
+}
+
+@Composable
+fun LandscapeLatest() {
+    val randomRecipes = rememberSaveable {
+        DataProvider.ResepTerbaru.shuffled().take(4)
+    }
+    Row (
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        randomRecipes.forEach { recipe ->
             RecipeCard(
-                foodImg = R.drawable.ic_food_2,
-                foodName = "Perkedel Jagung Tempe",
-                duration = "30"
+                modifier = Modifier.weight(1f),
+                foodImg = recipe.foodImg,
+                foodName = recipe.foodName,
+                duration = recipe.duration.toString(),
             )
         }
     }
