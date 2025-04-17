@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BisaMasak</string>
+    <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_ingredient_screen">IngredientScreen</string>
+    <string name="title_activity_profile_screen">ProfileScreen</string>
+</resources>

@@ -1,10 +1,24 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+=======
+<<<<<<< HEAD
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager">
+    <output url="file://$PROJECT_DIR$/out" />
+=======
+<project version="4">
+>>>>>>> ef9ef71a1db2e067e936f0ed9abc3d62167e500d
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+<<<<<<< HEAD
+=======
+>>>>>>> e528495 (First Work: Login, Register, Forgot, New Password)
+>>>>>>> ef9ef71a1db2e067e936f0ed9abc3d62167e500d
   </component>
 </project>
