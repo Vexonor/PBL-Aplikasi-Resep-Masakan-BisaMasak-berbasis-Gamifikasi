@@ -5,7 +5,7 @@ import com.example.bisamasak.data.response.IngredientResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-    private const val key: String = "KEY"
+    private const val key: String = "a0d4b5582592427aa640d83fca00d0c9"
 
 interface SpoonacularService {
     @GET("food/ingredients/search")

@@ -53,7 +53,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.platform.LocalConfiguration
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.data.provider.DataProvider
+import com.example.bisamasak.data.utils.formatIngredientName
 import com.example.bisamasak.data.viewModel.IngredientViewModel
+import com.example.bisamasak.data.viewModel.WikipediaViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,9 +64,11 @@ fun IngredientDetailScreen(
     ingredientId: Int,
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: IngredientViewModel = viewModel()
+    viewModel: IngredientViewModel = viewModel(),
+    wikipediaViewModel: WikipediaViewModel = viewModel()
 ) {
     val detail = viewModel.ingredientDetail.collectAsState().value
+    val description by wikipediaViewModel.ingredientDescription.collectAsState()
 
 //    Sheet State
     val sheetState = rememberModalBottomSheetState()
@@ -84,6 +88,11 @@ fun IngredientDetailScreen(
     LaunchedEffect(ingredientId) {
         viewModel.fetchIngredientDetail(ingredientId)
     }
+
+    LaunchedEffect(detail?.name) {
+        detail?.name?.let { wikipediaViewModel.fetchIngredientDescription(formatIngredientName(it)) }
+    }
+
         Scaffold(
             containerColor = Color.White,
             topBar = {
@@ -174,7 +183,7 @@ fun IngredientDetailScreen(
                                         style = OutfitTypography.titleLarge
                                     )
                                     Text(
-                                        text = "Description",
+                                        text = description ?: "Deskripsi Tidak Tersedia",
                                         style = OutfitTypography.bodyLarge
                                     )
                                 }
