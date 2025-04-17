@@ -107,7 +107,7 @@ fun IngredientComponent(navController: NavController) {
 
     LaunchedEffect(Unit) {
         Log.d("IngredientComponent", "Fetching ingredients...")
-        viewModel.fetchAllIngredients("API_KEYS")
+        viewModel.fetchAllIngredients()
     }
 
     Scaffold(
@@ -179,7 +179,9 @@ fun IngredientComponent(navController: NavController) {
                                 )
                             }
                             items(items) { ingredient ->
-                                IngredientItem(ingredient = ingredient)
+                                IngredientItem(ingredient = ingredient) { id ->
+                                    navController.navigate("ingredient_detail/$id")
+                                }
                             }
                             item {
                                 HorizontalDivider(
@@ -218,11 +220,13 @@ fun IngredientComponent(navController: NavController) {
 }
 
 @Composable
-fun IngredientItem(ingredient: IngredientData) {
+fun IngredientItem(ingredient: IngredientData, onClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
+            .clickable { onClick(ingredient.id) },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
             model = "https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}",

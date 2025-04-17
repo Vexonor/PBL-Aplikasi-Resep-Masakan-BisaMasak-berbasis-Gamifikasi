@@ -12,6 +12,7 @@ import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
 import com.example.bisamasak.home.latestRecipe.LatestContent
 import com.example.bisamasak.ingredient.IngredientActivity
+import com.example.bisamasak.ingredient.IngredientDetailScreen
 import com.example.bisamasak.login_register.LoginScreen
 import com.example.bisamasak.login_register.NewPasswordScreen
 import com.example.bisamasak.login_register.RegisterScreen
@@ -61,6 +62,13 @@ fun Navigation() {
         }
         composable("profile_screen") {
             ProfileActivity(navController = navController)
+        }
+//        Ingredient Detail Screen
+        composable("ingredient_detail/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            id?.let {
+                IngredientDetailScreen(ingredientId = it, navController = navController)
+            }
         }
     }
 }
