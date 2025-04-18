@@ -79,4 +79,40 @@ object DataProvider {
         RecipeData("file:///android_asset/makan_malam_img/mie_goreng_saus_tiram.png", "Mie Goreng Saus Tiram", 10),
         RecipeData("file:///android_asset/makan_malam_img/kwetiaw_goreng_seafood.png", "Kwetiaw Goreng Seafood", 10),
     )
+
+    val ResepSaya = listOf(
+        RecipeData("file:///android_asset/resep_saya_img/dimsum_ayam.png", "Dimsum Paha Ayam", 10),
+        RecipeData("file:///android_asset/resep_saya_img/sate_singkong.png", "Bola Bola Singkong", 10),
+        RecipeData("file:///android_asset/resep_saya_img/kue_lapis.png", "Kue Lapis", 10),
+        RecipeData("file:///android_asset/resep_saya_img/telur_gulung.png", "Telur Gulung", 10),
+        RecipeData("file:///android_asset/resep_saya_img/cendol_dawet.png", "Cendol Dawet", 10),
+        RecipeData("file:///android_asset/resep_saya_img/kopi_susu.png", "Kopi Susu", 10),
+
+    )
+
+    val ResepSimpan = listOf(
+        RecipeData("file:///android_asset/resep_simpan_img/kwetiaw_goreng_seafood.png", "Kwetiaw Goreng Seafood", 10),
+        RecipeData("file:///android_asset/resep_simpan_img/pisang_goreng_madu.png", "Pisang Goreng Madu", 10),
+        RecipeData("file:///android_asset/resep_simpan_img/salad_buah_kelapa_muda.png", "Salad Buah Kelapa Muda",10),
+        RecipeData("file:///android_asset/resep_simpan_img/mie_goreng_saus_tiram.png", "Mie Goreng Saus Tiram",  10),
+        RecipeData("file:///android_asset/resep_simpan_img/spring_roll.jpg", "Spring Roll", 10),
+    )
+
+    val ResepTerakhir = listOf(
+        RecipeData("file:///android_asset/resep_terakhir_img/cireng_bumbu_rujak.png", "Cireng Bumbu Rujak", 10),
+        RecipeData("file:///android_asset/resep_terakhir_img/telur_ceplok_pedas.jpg", "Telur Ceplok Pedas", 25),
+        RecipeData("file:///android_asset/resep_terakhir_img/es_teler.jpg", "Es Teler", 25),
+        RecipeData("file:///android_asset/resep_terakhir_img/ayam_geprek.jpg", "Ayam Geprek", 30),
+        RecipeData("file:///android_asset/resep_terakhir_img/dorayaki.jpg", "Dorayaki", 30),
+        RecipeData("file:///android_asset/resep_terakhir_img/es_susu_cincau.jpg", "Es Susu Cincau", 15),
+    )
+
+    val ResepRecently = listOf(
+        RecipeData("file:///android_asset/resep_recently_img/cireng_bumbu_rujak.png", "Cireng Bumbu Rujak", 10),
+        RecipeData("file:///android_asset/resep_recently_img/telur_ceplok_pedas.jpg", "Telur Ceplok Pedas", 25),
+        RecipeData("file:///android_asset/resep_recently_img/es_teler.jpg", "Es Teler", 25),
+        RecipeData("file:///android_asset/resep_recently_img/ayam_geprek.jpg", "Ayam Geprek", 30),
+        RecipeData("file:///android_asset/resep_recently_img/dorayaki.jpg", "Dorayaki", 30),
+        RecipeData("file:///android_asset/resep_recently_img/es_susu_cincau.jpg", "Es Susu Cincau", 15),
+    )
 }

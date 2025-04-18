@@ -64,6 +64,47 @@ fun PortraitTab(
 }
 
 @Composable
+fun ProfilePortraitTab(
+    pagerState: PagerState,
+    scope: CoroutineScope
+) {
+    val selectedTabsIndex = remember { derivedStateOf { pagerState.currentPage } }
+
+    ScrollableTabRow(
+        selectedTabIndex = selectedTabsIndex.value,
+        containerColor = Color.White,
+        contentColor = Color(0xFFED453A),
+        edgePadding = 16.dp,
+        indicator = { tabPositions ->
+            Box(
+                modifier = Modifier
+                    .tabIndicatorOffset(tabPositions[selectedTabsIndex.value])
+                    .height(4.dp)
+                    .background(Color(0xFFED453A), shape = CircleShape)
+            )
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        ProfileTabs.entries.forEachIndexed { index, currentTab ->
+            Tab(
+                selected = selectedTabsIndex.value == index,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
+                },
+                text = {
+                    Text(
+                        text = currentTab.text,
+                        style = OutfitTypography.labelLarge
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
 fun LandscapeTab(
     pagerState: PagerState,
     scope: CoroutineScope
@@ -104,6 +145,56 @@ fun LandscapeTab(
 
 }
 
+@Composable
+fun ProfileLandscapeTab(
+    pagerState: PagerState,
+    scope: CoroutineScope
+) {
+    val selectedTabsIndex = remember { derivedStateOf { pagerState.currentPage } }
+
+    TabRow(
+        selectedTabIndex = selectedTabsIndex.value,
+        containerColor = Color.White,
+        contentColor = Color(0xFFED453A),
+        indicator = { tabPositions ->
+            Box(
+                modifier = Modifier
+                    .tabIndicatorOffset(tabPositions[selectedTabsIndex.value])
+                    .height(4.dp)
+                    .background(Color(0xFFED453A), shape = CircleShape)
+            )
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        ProfileTabs.entries.forEachIndexed { index, currentTab ->
+            Tab(
+                selected = selectedTabsIndex.value == index,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
+                },
+                text = {
+                    Text(
+                        text = currentTab.text,
+                        style = OutfitTypography.labelLarge
+                    )
+                }
+            )
+        }
+    }
+}
+
+enum class ProfileTabs(
+    val text: String
+) {
+    All_Profile("Semua"),
+    Recipe("Resep Saya"),
+    Saved("Resep disimpan"),
+    Viewed("Resep terakhir dilihat"),
+}
+
+
 enum class MenuTabs(
     val text: String
 ) {
@@ -111,5 +202,6 @@ enum class MenuTabs(
     Breakfast("Sarapan"),
     Lunch("Makan Siang"),
     Snack("Cemilan"),
-    Dinner("Makan Malam")
+    Dinner("Makan Malam"),
 }
+

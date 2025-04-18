@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bisamasak.ui.theme.OutfitFont
+import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
 fun ForgotScreen(navController: NavController) {
@@ -85,9 +86,7 @@ fun ForgotScreen(navController: NavController) {
 
             Text(
                 text = "Email",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                fontFamily = OutfitFont,
+                style = OutfitTypography.labelLarge,
                 color = Color.Black,
                 modifier = Modifier.align(Alignment.Start)
             )
