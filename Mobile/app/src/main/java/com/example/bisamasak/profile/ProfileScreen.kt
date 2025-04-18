@@ -20,11 +20,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -156,6 +158,20 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) 
                         3 -> navController.navigate("profile_screen")
                     }
                 }
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                icon = { Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "") },
+                text = {
+                    Text(
+                        text = "Lihat Informasi Bahan Masak",
+                        style = OutfitTypography.labelLarge
+                    )
+                },
+                onClick = {
+                },
+                containerColor = Color(0xFFFAFAFA)
             )
         }
     ) { innerPadding ->
