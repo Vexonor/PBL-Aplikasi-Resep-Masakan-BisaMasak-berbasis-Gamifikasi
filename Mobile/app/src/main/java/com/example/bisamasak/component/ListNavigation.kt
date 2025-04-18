@@ -11,6 +11,7 @@ import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
 import com.example.bisamasak.home.latestRecipe.LatestContent
 import com.example.bisamasak.ingredient.IngredientActivity
+import com.example.bisamasak.ingredient.IngredientDetailScreen
 import com.example.bisamasak.login_register.ForgotScreen
 import com.example.bisamasak.login_register.LoginScreen
 import com.example.bisamasak.login_register.NewPasswordScreen
@@ -25,7 +26,7 @@ import com.example.bisamasak.profile.setting.setting.SettingContent
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "recently_screen") {
+    NavHost(navController = navController, startDestination = "splash_screen") {
         composable("splash_screen") {
             SplashScreen(navController = navController)
         }
@@ -74,6 +75,13 @@ fun Navigation() {
         }
         composable("recently_screen") {
             RecentlyContent(navController = navController)
+        }
+//        Ingredient Detail Screen
+        composable("ingredient_detail/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            id?.let {
+                IngredientDetailScreen(ingredientId = it, navController = navController)
+            }
         }
     }
 }

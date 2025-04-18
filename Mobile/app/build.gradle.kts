@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.coil.compose)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     implementation(libs.accompanist.flowlayout)
     implementation(libs.androidx.material3.window.size.class1.android)
