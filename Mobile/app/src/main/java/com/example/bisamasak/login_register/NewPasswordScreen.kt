@@ -166,8 +166,8 @@ fun PasswordTextField(
                 IconButton(onClick = onVisibilityChange) {
                     Icon(
                         painter = painterResource(
-                            id = if (passwordVisible) R.drawable.baseline_visibility_off_24
-                            else R.drawable.baseline_visibility_24
+                            id = if (passwordVisible) R.drawable.ic_password_off
+                            else R.drawable.ic_password_on
                         ),
                         contentDescription = if (passwordVisible) "Sembunyikan Kata Sandi" else "Lihat Kata Sandi"
                     )

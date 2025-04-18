@@ -123,7 +123,7 @@ fun OnBoardingScreen (navController: NavController, modifier: Modifier = Modifie
                     Box (
                         modifier = Modifier
                             .size(100.dp)
-                            .scale(5f)
+                            .scale(4.5f)
                             .background(Color(0xFFFCB912), shape = CircleShape)
                     ) {
                         Box (

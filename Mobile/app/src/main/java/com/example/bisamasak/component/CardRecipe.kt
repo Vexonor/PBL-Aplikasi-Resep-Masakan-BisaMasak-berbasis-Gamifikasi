@@ -46,31 +46,31 @@ fun RecipeCard(foodImg: String, foodName: String, duration: String, modifier: Mo
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(width = 3.dp, color = Color(0XFFFAFAFA))
     ) {
-        Column (
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-            Box (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp),
-                contentAlignment = Alignment.Center
+                 Column (
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
             ) {
-                AsyncImage(
-                    model = foodImg,
-                    contentDescription = "Food Image",
-                    contentScale = ContentScale.Crop,
+                Box (
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(8.dp))
-                )
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(4.dp)
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = foodImg,
+                        contentDescription = "Food Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+                }
+                Spacer(
+                    modifier = Modifier
+                        .height(4.dp)
             )
             Box (
                 modifier = Modifier

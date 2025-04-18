@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitFont
+import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -95,9 +96,7 @@ fun RegisterScreen(navController: NavController) {
 
             Text(
                 text = "Email",
-                fontFamily = OutfitFont,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
+                style = OutfitTypography.labelLarge,
                 color = Color.Black,
                 modifier = Modifier.align(Alignment.Start)
             )
@@ -118,9 +117,7 @@ fun RegisterScreen(navController: NavController) {
 
             Text(
                 text = "Kata Sandi",
-                fontFamily = OutfitFont,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
+                style = OutfitTypography.labelLarge,
                 color = Color.Black,
                 modifier = Modifier.align(Alignment.Start)
             )
@@ -136,8 +133,8 @@ fun RegisterScreen(navController: NavController) {
                     IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
                         Icon(
                             painter = painterResource(
-                                id = if (confirmPasswordVisible) R.drawable.baseline_visibility_off_24
-                                else R.drawable.baseline_visibility_24
+                                id = if (confirmPasswordVisible) R.drawable.ic_password_off
+                                else R.drawable.ic_password_on
                             ),
                             contentDescription = if (confirmPasswordVisible) "Sembunyikan Kata Sandi" else "Lihat Kata Sandi"
                         )
@@ -153,9 +150,7 @@ fun RegisterScreen(navController: NavController) {
 
             Text(
                 text = "Konfirmasi Kata Sandi",
-                fontFamily = OutfitFont,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
+                style = OutfitTypography.labelLarge,
                 color = Color.Black,
                 modifier = Modifier.align(Alignment.Start)
             )
@@ -171,8 +166,8 @@ fun RegisterScreen(navController: NavController) {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             painter = painterResource(
-                                id = if (passwordVisible) R.drawable.baseline_visibility_off_24
-                                else R.drawable.baseline_visibility_24
+                                id = if (passwordVisible) R.drawable.ic_password_off
+                                else R.drawable.ic_password_on
                             ),
                             contentDescription = if (passwordVisible) "Sembunyikan Kata Sandi" else "Lihat Kata Sandi"
                         )

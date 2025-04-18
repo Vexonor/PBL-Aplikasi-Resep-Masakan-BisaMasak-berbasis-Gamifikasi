@@ -6,23 +6,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.OnBoardingScreen
 import com.example.bisamasak.SplashScreen
-import com.example.bisamasak.login_register.ForgotScreen
 import com.example.bisamasak.home.HomeActivity
 import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
 import com.example.bisamasak.home.latestRecipe.LatestContent
 import com.example.bisamasak.ingredient.IngredientActivity
-import com.example.bisamasak.ingredient.IngredientDetailScreen
+import com.example.bisamasak.login_register.ForgotScreen
 import com.example.bisamasak.login_register.LoginScreen
 import com.example.bisamasak.login_register.NewPasswordScreen
 import com.example.bisamasak.login_register.RegisterScreen
 import com.example.bisamasak.menu.MenuActivity
 import com.example.bisamasak.profile.ProfileActivity
+import com.example.bisamasak.profile.setting.account.AccountContent
+import com.example.bisamasak.profile.setting.recently.RecentlyContent
+import com.example.bisamasak.profile.setting.setting.SettingContent
+
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "splash_screen") {
+    NavHost(navController = navController, startDestination = "recently_screen") {
         composable("splash_screen") {
             SplashScreen(navController = navController)
         }
@@ -63,12 +66,14 @@ fun Navigation() {
         composable("profile_screen") {
             ProfileActivity(navController = navController)
         }
-//        Ingredient Detail Screen
-        composable("ingredient_detail/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
-            id?.let {
-                IngredientDetailScreen(ingredientId = it, navController = navController)
-            }
+        composable("setting_screen") {
+            SettingContent(navController = navController)
+        }
+        composable("account_screen") {
+            AccountContent(navController = navController)
+        }
+        composable("recently_screen") {
+            RecentlyContent(navController = navController)
         }
     }
 }
