@@ -60,3 +60,7 @@ fun RecentlyContent(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(10.dp))
+
+        }
+    }
+}
