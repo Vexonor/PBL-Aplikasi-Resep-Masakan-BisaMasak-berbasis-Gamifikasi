@@ -20,7 +20,7 @@ import com.example.bisamasak.menu.MenuActivity
 import com.example.bisamasak.profile.ProfileActivity
 import com.example.bisamasak.profile.setting.account.AccountContent
 import com.example.bisamasak.profile.setting.recently.RecentlyContent
-import com.example.bisamasak.profile.setting.setting.SettingContent
+import com.example.bisamasak.profile.SettingContent
 
 
 @Composable

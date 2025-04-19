@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitFont
+import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
 fun NewPasswordScreen(navController: NavController) {
@@ -63,10 +64,7 @@ fun NewPasswordScreen(navController: NavController) {
 
                 Text(
                     text = "Lupa Kata Sandi",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = OutfitFont,
-                    color = Color.Black
+                    style = OutfitTypography.headlineSmall.copy(color = Color.Black)
                 )
             }
 

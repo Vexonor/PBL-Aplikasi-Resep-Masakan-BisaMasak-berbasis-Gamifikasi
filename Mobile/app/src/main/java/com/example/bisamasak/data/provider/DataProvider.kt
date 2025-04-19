@@ -1,6 +1,7 @@
 package com.example.bisamasak.data.provider
 
 import com.example.bisamasak.data.dataContainer.RecipeData
+import com.example.bisamasak.data.dataContainer.RecipeVertical
 
 object DataProvider {
     val ResepPraktis = listOf(
@@ -108,11 +109,11 @@ object DataProvider {
     )
 
     val ResepRecently = listOf(
-        RecipeData("file:///android_asset/resep_recently_img/cireng_bumbu_rujak.png", "Cireng Bumbu Rujak", 10),
-        RecipeData("file:///android_asset/resep_recently_img/telur_ceplok_pedas.jpg", "Telur Ceplok Pedas", 25),
-        RecipeData("file:///android_asset/resep_recently_img/es_teler.jpg", "Es Teler", 25),
-        RecipeData("file:///android_asset/resep_recently_img/ayam_geprek.jpg", "Ayam Geprek", 30),
-        RecipeData("file:///android_asset/resep_recently_img/dorayaki.jpg", "Dorayaki", 30),
-        RecipeData("file:///android_asset/resep_recently_img/es_susu_cincau.jpg", "Es Susu Cincau", 15),
+        RecipeVertical("file:///android_asset/resep_recently_img/cireng_bumbu_rujak.png", "Cireng Bumbu Rujak","Camilan khas Sunda yang renyah...",10),
+        RecipeVertical("file:///android_asset/resep_recently_img/telur_ceplok_pedas.jpg", "Telur Ceplok Pedas",  "Ceplok dengan siraman sambal pedas...",25),
+        RecipeVertical("file:///android_asset/resep_recently_img/es_teler.jpg", "Es Teler", "Minuman segar dengan campuran buah...",25),
+        RecipeVertical("file:///android_asset/resep_recently_img/ayam_geprek.jpg", "Ayam Geprek", "Ayam goreng crispy yang digeprek dengan...", 30),
+        RecipeVertical("file:///android_asset/resep_recently_img/dorayaki.jpg", "Dorayaki", "Pancake ala Jepang berisi kacang...",30),
+        RecipeVertical("file:///android_asset/resep_recently_img/es_susu_cincau.jpg", "Es Susu Cincau", "Minuman menyegarkan dengan susu manis...",15),
     )
 }

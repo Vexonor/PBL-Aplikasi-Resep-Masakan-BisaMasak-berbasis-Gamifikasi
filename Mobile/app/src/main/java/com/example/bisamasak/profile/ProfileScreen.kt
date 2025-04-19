@@ -20,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
@@ -162,17 +163,18 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) 
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                icon = { Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "") },
-                text = {
-                    Text(
-                        text = "Lihat Informasi Bahan Masak",
-                        style = OutfitTypography.labelLarge
-                    )
-                },
-                onClick = {
-                },
-                containerColor = Color(0xFFFAFAFA)
-            )
+                onClick = {},
+                containerColor = Color(0xFFED453A),
+                shape = CircleShape,
+                modifier = Modifier.size(60.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Tambah",
+                    tint = Color.White,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
         }
     ) { innerPadding ->
         Column(

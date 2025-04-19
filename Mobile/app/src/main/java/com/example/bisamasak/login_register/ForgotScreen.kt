@@ -56,10 +56,7 @@ fun ForgotScreen(navController: NavController) {
 
                 Text(
                     text = "Lupa Kata Sandi",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = OutfitFont,
-                    color = Color.Black
+                    style = OutfitTypography.headlineSmall.copy(color = Color.Black)
                 )
             }
 

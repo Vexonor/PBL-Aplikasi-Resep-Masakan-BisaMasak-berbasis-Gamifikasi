@@ -1,4 +1,4 @@
-package com.example.bisamasak.profile.setting.setting
+package com.example.bisamasak.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -107,7 +107,9 @@ fun SettingContent(navController: NavController) {
             SettingRow(
                 iconRes = R.drawable.ic_history,
                 title = "Resep terakhir dilihat",
-                onClick = {}
+                onClick = {
+                    navController.navigate("recently_screen")
+                }
             )
 
             Spacer(modifier = Modifier.height(12.dp))
