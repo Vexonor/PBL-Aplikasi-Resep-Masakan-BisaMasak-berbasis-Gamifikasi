@@ -96,7 +96,6 @@ fun ProfileActivity(navController: NavController) {
 @Composable
 fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) {
     var selectedIndex by remember { mutableIntStateOf(3) }
-
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })
 

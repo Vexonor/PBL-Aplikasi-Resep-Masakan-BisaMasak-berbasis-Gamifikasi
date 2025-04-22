@@ -32,7 +32,6 @@ fun RecentlyContent(navController: NavController) {
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Custom Top App Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()

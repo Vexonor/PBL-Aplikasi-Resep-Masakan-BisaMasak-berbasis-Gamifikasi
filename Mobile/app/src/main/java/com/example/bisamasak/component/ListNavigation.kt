@@ -10,6 +10,8 @@ import com.example.bisamasak.home.HomeActivity
 import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
 import com.example.bisamasak.home.latestRecipe.LatestContent
+import com.example.bisamasak.home.notification.NotificationContent
+import com.example.bisamasak.home.notificationDetail.NotificationDetailContent
 import com.example.bisamasak.ingredient.IngredientActivity
 import com.example.bisamasak.ingredient.IngredientDetailScreen
 import com.example.bisamasak.login_register.ForgotScreen
@@ -26,7 +28,7 @@ import com.example.bisamasak.profile.SettingContent
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "splash_screen") {
+    NavHost(navController = navController, startDestination = "notification_screen") {
         composable("splash_screen") {
             SplashScreen(navController = navController)
         }
@@ -54,6 +56,13 @@ fun Navigation() {
         composable("latest_content") {
             LatestContent(navController = navController)
         }
+        composable("notification_screen") {
+            NotificationContent(navController = navController)
+        }
+        composable("detailNotification_screen") {
+            NotificationDetailContent(navController = navController)
+        }
+
 //        Main Screen
         composable("home_screen") {
             HomeActivity(navController = navController)
@@ -67,6 +76,8 @@ fun Navigation() {
         composable("profile_screen") {
             ProfileActivity(navController = navController)
         }
+
+//          Profil Setting
         composable("setting_screen") {
             SettingContent(navController = navController)
         }
@@ -76,6 +87,7 @@ fun Navigation() {
         composable("recently_screen") {
             RecentlyContent(navController = navController)
         }
+
 //        Ingredient Detail Screen
         composable("ingredient_detail/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()

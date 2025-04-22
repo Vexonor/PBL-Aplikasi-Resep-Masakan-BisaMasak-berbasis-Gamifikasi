@@ -1,5 +1,6 @@
 package com.example.bisamasak.data.provider
 
+import com.example.bisamasak.data.dataContainer.NotificationItem
 import com.example.bisamasak.data.dataContainer.RecipeData
 import com.example.bisamasak.data.dataContainer.RecipeVertical
 
@@ -116,4 +117,26 @@ object DataProvider {
         RecipeVertical("file:///android_asset/resep_recently_img/dorayaki.jpg", "Dorayaki", "Pancake ala Jepang berisi kacang...",30),
         RecipeVertical("file:///android_asset/resep_recently_img/es_susu_cincau.jpg", "Es Susu Cincau", "Minuman menyegarkan dengan susu manis...",15),
     )
+
+    val NotifToday = listOf(
+        NotificationItem("Masak apa ya hari ini?", "Cobain rekomendasi resep dibawah"),
+        NotificationItem("Selamat 30 Poin pertamamu!", "Senang sekali kamu menikmati hari-hari memasakmu bersama BisaMasak!")
+    )
+
+    val NotifYesterday = listOf(
+        NotificationItem("Masak apa ya hari ini?", "Cobain rekomendasi resep dibawah"),
+        NotificationItem("Selamat 30 Poin pertamamu!", "Senang sekali kamu menikmati hari-hari memasakmu bersama BisaMasak!")
+    )
+
+    val Notif2Days = listOf(
+        NotificationItem("Masak apa ya hari ini?", "Cobain rekomendasi resep dibawah"),
+        NotificationItem("Selamat 30 Poin pertamamu!", "Senang sekali kamu menikmati hari-hari memasakmu bersama BisaMasak!")
+    )
+
+    val sections = listOf(
+        "Hari Ini" to NotifToday,
+        "Kemarin" to NotifYesterday,
+        "2 hari yang lalu" to NotifYesterday,
+
+        )
 }
