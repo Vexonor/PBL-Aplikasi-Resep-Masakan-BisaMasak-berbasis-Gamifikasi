@@ -2,10 +2,14 @@ package com.example.bisamasak.data.service
 
 import com.example.bisamasak.data.dataContainer.IngredientDetailData
 import com.example.bisamasak.data.response.IngredientResponse
+import com.example.bisamasak.BuildConfig
+import com.example.bisamasak.data.dataContainer.Recipe
+import com.example.bisamasak.data.dataContainer.RecipeResult
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
-    private const val key: String = "a0d4b5582592427aa640d83fca00d0c9"
+private const val key: String = BuildConfig.API_KEY
 
 interface SpoonacularService {
     @GET("food/ingredients/search")
@@ -17,8 +21,31 @@ interface SpoonacularService {
 
     @GET("food/ingredients/{id}/information")
     suspend fun getIngredientInformation(
-        @retrofit2.http.Path("id") id: Int,
+        @Path("id") id: Int,
         @Query("amount") amount: Int = 1,
         @Query("apiKey") apiKey: String = key
     ): IngredientDetailData
+
+    @GET("recipes/complexSearch")
+    suspend fun searchRecipes(
+        @Query("query") query: String? = null,
+        @Query("type") type: String? = null,
+        @Query("number") number: Int,
+        @Query("addRecipeInformation") addRecipeInformation: Boolean = true,
+        @Query("apiKey") apiKey: String = key
+    ): RecipeResult
+
+    @GET("recipes/{id}/information")
+    suspend fun getRecipeDetails(
+        @Path("id") id: Int,
+        @Query("includeNutrition") includeNutrition: Boolean = true,
+        @Query("apiKey") spiKey: String = key
+    ): Recipe
+
+    @GET("recipes/findByIngredients")
+    suspend fun searchRecipeByIngredients(
+        @Query("ingredients") ingredients: String,
+        @Query("number") number: Int,
+        @Query("apiKey") apiKey: String = key
+    ): List<Recipe>
 }
