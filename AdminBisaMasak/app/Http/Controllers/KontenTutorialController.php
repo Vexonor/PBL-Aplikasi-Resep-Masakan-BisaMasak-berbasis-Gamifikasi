@@ -21,7 +21,9 @@ class KontenTutorialController extends Controller
      */
     public function create()
     {
-        //
+        return view('konten-tutorial.tambah-konten-page', [
+            "title" => "Tambah Konten Tutorial"
+        ]);
     }
 
     /**
@@ -45,7 +47,9 @@ class KontenTutorialController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('konten-tutorial.edit-konten-page', [
+            "title" => "Edit Konten Tutorial"
+        ]);
     }
 
     /**

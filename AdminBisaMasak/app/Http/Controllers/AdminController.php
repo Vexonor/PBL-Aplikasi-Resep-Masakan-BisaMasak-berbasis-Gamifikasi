@@ -21,7 +21,9 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.tambah-admin-page', [
+            "title" => "Tambah Admin"
+        ]);
     }
 
     /**

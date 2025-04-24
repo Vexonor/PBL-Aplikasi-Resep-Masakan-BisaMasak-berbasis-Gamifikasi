@@ -21,7 +21,9 @@ class BahanMasakController extends Controller
      */
     public function create()
     {
-        //
+        return view('bahan-masak.tambah-bahan-page', [
+            "title" => "Tambah Bahan Masak"
+        ]);
     }
 
     /**
