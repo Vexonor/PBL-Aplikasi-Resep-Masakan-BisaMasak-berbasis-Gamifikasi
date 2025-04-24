@@ -1,29 +1,22 @@
 package com.example.bisamasak.login_register
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.bisamasak.R
-import com.example.bisamasak.ui.theme.OutfitFont
 import com.example.bisamasak.ui.theme.OutfitTypography
+import com.example.bisamasak.component.CustomTextField
+import com.example.bisamasak.component.AppLogo
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -45,112 +38,65 @@ fun LoginScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(56.dp))
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_app_thumbnail),
-                contentDescription = "Logo BisaMasak",
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(50))
-            )
+            AppLogo()
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
                 text = "BisaMasak",
-                fontFamily = OutfitFont,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
+                style = OutfitTypography.headlineMedium,
             )
 
             Text(
                 text = "Resep Masakan",
-                fontFamily = OutfitFont,
-                fontSize = 14.sp,
-                color = Color.Black
+                style = OutfitTypography.bodyMedium,
             )
 
             Spacer(modifier = Modifier.height(40.dp))
 
             Text(
                 text = "Halo,",
-                fontFamily = OutfitFont,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black,
+                style = OutfitTypography.titleLarge,
                 modifier = Modifier.align(Alignment.Start)
             )
+
+            val text = buildAnnotatedString {
+                append("Selamat Datang di ")
+                withStyle(style = SpanStyle(color = Color(0xFFED453A))) {
+                    append("BisaMasak!")
+                }
+            }
 
             Text(
-                text = "Selamat Datang di BisaMasak!",
-                fontFamily = OutfitFont,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black,
+                text = text,
+                style = OutfitTypography.titleMedium,
                 modifier = Modifier.align(Alignment.Start)
             )
-
             Spacer(modifier = Modifier.height(32.dp))
 
-            Text(
-                text = "Email",
-                style = OutfitTypography.labelLarge,
-                color = Color.Black,
-                modifier = Modifier.align(Alignment.Start)
-            )
-            OutlinedTextField(
+            CustomTextField(
+                label = "Email",
                 value = email,
                 onValueChange = { email = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                keyboardOptions = KeyboardOptions.Default,
-                textStyle = TextStyle(fontFamily = OutfitFont),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Red,
-                    focusedBorderColor = Color.Red
-                )
+                isPassword = false // Not a password field
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Kata Sandi",
-                style = OutfitTypography.labelLarge,
-                color = Color.Black,
-                modifier = Modifier.align(Alignment.Start)
-            )
-            OutlinedTextField(
+            CustomTextField(
+                label = "Kata Sandi",
                 value = password,
                 onValueChange = { password = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                textStyle = TextStyle(fontFamily = OutfitFont),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            painter = painterResource(
-                                id = if (passwordVisible) R.drawable.ic_password_off
-                                else R.drawable.ic_password_on
-                            ),
-                            contentDescription = if (passwordVisible) "Sembunyikan Kata Sandi" else "Lihat Kata Sandi"
-                        )
-                    }
-                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Red,
-                    focusedBorderColor = Color.Red
-                )
+                isPassword = true,
+                passwordVisible = passwordVisible,
+                onVisibilityChange = { passwordVisible = !passwordVisible }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-
             Text(
                 text = "Lupa Kata Sandi?",
-                fontFamily = OutfitFont,
-                fontSize = 12.sp,
+                style = OutfitTypography.labelLarge,
                 color = Color(0xFFED453A),
                 modifier = Modifier
                     .align(Alignment.End)
@@ -184,9 +130,7 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Text(
                     text = "Masuk",
-                    fontFamily = OutfitFont,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
+                    style = OutfitTypography.titleMedium,
                     color = Color.White
                 )
             }
@@ -196,18 +140,13 @@ fun LoginScreen(navController: NavController) {
             Row {
                 Text(
                     text = "Belum punya akun? ",
-                    fontFamily = OutfitFont,
-                    fontSize = 12.sp,
-                    color = Color.Black
+                    style = OutfitTypography.labelLarge,
                 )
                 Text(
                     text = "Daftar",
-                    fontFamily = OutfitFont,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
+                    style = OutfitTypography.labelLarge,
                     color = Color(0xFFED453A),
                     modifier = Modifier.clickable {
-                        println("Navigasi ke register_screen")
                         navController.navigate("register_screen")
                     }
                 )
@@ -215,4 +154,3 @@ fun LoginScreen(navController: NavController) {
         }
     }
 }
-

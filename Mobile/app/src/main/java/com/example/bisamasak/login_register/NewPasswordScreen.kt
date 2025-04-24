@@ -3,24 +3,15 @@ package com.example.bisamasak.login_register
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.bisamasak.R
 import com.example.bisamasak.component.BackButton
-import com.example.bisamasak.ui.theme.OutfitFont
+import com.example.bisamasak.component.CustomTextField
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
@@ -50,51 +41,49 @@ fun NewPasswordScreen(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BackButton(onClick = { navController.popBackStack() })
-
                 Spacer(modifier = Modifier.width(16.dp))
-
                 Text(
                     text = "Lupa Kata Sandi",
-                    style = OutfitTypography.headlineSmall.copy(color = Color.Black)
+                    style = OutfitTypography.titleLarge
                 )
             }
 
             Spacer(modifier = Modifier.height(80.dp))
 
             Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Atur kata sandi baru",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = OutfitFont,
-                        color = Color.Black
-                    )
+                Text(
+                    text = "Atur kata sandi baru",
+                    style = OutfitTypography.titleMedium,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "Buat kata sandi baru. Pastikan kata sandi tersebut berbeda dari yang sebelumnya untuk keamanan.",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light,
-                    fontFamily = OutfitFont,
+                    style = OutfitTypography.bodyMedium,
                     color = Color.Black
                 )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            PasswordTextField(
+            CustomTextField(
                 label = "Kata Sandi",
-                password = password,
-                onPasswordChange = { password = it },
+                value = password,
+                onValueChange = { password = it },
+                isPassword = true,
                 passwordVisible = passwordVisible,
                 onVisibilityChange = { passwordVisible = !passwordVisible }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            PasswordTextField(
+            CustomTextField(
                 label = "Konfirmasi Kata Sandi",
-                password = confirmPassword,
-                onPasswordChange = { confirmPassword = it },
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                isPassword = true,
                 passwordVisible = confirmPasswordVisible,
                 onVisibilityChange = { confirmPasswordVisible = !confirmPasswordVisible }
             )
@@ -116,56 +105,10 @@ fun NewPasswordScreen(navController: NavController) {
             ) {
                 Text(
                     text = "Kirim",
-                    fontFamily = OutfitFont,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
+                    style = OutfitTypography.titleMedium,
                     color = Color.White
                 )
             }
         }
-    }
-}
-
-@Composable
-fun PasswordTextField(
-    label: String,
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    passwordVisible: Boolean,
-    onVisibilityChange: () -> Unit
-) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            fontFamily = OutfitFont,
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.Start)
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            textStyle = TextStyle(fontFamily = OutfitFont),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = onVisibilityChange) {
-                    Icon(
-                        painter = painterResource(
-                            id = if (passwordVisible) R.drawable.ic_password_off
-                            else R.drawable.ic_password_on
-                        ),
-                        contentDescription = if (passwordVisible) "Sembunyikan Kata Sandi" else "Lihat Kata Sandi"
-                    )
-                }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color.Red,
-                focusedBorderColor = Color.Red
-            )
-        )
     }
 }

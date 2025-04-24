@@ -5,11 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,13 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.bisamasak.component.BackButton
 import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.component.RecipeCard
-import com.example.bisamasak.ui.theme.OutfitFont
+import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
 fun LatestContent(navController: NavController) {
@@ -49,20 +45,12 @@ fun LatestContent(navController: NavController) {
                     contentPadding = PaddingValues(0.dp),
                     elevation = null
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFFED453A),
-                        modifier = Modifier.size(24.dp)
-                    )
+                    BackButton(onClick = { navController.popBackStack() })
                 }
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Resep Terbaru",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = OutfitFont,
-                    color = Color.Black
+                    style = OutfitTypography.titleLarge
                 )
             }
         }

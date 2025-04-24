@@ -97,7 +97,9 @@ fun HomeComponent(navController: NavController) {
                 name = "Shafiq",
                 modifier = Modifier
                     .padding(bottom = 16.dp)
-                    .wrapContentSize()
+                    .wrapContentSize(),
+                onCalendarClick = { navController.navigate("daily_screen") },
+                onBellClick = { navController.navigate("notifikasi_screen") }
             )
             HeroSection(
                 level = 10,

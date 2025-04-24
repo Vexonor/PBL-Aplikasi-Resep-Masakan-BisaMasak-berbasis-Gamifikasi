@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.ui.theme.OutfitFont
+import com.example.bisamasak.ui.theme.OutfitTypography
 
 
 @Composable
@@ -60,10 +61,7 @@ fun PracticeContent(navController: NavController) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Resep Praktis",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = OutfitFont,
-                    color = Color.Black
+                    style = OutfitTypography.titleLarge
                 )
             }
         }

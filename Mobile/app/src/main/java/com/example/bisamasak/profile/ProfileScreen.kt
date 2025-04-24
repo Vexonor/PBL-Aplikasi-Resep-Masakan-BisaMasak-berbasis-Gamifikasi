@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -92,7 +91,7 @@ fun ProfileActivity(navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) {
     var selectedIndex by remember { mutableIntStateOf(3) }
@@ -109,7 +108,7 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) 
                 title = {
                     Text(
                         text = "Profil",
-                        style = OutfitTypography.headlineMedium
+                        style = OutfitTypography.titleLarge
                     )
                 },
                 actions = {

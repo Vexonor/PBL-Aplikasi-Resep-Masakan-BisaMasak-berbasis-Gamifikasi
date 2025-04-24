@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.OnBoardingScreen
 import com.example.bisamasak.SplashScreen
 import com.example.bisamasak.home.HomeActivity
+import com.example.bisamasak.home.dailyTask.DailyTaskContent
 import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
 import com.example.bisamasak.home.latestRecipe.LatestContent
@@ -28,7 +29,7 @@ import com.example.bisamasak.profile.SettingContent
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "notification_screen") {
+    NavHost(navController = navController, startDestination = "splash_screen") {
         composable("splash_screen") {
             SplashScreen(navController = navController)
         }
@@ -61,6 +62,9 @@ fun Navigation() {
         }
         composable("detailNotification_screen") {
             NotificationDetailContent(navController = navController)
+        }
+        composable("daily_screen") {
+            DailyTaskContent(navController = navController)
         }
 
 //        Main Screen

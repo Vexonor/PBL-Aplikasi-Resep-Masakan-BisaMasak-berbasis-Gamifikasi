@@ -1,8 +1,10 @@
 package com.example.bisamasak.data.provider
 
+import com.example.bisamasak.R
 import com.example.bisamasak.data.dataContainer.NotificationItem
 import com.example.bisamasak.data.dataContainer.RecipeData
 import com.example.bisamasak.data.dataContainer.RecipeVertical
+import com.example.bisamasak.data.dataContainer.TaskItemData
 
 object DataProvider {
     val ResepPraktis = listOf(
@@ -137,6 +139,12 @@ object DataProvider {
         "Hari Ini" to NotifToday,
         "Kemarin" to NotifYesterday,
         "2 hari yang lalu" to NotifYesterday,
-
         )
+
+    val DailyTask = listOf(
+        TaskItemData(R.drawable.ic_coin, "Baca resep", 20),
+        TaskItemData(R.drawable.ic_coin, "Post Resep w/Video", 60),
+        TaskItemData(R.drawable.ic_coin, "Post Resep w/Photo", 40)
+    )
+
 }

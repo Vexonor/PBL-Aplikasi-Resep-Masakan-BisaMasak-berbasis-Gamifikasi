@@ -38,7 +38,7 @@ fun NotificationDetailContent(navController: NavController) {
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = "Pesan",
-                style = OutfitTypography.headlineSmall.copy(color = Color.Black)
+                style = OutfitTypography.titleLarge
             )
         }
 //
@@ -62,7 +62,6 @@ fun NotificationDetailContent(navController: NavController) {
                 Text(
                     text = "Masak apa ya hari ini?",
                     style = OutfitTypography.titleMedium,
-                    color = Color.Black
                 )
                 Text(
                     text = "Cobain rekomendasi resep dibawah ini. Jangan lupa recook, ya!",
