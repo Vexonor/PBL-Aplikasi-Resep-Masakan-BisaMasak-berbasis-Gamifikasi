@@ -105,7 +105,7 @@ fun NewPasswordScreen(navController: NavController) {
             ) {
                 Text(
                     text = "Kirim",
-                    style = OutfitTypography.titleMedium,
+                    style = OutfitTypography.titleLarge,
                     color = Color.White
                 )
             }

@@ -130,7 +130,7 @@ fun RegisterScreen(navController: NavController) {
             ) {
                 Text(
                     text = "Daftar",
-                    style = OutfitTypography.titleMedium,
+                    style = OutfitTypography.titleLarge,
                     color = Color.White
                 )
             }

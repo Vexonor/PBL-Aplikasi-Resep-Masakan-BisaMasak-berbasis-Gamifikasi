@@ -130,7 +130,7 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Text(
                     text = "Masuk",
-                    style = OutfitTypography.titleMedium,
+                    style = OutfitTypography.titleLarge,
                     color = Color.White
                 )
             }
