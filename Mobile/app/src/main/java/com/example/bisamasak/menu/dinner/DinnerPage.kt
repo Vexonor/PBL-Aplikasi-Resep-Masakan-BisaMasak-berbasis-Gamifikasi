@@ -68,7 +68,7 @@ fun PortraitDinnerContent() {
                 )
             }
         }
-        items(DataProvider.ResepCemilan) { recipe ->
+        items(DataProvider.ResepMakanMalam) { recipe ->
             RecipeCard(
                 foodImg = recipe.foodImg,
                 foodName = recipe.foodName,
