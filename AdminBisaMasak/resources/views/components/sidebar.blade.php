@@ -63,7 +63,7 @@
                     </li>
                     <!-- Ingredients -->
                     <li>
-                        <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm {{ $title == 'Bahan Masak' || $title == 'Tambah Bahan Masak' ? 'bg-cinnabar text-white' : 'text-charcoal hover:bg-cinnabar/50' }} rounded-lg focus:outline-hidden"
+                        <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm {{ $title == 'Bahan Masak' || $title == 'Tambah Bahan Masak' || $title == 'Detail Bahan Masak' || $title == 'Edit Bahan Masak' ? 'bg-cinnabar text-white' : 'text-charcoal hover:bg-cinnabar/50' }} rounded-lg focus:outline-hidden"
                             href="/bahan-masak">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor"
                                 viewBox="0 0 256 256">

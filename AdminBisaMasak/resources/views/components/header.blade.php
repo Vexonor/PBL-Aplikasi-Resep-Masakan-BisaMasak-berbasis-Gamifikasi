@@ -29,7 +29,7 @@
                     <img class="inline-block size-8 rounded-full"
                         src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
                         alt="Avatar">
-                    Hi, Admin
+                    Hi, {{ Auth::user() -> nama }}
                     <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"
                         aria-hidden="true">
@@ -39,8 +39,8 @@
 
                 <div id="dropdownMenu"
                     class="hidden absolute right-0 z-10 w-48 py-1 mt-2 bg-white rounded-lg shadow-lg focus:outline-none transform transition-all duration-800 ease-in-out">
-                    <a href="#"
-                        class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal font-semibold hover:bg-gray-100">
+                    <button type="button" data-modal-target="logout-modal" data-modal-toggle="logout-modal"
+                        class="flex w-full items-center gap-2 px-4 py-2 text-sm text-charcoal font-semibold hover:bg-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor"
                             viewBox="0 0 256 256">
                             <path
@@ -48,7 +48,7 @@
                             </path>
                         </svg>
                         Logout
-                    </a>
+                    </button>
                     <a href="#"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal font-semibold hover:bg-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor"
@@ -64,3 +64,5 @@
         </div>
     </nav>
 </header>
+
+@include('components.logout-modal')

@@ -1,12 +1,6 @@
 @extends('main')
 
 @section('main-content')
-<!-- Title -->
-<h1 class="text-charcoal text-2xl font-medium my-5">
-    {{ $title }}
-</h1>
-
-
 <div class="flex flex-wrap gap-4">
     <div class="flex flex-wrap max-w-[45rem] gap-2">
         <!-- Highlight Card -->

@@ -1,11 +1,6 @@
 @extends('main')
 
 @section('main-content')
-<!-- Title -->
-<h1 class="text-charcoal text-2xl font-medium my-5">
-    {{ $title }}
-</h1>
-
 <div class="flex justify-between items-center gap-4 w-full">
     <!-- Search Bar -->
     <div class="relative flex-1">

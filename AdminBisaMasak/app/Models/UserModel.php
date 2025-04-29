@@ -6,21 +6,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class UserModel extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    use HasApiTokens, Notifiable;
+    protected $table = "users";
+    protected $primaryKey = "id_user";
     protected $fillable = [
-        'name',
+        'nama',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'foto_profil',
         'email',
         'password',
+        'peran'
     ];
 
     /**
@@ -44,5 +44,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function AdminTable()
+    {
+        return $this->hasOne(AdminModel::class, 'id_user', 'id_user');
+    }
+
+    public function KontenResepTable()
+    {
+        return $this->hasOne(KontenResepModel::class, 'id_user', 'id_user');
     }
 }
