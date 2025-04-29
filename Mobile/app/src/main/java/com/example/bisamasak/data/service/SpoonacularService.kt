@@ -12,40 +12,40 @@ import retrofit2.http.Query
 private const val key: String = BuildConfig.API_KEY
 
 interface SpoonacularService {
-    @GET("food/ingredients/search")
-    suspend fun searchIngredients(
-            @Query("query") query: String,
-            @Query("number") number: Int,
-            @Query("apiKey") apiKey: String = key
-    ): IngredientResponse
+        @GET("food/ingredients/search")
+        suspend fun searchIngredients(
+                @Query("query") query: String,
+                @Query("number") number: Int,
+                @Query("apiKey") apiKey: String = key
+        ): IngredientResponse
 
-    @GET("food/ingredients/{id}/information")
-    suspend fun getIngredientInformation(
-            @Path("id") id: Int,
-            @Query("amount") amount: Int = 1,
-            @Query("apiKey") apiKey: String = key
-    ): IngredientDetailData
+        @GET("food/ingredients/{id}/information")
+        suspend fun getIngredientInformation(
+                @Path("id") id: Int,
+                @Query("amount") amount: Int = 1,
+                @Query("apiKey") apiKey: String = key
+        ): IngredientDetailData
 
-    @GET("recipes/complexSearch")
-    suspend fun searchRecipes(
-            @Query("query") query: String? = null,
-            @Query("type") type: String? = null,
-            @Query("number") number: Int,
-            @Query("addRecipeInformation") addRecipeInformation: Boolean = true,
-            @Query("apiKey") apiKey: String = key
-    ): RecipeResult
+        @GET("recipes/complexSearch")
+        suspend fun searchRecipes(
+                @Query("query") query: String? = null,
+                @Query("type") type: String? = null,
+                @Query("number") number: Int,
+                @Query("addRecipeInformation") addRecipeInformation: Boolean = true,
+                @Query("apiKey") apiKey: String = key
+        ): RecipeResult
 
-    @GET("recipes/{id}/information")
-    suspend fun getRecipeDetails(
-            @Path("id") id: Int,
-            @Query("includeNutrition") includeNutrition: Boolean = true,
-            @Query("apiKey") spiKey: String = key
-    ): Recipe
+        @GET("recipes/{id}/information")
+        suspend fun getRecipeDetails(
+                @Path("id") id: Int,
+                @Query("includeNutrition") includeNutrition: Boolean = true,
+                @Query("apiKey") spiKey: String = key
+        ): Recipe
 
-    @GET("recipes/findByIngredients")
-    suspend fun searchRecipeByIngredients(
-            @Query("ingredients") ingredients: String,
-            @Query("number") number: Int,
-            @Query("apiKey") apiKey: String = key
-    ): List<Recipe>
+        @GET("recipes/findByIngredients")
+        suspend fun searchRecipeByIngredients(
+                @Query("ingredients") ingredients: String,
+                @Query("number") number: Int,
+                @Query("apiKey") apiKey: String = key
+        ): List<Recipe>
 }

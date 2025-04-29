@@ -2,6 +2,7 @@ package com.example.bisamasak.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +24,8 @@ import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun Header(name: String, modifier: Modifier = Modifier) {
+fun Header(name: String, onCalendarClick: () -> Unit, onBellClick: () -> Unit, modifier: Modifier = Modifier
+) {
     Row (
         modifier = modifier
             .background(color = Color(0xE6ED453A))
@@ -61,13 +63,17 @@ fun Header(name: String, modifier: Modifier = Modifier) {
             Image(
                 painter = painterResource(id = R.drawable.ic_calendar),
                 contentDescription = "Calendar",
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { onCalendarClick() }
             )
             Spacer(modifier = Modifier.size(16.dp))
             Image(
                 painter = painterResource(id = R.drawable.ic_bell),
                 contentDescription = "Bell",
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { onBellClick() }
             )
         }
     }

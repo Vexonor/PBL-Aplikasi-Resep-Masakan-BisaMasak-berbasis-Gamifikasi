@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -28,9 +27,9 @@ import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
 fun AccountContent(navController: NavController) {
-    var name by remember { mutableStateOf("Rizqi Vela Syifa") }
-    var email by remember { mutableStateOf("velasyifa02@gmail.com") }
-    var password by remember { mutableStateOf("password123") }
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     Box(
@@ -133,7 +132,7 @@ fun AccountContent(navController: NavController) {
                     .padding(bottom = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 keyboardOptions = KeyboardOptions.Default,
-                textStyle = OutfitTypography.titleMedium, // Menggunakan titleMedium
+                textStyle = OutfitTypography.titleMedium,
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color(0xFFED453A),
                     focusedBorderColor = Color(0xFFED453A)

@@ -20,11 +20,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -89,11 +91,10 @@ fun ProfileActivity(navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) {
     var selectedIndex by remember { mutableIntStateOf(3) }
-
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })
 
@@ -107,7 +108,7 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) 
                 title = {
                     Text(
                         text = "Profil",
-                        style = OutfitTypography.headlineMedium
+                        style = OutfitTypography.titleLarge
                     )
                 },
                 actions = {
@@ -157,6 +158,21 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) 
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = {},
+                containerColor = Color(0xFFED453A),
+                shape = CircleShape,
+                modifier = Modifier.size(60.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Tambah",
+                    tint = Color.White,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
         }
     ) { innerPadding ->
         Column(

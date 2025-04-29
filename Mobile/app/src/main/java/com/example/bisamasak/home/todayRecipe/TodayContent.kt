@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.ui.theme.OutfitFont
+import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
 fun TodayContent(navController: NavController) {
@@ -58,11 +59,8 @@ fun TodayContent(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Menu BisaMasak Hari Ini",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = OutfitFont,
-                    color = Color.Black
+                    text = "Menu Hari Ini",
+                    style = OutfitTypography.titleLarge
                 )
             }
         }
