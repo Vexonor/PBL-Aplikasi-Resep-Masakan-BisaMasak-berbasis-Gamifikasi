@@ -161,7 +161,9 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass) 
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = {},
+                onClick = {
+                    navController.navigate("add_content_screen")
+                },
                 containerColor = Color(0xFFED453A),
                 shape = CircleShape,
                 modifier = Modifier.size(60.dp)

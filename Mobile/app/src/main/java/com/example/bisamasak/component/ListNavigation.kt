@@ -29,6 +29,7 @@ import com.example.bisamasak.menu.SearchScreen
 import com.example.bisamasak.menu.TutorialDetailScreen
 import com.example.bisamasak.profile.ProfileActivity
 import com.example.bisamasak.profile.SettingContent
+import com.example.bisamasak.profile.add_content.AddContentScreen
 import com.example.bisamasak.profile.setting.account.AccountContent
 import com.example.bisamasak.profile.setting.recently.RecentlyContent
 
@@ -69,6 +70,7 @@ fun Navigation() {
         composable("setting_screen") { SettingContent(navController = navController) }
         composable("account_screen") { AccountContent(navController = navController) }
         composable("recently_screen") { RecentlyContent(navController = navController) }
+        composable("add_content_screen") { AddContentScreen(navController = navController) }
 
         //        Ingredient Detail Screen
         composable("ingredient_detail/{id}") { backStackEntry ->
