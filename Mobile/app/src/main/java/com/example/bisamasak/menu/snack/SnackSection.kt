@@ -1,5 +1,6 @@
 package com.example.bisamasak.menu.snack
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,14 +13,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.bisamasak.component.MenuTabs
 import com.example.bisamasak.component.RecipeCard
-import com.example.bisamasak.data.provider.DataProvider
+import com.example.bisamasak.data.dataContainer.Recipe
 import com.example.bisamasak.ui.theme.OutfitTypography
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -29,7 +30,9 @@ fun SnackSection(
     modifier: Modifier = Modifier,
     windowSize: WindowSizeClass,
     pagerState: PagerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    recipes: List<Recipe>,
+    onRecipeClick: (Int) -> Unit
 ) {
     Column (
         modifier = modifier
@@ -66,20 +69,18 @@ fun SnackSection(
         }
         when(windowSize.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                PortraitSnack()
+                PortraitSnack(recipes, onRecipeClick)
             }
             WindowWidthSizeClass.Expanded -> {
-                LandscapeSnack()
+                LandscapeSnack(recipes, onRecipeClick)
             }
         }
     }
 }
 
 @Composable
-fun PortraitSnack() {
-    val randomRecipes = rememberSaveable {
-        DataProvider.ResepCemilan.shuffled().take(2)
-    }
+fun PortraitSnack(recipes: List<Recipe>, onRecipeClick: (Int) -> Unit) {
+    val randomRecipes = remember { recipes.shuffled().take(2) }
     Row (
         modifier = Modifier
             .fillMaxWidth(),
@@ -87,20 +88,20 @@ fun PortraitSnack() {
     ) {
         randomRecipes.forEach { recipe ->
             RecipeCard(
-                modifier = Modifier.weight(1f),
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable{ onRecipeClick(recipe.id) },
+                foodImg = recipe.image,
+                foodName = recipe.title,
+                duration = recipe.readyInMinutes.toString(),
             )
         }
     }
 }
 
 @Composable
-fun LandscapeSnack() {
-    val randomRecipes = rememberSaveable {
-        DataProvider.ResepCemilan.shuffled().take(4)
-    }
+fun LandscapeSnack(recipes: List<Recipe>, onRecipeClick: (Int) -> Unit) {
+    val randomRecipes = remember { recipes.shuffled().take(4) }
     Row (
         modifier = Modifier
             .fillMaxWidth(),
@@ -108,10 +109,12 @@ fun LandscapeSnack() {
     ) {
         randomRecipes.forEach { recipe ->
             RecipeCard(
-                modifier = Modifier.weight(1f),
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable{ onRecipeClick(recipe.id) },
+                foodImg = recipe.image,
+                foodName = recipe.title,
+                duration = recipe.readyInMinutes.toString(),
             )
         }
     }

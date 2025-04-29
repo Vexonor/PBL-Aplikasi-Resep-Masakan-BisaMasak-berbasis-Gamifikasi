@@ -1,16 +1,29 @@
 package com.example.bisamasak.menu.all_content
 
 import android.app.Activity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.bisamasak.component.ShimmerCard
+import com.example.bisamasak.data.utils.RecipeCategory
+import com.example.bisamasak.data.viewModel.RecipeViewModel
 import com.example.bisamasak.menu.breakfast.BreakFastSection
 import com.example.bisamasak.menu.dinner.DinnerSection
 import com.example.bisamasak.menu.lunch.LunchSection
@@ -21,50 +34,94 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun AllContent(
     pagerState: PagerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    navController: NavController
 ) {
     val context = LocalContext.current
     val activity = context as Activity
     val windowSizeClass = calculateWindowSizeClass(activity = activity)
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
-        item {
-            BreakFastSection(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp),
-                windowSize = windowSizeClass,
-                pagerState = pagerState,
-                scope = scope
-            )
+
+
+//    Recipe Model
+    val viewModel: RecipeViewModel = viewModel()
+    val recipesByCategory = viewModel.recipesByCategory.collectAsState().value
+    val isLoading = viewModel.isLoading.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllCategories()
+    }
+
+    if (isLoading) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
+            modifier = Modifier
+                .background(Color.White)
+                .padding(horizontal = 24.dp)
+        ) {
+            items(8) {
+                ShimmerCard()
+            }
         }
-        item {
-            LunchSection(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp),
-                windowSize = windowSizeClass,
-                pagerState = pagerState,
-                scope = scope
-            )
-        }
-        item {
-            SnackSection(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp),
-                windowSize = windowSizeClass,
-                pagerState = pagerState,
-                scope = scope
-            )
-        }
-        item {
-            DinnerSection(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp),
-                windowSize = windowSizeClass,
-                pagerState = pagerState,
-                scope = scope
-            )
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            item {
+                BreakFastSection(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp),
+                    windowSize = windowSizeClass,
+                    pagerState = pagerState,
+                    scope = scope,
+                    recipes = recipesByCategory[RecipeCategory.SARAPAN] ?: emptyList(),
+                    onRecipeClick = { id ->
+                        navController.navigate("recipe_detail/$id")
+                    }
+                )
+            }
+            item {
+                LunchSection(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp),
+                    windowSize = windowSizeClass,
+                    pagerState = pagerState,
+                    scope = scope,
+                    recipes = recipesByCategory[RecipeCategory.MAKAN_SIANG] ?: emptyList(),
+                    onRecipeClick = { id ->
+                        navController.navigate("recipe_detail/$id")
+                    }
+                )
+            }
+            item {
+                SnackSection(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp),
+                    windowSize = windowSizeClass,
+                    pagerState = pagerState,
+                    scope = scope,
+                    recipes = recipesByCategory[RecipeCategory.CEMILAN] ?: emptyList(),
+                    onRecipeClick = { id ->
+                        navController.navigate("recipe_detail/$id")
+                    }
+                )
+            }
+            item {
+                DinnerSection(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp),
+                    windowSize = windowSizeClass,
+                    pagerState = pagerState,
+                    scope = scope,
+                    recipes = recipesByCategory[RecipeCategory.MAKAN_MALAM] ?: emptyList(),
+                    onRecipeClick = { id ->
+                        navController.navigate("recipe_detail/$id")
+                    }
+                )
+            }
         }
     }
 }

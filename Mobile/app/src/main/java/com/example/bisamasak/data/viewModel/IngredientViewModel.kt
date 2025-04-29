@@ -53,6 +53,7 @@ class IngredientViewModel : ViewModel()  {
             }
         }
     }
+
     fun fetchIngredientDetail(id: Int) {
         viewModelScope.launch {
             _isLoading.value = true

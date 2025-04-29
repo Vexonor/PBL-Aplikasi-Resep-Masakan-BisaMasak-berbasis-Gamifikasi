@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import 'tailwindcss';
+@import "flowbite/src/themes/default";
 
+@plugin "flowbite/plugin";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source "../**/*.blade.php";
@@ -7,7 +10,13 @@
 @source "../**/*.vue";
 @source "node_modules/preline/dist/*.js";
 
+
+
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-outfit: "Outfit", sans-serif;
+    --color-cinnabar: #ED453A;
+    --color-charcoal: #323232;
+    --color-alabaster: #FAFAFA;
 }

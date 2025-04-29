@@ -92,7 +92,8 @@ fun MenuActivity(navController: NavController) {
 @Composable
 fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
     var selectedIndex by remember { mutableIntStateOf(1) }
-    
+
+//    Pager State
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { MenuTabs.entries.size })
 
@@ -111,7 +112,9 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                 },
                 actions = {
                     Button (
-                        onClick = {},
+                        onClick = {
+                            navController.navigate("search_screen")
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             contentColor = Color.Transparent,
@@ -186,36 +189,48 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                     MenuTabs.All -> {
                         AllContent(
                             pagerState = pagerState,
-                            scope = scope
+                            scope = scope,
+                            navController = navController
                         )
                     }
                     MenuTabs.Breakfast -> {
                         BreakfastContent(
                             pagerState = pagerState,
                             scope = scope,
-                            windowSize = windowSize
-
+                            windowSize = windowSize,
+                            onRecipeClick = { id ->
+                                navController.navigate("recipe_detail/$id")
+                            }
                         )
                     }
                     MenuTabs.Lunch -> {
                         LunchContent(
                             pagerState = pagerState,
                             scope = scope,
-                            windowSize = windowSize
+                            windowSize = windowSize,
+                            onRecipeClick = { id ->
+                                navController.navigate("recipe_detail/$id")
+                            }
                         )
                     }
                     MenuTabs.Snack -> {
                         SnackContent(
                             pagerState = pagerState,
                             scope = scope,
-                            windowSize = windowSize
+                            windowSize = windowSize,
+                            onRecipeClick = { id ->
+                                navController.navigate("recipe_detail/$id")
+                            }
                         )
                     }
                     MenuTabs.Dinner -> {
                         DinnerContent(
                             pagerState = pagerState,
                             scope = scope,
-                            windowSize = windowSize
+                            windowSize = windowSize,
+                            onRecipeClick = { id ->
+                                navController.navigate("recipe_detail/$id")
+                            }
                         )
                     }
                 }
