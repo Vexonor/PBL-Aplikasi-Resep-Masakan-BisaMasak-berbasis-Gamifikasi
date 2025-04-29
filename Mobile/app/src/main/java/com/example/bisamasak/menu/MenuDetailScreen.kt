@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,18 +36,26 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +63,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,7 +75,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -79,12 +91,15 @@ import com.example.bisamasak.R
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.data.viewModel.RecipeViewModel
+import com.example.bisamasak.profile.add_content.TextInput
+import com.example.bisamasak.ui.theme.OutfitFont
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
 import kotlin.toString
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedBoxWithConstraintsScope")
 @Composable
 fun MenuDetailScreen(
@@ -96,6 +111,8 @@ fun MenuDetailScreen(
     val menudetails = viewModel.recipeDetails.collectAsState().value
     val isLoading = viewModel.isLoading.collectAsState().value
 
+    var showDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(recipeId) {
         viewModel.fetchRecipeDetails(recipeId)
     }
@@ -103,33 +120,56 @@ fun MenuDetailScreen(
     Scaffold(
         containerColor = Color.White,
         topBar = {
-            Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 24.dp, top = 32.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigate("menu_screen")
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = Color.Transparent
-                    ),
-                    contentPadding = PaddingValues(0.dp),
-                    elevation = null
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFFED453A),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
+            TopAppBar(
+                title = {},
+                modifier = modifier,
+                navigationIcon = {
+                    Button(
+                        onClick = {
+                            navController.navigate("menu_screen")
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = Color.Transparent
+                        ),
+                        contentPadding = PaddingValues(0.dp),
+                        elevation = null
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color(0xFFED453A),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                actions = {
+                    Button(
+                        onClick = { showDialog = true },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = Color.Transparent
+                        ),
+                        contentPadding = PaddingValues(0.dp),
+                        elevation = null
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_warning),
+                            contentDescription = "Report",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0x66FAFAFA),
+                    navigationIconContentColor = Color.Transparent,
+                    actionIconContentColor = Color.Transparent
+                ),
+            )
         }
     ) { innerPadding ->
         Surface(
@@ -698,6 +738,91 @@ fun MenuDetailScreen(
                                     color = Color(0xFF748189)
                                 )
                             }
+//                     Comment Section
+                            item {
+                                var text by remember { mutableStateOf("") }
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                                ) {
+                                    Text(
+                                        text = "Komentar",
+                                        style = OutfitTypography.titleLarge,
+                                        modifier = Modifier.padding(vertical = 12.dp)
+                                    )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 12.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(0.4f)
+                                                .size(50.dp)
+                                                .clip(RoundedCornerShape(50.dp))
+                                                .background(Color(0xFFED453A)),
+                                            contentAlignment = Alignment.Center
+                                        ){
+                                            Text(
+                                                text = "S",
+                                                style = OutfitTypography.displaySmall,
+                                                color = Color.White
+                                            )
+                                        }
+                                        OutlinedTextField(
+                                            value = text ,
+                                            onValueChange = { text = it },
+                                            placeholder = {
+                                                Text(
+                                                    text = "Tuliskan Komentar Anda...",
+                                                    style = OutfitTypography.bodyMedium
+                                                )
+                                            },
+                                            colors = OutlinedTextFieldDefaults.colors(
+                                                unfocusedBorderColor = Color(0xFFED453A),
+                                                focusedBorderColor = Color(0xFFED453A),
+                                                cursorColor = Color(0xFFED453A)
+                                            ),
+                                            textStyle = TextStyle(fontFamily = OutfitFont),
+                                            singleLine = false,
+                                            shape = RoundedCornerShape(32.dp),
+                                            modifier = Modifier
+                                                .weight(2f)
+                                                .fillMaxWidth()
+                                                .height(44.dp)
+                                                .padding(horizontal = 12.dp),
+                                        )
+                                        Button(
+                                            modifier = Modifier
+                                                .weight(0.5f),
+                                            onClick = {  },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color(0xFFED453A),
+                                                contentColor = Color.White,
+                                                disabledContainerColor = Color.Transparent,
+                                                disabledContentColor = Color.Transparent
+                                            ),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                                contentDescription = "Send",
+                                                tint = Color.White,
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 24.dp),
+                                    color = Color(0xFF748189)
+                                )
+                            }
 //                     Similar Recipe
                             item {
                                 Column(
@@ -721,6 +846,56 @@ fun MenuDetailScreen(
                                     }
                                 }
                             }
+                        }
+//                      Report Dialog
+                        if (showDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showDialog = false },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        showDialog = false
+                                    }) {
+                                        Text(
+                                            text = "Kirim Laporan",
+                                            style = OutfitTypography.labelLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFFED453A)
+                                        )
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = { showDialog = false }) {
+                                        Text(
+                                            text = "Batal",
+                                            style = OutfitTypography.labelLarge,
+                                            color = Color.Black
+                                        )
+                                    }
+                                },
+                                containerColor = Color.White,
+                                title = {
+                                    Text(
+                                        text = "Laporkan Konten",
+                                        style = OutfitTypography.titleLarge
+                                    )
+                                },
+                                text = {
+                                    Column(
+                                        modifier = Modifier.heightIn(max = 200.dp) ,
+                                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                                    ) {
+                                        Text(
+                                            text = "Mohon hanya untuk melaporkan komentar yang mengandung iklan, ujaran kebencian atau konten lain yang tidak berhubungan dengan memasak. Tim BisaMasak akan segera menindak-lajutin laporan ini.",
+                                            style = OutfitTypography.bodyMedium
+                                        )
+                                        TextInput(
+                                            label = "Tuliskan Alasan",
+                                            singleLine = false,
+                                            keyboardType = KeyboardType.Text
+                                        )
+                                    }
+                                }
+                            )
                         }
                     }
                 }

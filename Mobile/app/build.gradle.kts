@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.accompanist.flowlayout)
     implementation(libs.compose.shimmer)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
 
     implementation(libs.androidx.material3.window.size.class1.android)
     testImplementation(libs.junit)
