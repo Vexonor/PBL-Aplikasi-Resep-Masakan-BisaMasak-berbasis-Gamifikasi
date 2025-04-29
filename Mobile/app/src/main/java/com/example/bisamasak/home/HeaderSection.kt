@@ -20,11 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun Header(name: String, onCalendarClick: () -> Unit, onBellClick: () -> Unit, modifier: Modifier = Modifier
+fun Header(name: String, navController: NavController, modifier: Modifier = Modifier
 ) {
     Row (
         modifier = modifier
@@ -65,7 +66,9 @@ fun Header(name: String, onCalendarClick: () -> Unit, onBellClick: () -> Unit, m
                 contentDescription = "Calendar",
                 modifier = Modifier
                     .size(32.dp)
-                    .clickable { onCalendarClick() }
+                    .clickable {
+                        navController.navigate("daily_screen")
+                    }
             )
             Spacer(modifier = Modifier.size(16.dp))
             Image(
@@ -73,7 +76,9 @@ fun Header(name: String, onCalendarClick: () -> Unit, onBellClick: () -> Unit, m
                 contentDescription = "Bell",
                 modifier = Modifier
                     .size(32.dp)
-                    .clickable { onBellClick() }
+                    .clickable {
+                        navController.navigate("notification_screen")
+                    }
             )
         }
     }

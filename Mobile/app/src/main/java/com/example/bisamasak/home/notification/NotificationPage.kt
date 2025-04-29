@@ -3,6 +3,7 @@ package com.example.bisamasak.home.notification
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,15 +44,10 @@ fun NotificationContent(navController: NavController) {
             modifier = Modifier.fillMaxSize()
         ) {
 
-            sections.forEach { (label, items) ->
-                item {
-                    NotificationSection(
-                        label = label,
-                        items = items,
-                        navController = navController
-                    )
-                }
+            items(sections) { (label, items) ->
+                NotificationSection(label = label, items = items, navController = navController)
             }
+
         }
     }
 }
