@@ -15,12 +15,12 @@
         </svg>
     </li>
     <li class="inline-flex items-center text-sm font-semibold text-gray-800 truncate" aria-current="page">
-        Tambah Admin
+        Edit Admin
     </li>
 </ol>
 
 <!-- Form -->
 <div class="bg-white w-full my-5">
-    @include('admin.form-input')
+    @include('admin.form-edit')
 </div>
 @endsection
