@@ -23,6 +23,7 @@ return new class extends Migration
                 'Terunggah',
                 'Terblokir'
             ])->default('Draf');
+            $table->integer('terbuka_di_level');
             $table->timestamps();
         });
     }

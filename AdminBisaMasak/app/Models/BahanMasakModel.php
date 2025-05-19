@@ -28,6 +28,11 @@ class BahanMasakModel extends Model
         return $this->belongsTo(KontenResepModel::class, "id_resep", "id_resep");
     }
 
+    public function BahanResepTable()
+    {
+        return $this->belongsTo(BahanResepModel::class, "id_bahan_resep", "id_bahan_resep");
+    }
+
     public function scopeBahanMasak(Builder $query, $search): void
     {
         $query->where('nama_bahan', 'LIKE', '%' . $search . '%');

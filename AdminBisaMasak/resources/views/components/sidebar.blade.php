@@ -50,7 +50,7 @@
                     </li>
                     <!-- Tutorial Content -->
                     <li>
-                        <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm {{ $title == 'Konten Tutorial' || $title == 'Tambah Konten Tutorial' ? 'bg-cinnabar text-white' : 'text-charcoal hover:bg-cinnabar/50' }} rounded-lg focus:outline-hidden"
+                        <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm {{ $title == 'Konten Tutorial' || $title == 'Tambah Konten Tutorial' || $title == 'Detail Konten Tutorial' || $title == 'Edit Konten Tutorial' ? 'bg-cinnabar text-white' : 'text-charcoal hover:bg-cinnabar/50' }} rounded-lg focus:outline-hidden"
                             href="/konten-tutorial">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor"
                                 viewBox="0 0 256 256">

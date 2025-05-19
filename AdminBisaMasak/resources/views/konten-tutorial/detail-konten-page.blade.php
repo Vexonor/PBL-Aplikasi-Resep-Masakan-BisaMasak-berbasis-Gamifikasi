@@ -15,12 +15,12 @@
         </svg>
     </li>
     <li class="inline-flex items-center text-sm font-semibold text-gray-800 truncate" aria-current="page">
-        Edit Konten Tutorial
+        Detail Konten Tutorial
     </li>
 </ol>
 
 <!-- Form -->
 <div class="bg-white w-full my-5">
-    @include('konten-tutorial.form-edit')
+    @include('konten-tutorial.form-detail')
 </div>
 @endsection

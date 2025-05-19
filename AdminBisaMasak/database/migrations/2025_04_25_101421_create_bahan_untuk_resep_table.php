@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('id_bahan_resep');
             $table->foreignId('id_resep')->constrained('konten_resep', 'id_resep')->onDelete('cascade');
             $table->foreignId('id_bahan')->constrained('bahan_masak', 'id_bahan')->onDelete('cascade');
-            $table->decimal('jumlah_bahan');
+            $table->string('jumlah_bahan');
             $table->enum('satuan_bahan', [
                 'g',
                 'kg',

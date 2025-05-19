@@ -21,4 +21,9 @@ class BahanResepModel extends Model
     {
         return $this->belongsTo(KontenResepModel::class, "id_resep", "id_resep");
     }
+
+    public function BahanMasakTable()
+    {
+        return $this->belongsTo(BahanMasakModel::class, "id_bahan_resep", "id_bahan_resep");
+    }
 }

@@ -15,6 +15,7 @@ class KontenResepModel extends Model
         "id_user",
         "judul_konten",
         "deskripsi_konten",
+        "terbuka_di_level",
         "thumbnail",
         "video_tutorial",
         "status_konten"

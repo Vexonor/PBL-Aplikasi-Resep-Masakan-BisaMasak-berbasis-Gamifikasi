@@ -10,7 +10,7 @@ class BahanMasakApiController extends Controller
 {
     public function index()
     {
-        $data = BahanMasakModel::all();
+        $data = BahanMasakModel::with('GiziTable')->get();
         return response()->json($data);
     }
 }

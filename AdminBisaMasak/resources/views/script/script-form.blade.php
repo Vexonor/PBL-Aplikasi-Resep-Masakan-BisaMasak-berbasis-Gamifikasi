@@ -32,109 +32,116 @@
     });
 
     // Duplicate Input for Ingredient
-    document.addEventListener("DOMContentLoaded", function() {
-        const container = document.getElementById('textInputContainerIngredient');
+    document.addEventListener('DOMContentLoaded', function() {
         const btnAdd = document.getElementById('btnAddIngredient');
         const btnRemove = document.getElementById('btnRemoveIngredient');
-        let counter = 1;
+        const container = document.querySelector('.ingredients-container .flex-col'); // Container yang benar
+        const ingredientGroups = container.querySelectorAll('.ingredient-group');
 
-        function toggleRemoveButton() {
-            const groups = document.querySelectorAll('.ingredient-group');
-            btnRemove.style.display = groups.length > 1 ? 'inline-flex' : 'none';
-        }
+        // Ambil group pertama sebagai template
+        const originalGroup = ingredientGroups[0].querySelector('.flex-wrap');
 
-        function updateLabelVisibility() {
-            const groups = document.querySelectorAll('.ingredient-group');
-            if (groups.length > 1) {
-                document.querySelector('label[for="input-ingredient"]').style.display = 'none';
-            } else {
-                document.querySelector('label[for="input-ingredient"]').style.display = 'block';
+        // Fungsi untuk mengupdate ID bahan
+        function updateIdBahan(inputElement) {
+            const bahanValue = inputElement.value;
+            const options = document.getElementById('ingredient').options;
+            const idField = inputElement.closest('.flex-wrap').querySelector('input[name="id_bahan[]"]');
+
+            idField.value = '';
+
+            for (let option of options) {
+                if (option.value === bahanValue) {
+                    idField.value = option.getAttribute('data-id');
+                    break;
+                }
             }
         }
 
-        btnAdd.addEventListener('click', function() {
-            counter++;
-            const newGroup = container.cloneNode(true);
-            newGroup.id = 'ingredient-group-' + counter;
-
-            const labels = newGroup.querySelectorAll('label');
-            labels.forEach(label => label.remove());
-
-            const inputs = newGroup.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                const originalId = input.id.replace(/-[0-9]+$/,
-                    '');
-                const newId = originalId + '-' + counter;
-                input.id = newId;
-                input.value = '';
-
-                if (input.previousElementSibling && input.previousElementSibling.tagName ===
-                    'LABEL') {
-                    input.previousElementSibling.setAttribute('for', newId);
+        // Fungsi cek duplikat bahan
+        function isDuplicate(bahanValue, excludeGroup) {
+            const inputs = container.querySelectorAll('.flex-wrap .input-bahan-field');
+            for (let input of inputs) {
+                if (input.closest('.flex-wrap') !== excludeGroup && input.value === bahanValue) {
+                    return true;
                 }
+            }
+            return false;
+        }
 
-                if (input.tagName === 'SELECT') {
-                    const options = input.options;
-                    for (let i = 0; i < options.length; i++) {
-                        if (options[i].hasAttribute('selected') && options[i].hasAttribute(
-                                'disabled')) {
-                            input.selectedIndex = i;
-                            break;
-                        }
-                    }
+        // Event Delegation untuk input bahan
+        container.addEventListener('input', function(e) {
+            if (e.target.classList.contains('input-bahan-field')) {
+                updateIdBahan(e.target);
+
+                if (isDuplicate(e.target.value, e.target.closest('.flex-wrap'))) {
+                    e.target.setCustomValidity('Bahan sudah ada!');
+                    e.target.reportValidity();
+                } else {
+                    e.target.setCustomValidity('');
                 }
-            });
-
-            const comboBoxes = newGroup.querySelectorAll('[data-hs-combo-box]');
-            comboBoxes.forEach(box => {
-                box.removeAttribute('data-hs-combo-box-initialized');
-                const input = box.querySelector('[data-hs-combo-box-input]');
-                if (input) {
-                    input.value = '';
-                    input.setAttribute('aria-expanded', 'false');
-                }
-
-                setTimeout(() => {
-                    if (typeof HSComboBox !== 'undefined') {
-                        new HSComboBox(box).init();
-                    }
-                }, 0);
-            });
-
-            container.parentNode.insertBefore(newGroup, container.nextSibling);
-            toggleRemoveButton();
-            updateLabelVisibility();
+            }
         });
 
+        // Tombol Tambah Input
+        btnAdd.addEventListener('click', function() {
+            const groups = container.querySelectorAll('.flex-wrap');
+            const lastGroup = groups[groups.length - 1];
+            const lastBahanInput = lastGroup.querySelector('.input-bahan-field');
+
+            if (!lastBahanInput.value.trim()) {
+                alert('Harap isi nama bahan!');
+                lastBahanInput.focus();
+                return;
+            }
+
+            if (isDuplicate(lastBahanInput.value, lastGroup)) {
+                alert('Bahan ini sudah ada!');
+                lastBahanInput.focus();
+                return;
+            }
+
+            // Buat div wrapper baru untuk group
+            const newGroupWrapper = document.createElement('div');
+            newGroupWrapper.className = 'w-full flex flex-col gap-2 ingredient-group';
+
+            // Clone original group
+            const newGroup = originalGroup.cloneNode(true);
+            const newId = 'input-bahan-' + Date.now();
+
+            // Reset nilai input
+            const newBahanInput = newGroup.querySelector('.input-bahan-field');
+            newBahanInput.id = newId;
+            newBahanInput.value = '';
+            newGroup.querySelector('input[name="id_bahan[]"]').value = '';
+            newGroup.querySelector('[name="jumlah_bahan[]"]').value = '';
+            newGroup.querySelector('[name="satuan_bahan[]"]').selectedIndex = 0;
+
+            // Tambahkan ke wrapper
+            newGroupWrapper.appendChild(newGroup);
+
+            // Tambahkan ke container utama (setelah semua group)
+            container.appendChild(newGroupWrapper);
+
+            btnRemove.classList.remove('hidden');
+            newBahanInput.focus();
+        });
+
+        // Tombol Hapus Input
         btnRemove.addEventListener('click', function() {
-            const groups = document.querySelectorAll('.ingredient-group');
+            const groups = container.querySelectorAll('.ingredient-group');
             if (groups.length > 1) {
                 groups[groups.length - 1].remove();
-                toggleRemoveButton();
-                updateLabelVisibility();
+                btnRemove.classList.toggle('hidden', groups.length === 2);
             }
         });
 
-        toggleRemoveButton();
-        updateLabelVisibility();
-
-        document.addEventListener('click', function(e) {
-            const item = e.target.closest('[data-hs-combo-box-output-item]');
-            if (item) {
-                const comboBox = item.closest('[data-hs-combo-box]');
-                const displayInput = comboBox.querySelector('[data-hs-combo-box-input]');
-                const realInput = comboBox.parentElement.querySelector('input[type="hidden"]');
-
-                const valueId = item.getAttribute('data-hs-combo-box-item-stored-data');
-                const displayText = item.querySelector('[data-hs-combo-box-search-text]').textContent;
-
-                displayInput.value = displayText;
-                realInput.value = valueId;
-            }
+        // Inisialisasi untuk input yang sudah ada
+        container.querySelectorAll('.input-bahan-field').forEach(input => {
+            updateIdBahan(input);
         });
     });
 
-    // DUplicate Input for Nutrition
+    // Duplicate Input for Nutrition
     document.addEventListener("DOMContentLoaded", function() {
         const textInputContainer = document.getElementById('textInputContainerNutrition');
         const btnAddText = document.getElementById('btnAddNutrition');
@@ -168,14 +175,17 @@
                 'mg', 'g', 'µg', 'kcal', 'IU', 'ml', 'L', '%'
             ];
 
-            const giziOptions = giziList.map(gizi => `<option value="${gizi}">${gizi}</option>`).join('');
+            const giziOptions = giziList.map(gizi => `<option value="${gizi}">${gizi}</option>`)
+                .join('');
 
-            const satuanOptions = satuanList.map(satuan => `<option value="${satuan}">${satuan}</option>`)
+            const satuanOptions = satuanList.map(satuan =>
+                    `<option value="${satuan}">${satuan}</option>`)
                 .join('');
 
             // Mengisi HTML dengan opsi
             textInputWrapper.innerHTML = `
             <div class="flex-2">
+            <label for="input-nutrition" class="block text-sm font-medium mb-2">Nutrisi</label>
                 <div class="w-full px-2 border border-cinnabar rounded-lg">
                     <select name="nama_gizi[]"
                         class="py-3 px-4 block w-full text-sm border-none focus:outline-none focus-within:ring-0 disabled:opacity-50 disabled:pointer-events-none">
@@ -185,11 +195,13 @@
                 </div>
             </div>
             <div class="flex-1">
+            <label for="input-amount" class="block text-sm font-medium mb-2">Jumlah</label>
                 <input type="text" name="jumlah[]"
                     class="py-2.5 sm:py-3 px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
                     placeholder="Masukkan jumlah">
             </div>
             <div class="flex-1">
+            <label for="hs-select-label" class="block text-sm font-medium mb-2">Satuan</label>
                 <div class="w-full px-2 border border-cinnabar rounded-lg">
                     <select name="satuan[]"
                         class="py-3 px-4 block w-full text-sm border-none focus:outline-none focus-within:ring-0 disabled:opacity-50 disabled:pointer-events-none">
@@ -273,31 +285,18 @@
 
     // Handle Send Data from nama_bahan to id_bahan
     document.addEventListener('DOMContentLoaded', function() {
-        const comboBox = document.querySelector('[data-hs-combo-box]');
-        const displayInput = document.getElementById('display-input-ingredient');
-        const realInput = document.getElementById('real-input-ingredient');
-
-        comboBox.addEventListener('click', function(e) {
-            const item = e.target.closest('[data-hs-combo-box-output-item]');
-            if (item) {
-                const valueId = item.getAttribute('data-hs-combo-box-item-stored-data');
-                const displayText = item.querySelector('[data-hs-combo-box-search-text]')
-                    .textContent;
-
-                displayInput.value = displayText;
-                realInput.value = valueId;
-            }
-        });
-
         document.getElementById('ingredient-form').addEventListener('submit', function(e) {
             const allRealInputs = document.querySelectorAll('input[name="id_bahan[]"]');
             let isValid = true;
 
             allRealInputs.forEach(input => {
-                if (!input.value) {
+                const parent = input.closest('.flex-2') || input.closest(
+                    '.ingredient-group');
+                if (parent) parent.style.border = '';
+
+                if (!input.value.trim()) {
                     isValid = false;
-                    // Highlight input yang kosong
-                    input.closest('.ingredient-group').style.border = '1px solid red';
+                    if (parent) parent.style.border = '1px solid red';
                 }
             });
 

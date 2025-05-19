@@ -1,5 +1,5 @@
 <!-- Tutorial Content -->
-<div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl flex-1">
+<div class="flex flex-col flex-1 h-max bg-white border border-gray-200 shadow-2xs rounded-xl">
     <div class="p-4 md:p-5">
         <div class="flex justify-start items-center gap-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="size-10 bg-cinnabar text-white p-2 rounded-lg"
@@ -18,7 +18,7 @@
             </div>
         </div>
     </div>
-    <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5">
+    <div class="bg-gray-100 w-full border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5">
         <a class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-gray-600 decoration-2 focus:underline focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none"
             href="#">
             Lihat Semua
@@ -31,7 +31,7 @@
 </div>
 
 <!-- Ingredient -->
-<div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl flex-1">
+<div class="flex flex-col h-max bg-white border border-gray-200 shadow-2xs rounded-xl flex-1">
     <div class="p-4 md:p-5">
         <div class="flex justify-start items-center gap-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="size-10 bg-cinnabar text-white p-2 rounded-lg"
@@ -63,7 +63,7 @@
 </div>
 
 <!-- Report Content -->
-<div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl flex-1">
+<div class="flex flex-col h-max bg-white border border-gray-200 shadow-2xs rounded-xl flex-1">
     <div class="p-4 md:p-5">
         <div class="flex justify-start items-center gap-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="size-10 bg-cinnabar text-white p-2 rounded-lg"
