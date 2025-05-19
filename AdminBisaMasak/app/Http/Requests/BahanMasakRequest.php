@@ -33,7 +33,6 @@ class BahanMasakRequest extends FormRequest
                     }
                 },
             ],
-            "terbuka_di_level" => "required|integer|min:1"
         ];
     }
 

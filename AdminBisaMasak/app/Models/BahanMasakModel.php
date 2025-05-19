@@ -15,7 +15,6 @@ class BahanMasakModel extends Model
         "nama_bahan",
         "deskripsi_bahan",
         "gambar_bahan",
-        "terbuka_di_level"
     ];
 
     public function GiziTable()

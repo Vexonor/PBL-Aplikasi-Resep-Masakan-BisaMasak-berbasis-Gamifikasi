@@ -2,17 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BahanMasakModel;
+use App\Models\KontenResepModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class KonfirmasiKontenController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+        $dataCount = $request->input('data_count', 10);
+        $dataKontenResep = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->judulKonten($search)->latest();
+
+        $data = $dataKontenResep->paginate($dataCount);
+
         return view('konfirmasi-konten.konfirmasi-konten-page', [
-            "title" => "Konfirmasi Konten"
+            "title" => "Konfirmasi Konten",
+            "dataResep" => $data
         ]);
     }
 
@@ -37,7 +48,13 @@ class KonfirmasiKontenController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->findOrFail($id);
+        $dataBahanMasak = BahanMasakModel::all();
+        return view('konfirmasi-konten.detail-konten-page', [
+            "title" => "Detail Konten Resep",
+            "dataResep" => $data,
+            "dataBahanMasak" => $dataBahanMasak
+        ]);
     }
 
     /**
@@ -51,9 +68,23 @@ class KonfirmasiKontenController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $data = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable')->findOrFail($id);
+
+            $data->update([
+                'status_konten' => 'Terunggah'
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Konten Resep berhasil diunggah!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Gagal mengunggah konten resep: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Konten Resep gagal diunggah!');
+        }
     }
 
     /**
@@ -61,6 +92,20 @@ class KonfirmasiKontenController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $data = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable')->findOrFail($id);
+
+            $data->update([
+                'status_konten' => 'Terblokir'
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Konten Resep berhasil diblokir!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Gagal memblokir konten resep: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Konten Resep gagal diblokir!');
+        }
     }
 }

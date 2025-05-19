@@ -17,13 +17,6 @@
             rows="3" placeholder="Ketikkan deskripsi disini..."
             readonly>{{ $dataBahanMasak -> deskripsi_bahan }}</textarea>
     </div>
-    <!-- Input Level Requirement -->
-    <div class="w-full">
-        <label for="input-level" class="block text-sm font-medium mb-2">Level Untuk Membuka Bahan Ini</label>
-        <input type="number" id="input-level" name="terbuka_di_level"
-            class="py-2.5 sm:py-3 px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
-            placeholder="Masukkan level yang dibutuhkan" value="{{ $dataBahanMasak -> terbuka_di_level }}" readonly>
-    </div>
     <!-- Input Nutrition -->
     <div class="flex flex-col gap-2" id="textInputContainerNutrition">
         <label for="input-ingredient" class="block text-sm font-medium mb-2 w-full">Kandungan Gizi</label>

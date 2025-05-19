@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nama_bahan');
             $table->longText('deskripsi_bahan');
             $table->longText('gambar_bahan');
-            $table->integer('terbuka_di_level');
             $table->timestamps();
         });
     }

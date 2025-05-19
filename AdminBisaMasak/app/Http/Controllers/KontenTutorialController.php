@@ -23,7 +23,7 @@ class KontenTutorialController extends Controller
     {
         $search = $request->input('search');
         $dataCount = $request->input('data_count', 10);
-        $dataKontenResep = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->searchByBahanOrJudul($search)->latest();
+        $dataKontenResep = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->judulKonten($search)->latest();
 
         $data = $dataKontenResep->paginate($dataCount);
 

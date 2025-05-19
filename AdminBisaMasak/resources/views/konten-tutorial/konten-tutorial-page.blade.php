@@ -59,7 +59,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($dataResep as $key => $resep )
+                            @foreach ( $dataResep as $key => $resep )
                             <tr class="border border-cinnabar divide-x divide-cinnabar text-charcoal text-center">
                                 <td class="px-1 py-4 whitespace-nowrap text-sm font-medium">
                                     {{ $key + 1 }}.

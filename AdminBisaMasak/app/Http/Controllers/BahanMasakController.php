@@ -52,7 +52,6 @@ class BahanMasakController extends Controller
                 'nama_bahan' => $request->nama_bahan,
                 'deskripsi_bahan' => $request->deskripsi_bahan,
                 'gambar_bahan' => $request->gambar_bahan,
-                'terbuka_di_level' => $request->terbuka_di_level
             ]);
 
             foreach ($request->nama_gizi as $index => $gizi) {
@@ -110,7 +109,6 @@ class BahanMasakController extends Controller
                 'nama_bahan' => $request->nama_bahan,
                 'deskripsi_bahan' => $request->deskripsi_bahan,
                 'gambar_bahan' => $request->gambar_bahan,
-                'terbuka_di_level' => $request->terbuka_di_level
             ]);
 
             $bahan->GiziTable()->delete();

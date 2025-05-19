@@ -46,24 +46,8 @@ class KontenResepModel extends Model
         return $this->hasMany(BahanMasakModel::class, "id_resep", "id_resep");
     }
 
-    public function scopeSearchByBahanOrJudul(Builder $query, $keywords)
+    public function scopeJudulKonten(Builder $query, $search): void
     {
-        $query->where(function ($q) use ($keywords) {
-            // Search Recipe Name
-            $q->where(function ($subQuery) use ($keywords) {
-                foreach ((array)$keywords as $keyword) {
-                    $subQuery->orWhere('judul_konten', 'LIKE', '%' . $keyword . '%');
-                }
-            });
-
-            // Search Ingredient
-            $q->orWhereHas('BahanResepTable', function ($bahanQuery) use ($keywords) {
-                $bahanQuery->where(function ($subQuery) use ($keywords) {
-                    foreach ((array)$keywords as $keyword) {
-                        $subQuery->orWhere('nama_bahan', 'LIKE', '%' . $keyword . '%');
-                    }
-                });
-            });
-        });
+        $query->where('judul_konten', 'LIKE', '%' . $search . '%');
     }
 }
