@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\KontenTutorialRequest;
 use App\Models\BahanMasakModel;
 use App\Models\BahanResepModel;
 use App\Models\GiziModel;

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BahanMasakModel;
+use App\Models\KontenResepModel;
+use App\Models\LaporanKontenModel;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -11,8 +14,15 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $dataKontenResep = KontenResepModel::count();
+        $dataBahanMasak = BahanMasakModel::count();
+        $dataLaporan = LaporanKontenModel::count();
+
         return view('dashboard.dashboard-page', [
-            "title" => "Dashboard"
+            "title" => "Dashboard",
+            "dataKontenResep" => $dataKontenResep,
+            "dataBahanMasak" => $dataBahanMasak,
+            "dataLaporan" => $dataLaporan
         ]);
     }
 

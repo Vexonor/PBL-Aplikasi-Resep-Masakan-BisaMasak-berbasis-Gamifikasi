@@ -10,7 +10,7 @@
             </svg>
             <div>
                 <h3 class="text-lg font-bold text-charcoal">
-                    100
+                    {{ $dataKontenResep }}
                 </h3>
                 <p class="mt-2 text-charcoal">
                     Konten Tutorial
@@ -20,7 +20,7 @@
     </div>
     <div class="bg-gray-100 w-full border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5">
         <a class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-gray-600 decoration-2 focus:underline focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none"
-            href="#">
+            href="/konten-tutorial">
             Lihat Semua
             <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -42,7 +42,7 @@
             </svg>
             <div>
                 <h3 class="text-lg font-bold text-charcoal">
-                    100
+                    {{ $dataBahanMasak }}
                 </h3>
                 <p class="mt-2 text-charcoal">
                     Bahan Masak
@@ -52,7 +52,7 @@
     </div>
     <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5">
         <a class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-gray-600 decoration-2 focus:underline focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none"
-            href="#">
+            href="/bahan-masak">
             Lihat Semua
             <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -74,7 +74,7 @@
             </svg>
             <div>
                 <h3 class="text-lg font-bold text-charcoal">
-                    100
+                    {{ $dataLaporan }}
                 </h3>
                 <p class="mt-2 text-charcoal">
                     Laporan Konten
@@ -84,7 +84,7 @@
     </div>
     <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5">
         <a class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-gray-600 decoration-2 focus:underline focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none"
-            href="#">
+            href="/laporan-konten">
             Lihat Semua
             <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

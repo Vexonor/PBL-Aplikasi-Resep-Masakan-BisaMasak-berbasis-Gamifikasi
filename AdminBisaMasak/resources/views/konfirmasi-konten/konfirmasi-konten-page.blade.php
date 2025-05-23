@@ -22,7 +22,7 @@
 </div>
 
 <div class="w-full h-screen bg-white p-5 my-5">
-    @if ($dataResep->isEmpty() || $dataResep->where('status_konten', '==', 'Draf')->isEmpty())
+    @if ($dataResep->isEmpty())
     <div class="w-full flex flex-col justify-center items-center gap-4 my-4">
         <img src="{{ asset('/asset/empty-query.svg') }}" class="size-60" alt="Empty Asset">
         <h2 class="font-semibold text-xl">Saat ini, belum ada konten resep yang perlu di konfirmasi.</h2>

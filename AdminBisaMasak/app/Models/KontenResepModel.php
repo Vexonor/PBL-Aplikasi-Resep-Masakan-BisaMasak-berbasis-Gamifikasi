@@ -46,6 +46,11 @@ class KontenResepModel extends Model
         return $this->hasMany(BahanMasakModel::class, "id_resep", "id_resep");
     }
 
+    public function LaporanKontenTable()
+    {
+        return $this->hasMany(LaporanKontenModel::class, "id_resep", "id_resep");
+    }
+
     public function scopeJudulKonten(Builder $query, $search): void
     {
         $query->where('judul_konten', 'LIKE', '%' . $search . '%');

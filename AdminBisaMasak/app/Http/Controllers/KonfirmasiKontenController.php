@@ -17,7 +17,7 @@ class KonfirmasiKontenController extends Controller
     {
         $search = $request->input('search');
         $dataCount = $request->input('data_count', 10);
-        $dataKontenResep = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->judulKonten($search)->latest();
+        $dataKontenResep = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->where('status_konten', 'Draf')->judulKonten($search)->latest();
 
         $data = $dataKontenResep->paginate($dataCount);
 
