@@ -23,6 +23,12 @@ return new class extends Migration
                 'Terunggah',
                 'Terblokir'
             ])->default('Draf');
+            $table->enum('kategori', [
+                'Sarapan',
+                'Makan Siang',
+                'Makan Malam',
+                'Cemilan'
+            ]);
             $table->integer('terbuka_di_level');
             $table->timestamps();
         });

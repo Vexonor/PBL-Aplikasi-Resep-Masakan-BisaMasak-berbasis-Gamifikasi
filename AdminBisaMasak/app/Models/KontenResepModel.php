@@ -18,7 +18,8 @@ class KontenResepModel extends Model
         "terbuka_di_level",
         "thumbnail",
         "video_tutorial",
-        "status_konten"
+        "status_konten",
+        "kategori"
     ];
 
     public function UserTable()

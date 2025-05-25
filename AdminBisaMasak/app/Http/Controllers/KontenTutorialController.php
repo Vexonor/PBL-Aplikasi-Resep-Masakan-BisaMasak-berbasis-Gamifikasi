@@ -68,6 +68,7 @@ class KontenTutorialController extends Controller
                 'judul_konten' => $request->judul_konten,
                 'deskripsi_konten' => $request->deskripsi_konten,
                 'terbuka_di_level' => $request->terbuka_di_level,
+                'kategori' => $request->kategori,
                 'thumbnail' => $thumbnailPath,
                 'video_tutorial' => $videoPath,
             ]);
@@ -183,6 +184,7 @@ class KontenTutorialController extends Controller
                 'judul_konten' => $request->judul_konten,
                 'deskripsi_konten' => $request->deskripsi_konten,
                 'terbuka_di_level' => $request->terbuka_di_level,
+                'kategori' => $request->kategori,
                 'thumbnail' => $thumbnail,
                 'video_tutorial' => $video,
             ]);
