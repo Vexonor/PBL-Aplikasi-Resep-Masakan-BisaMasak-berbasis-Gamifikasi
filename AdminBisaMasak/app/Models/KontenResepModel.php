@@ -18,7 +18,8 @@ class KontenResepModel extends Model
         "terbuka_di_level",
         "thumbnail",
         "video_tutorial",
-        "status_konten"
+        "status_konten",
+        "kategori"
     ];
 
     public function UserTable()
@@ -44,6 +45,11 @@ class KontenResepModel extends Model
     public function BahanMasakTable()
     {
         return $this->hasMany(BahanMasakModel::class, "id_resep", "id_resep");
+    }
+
+    public function LaporanKontenTable()
+    {
+        return $this->hasMany(LaporanKontenModel::class, "id_resep", "id_resep");
     }
 
     public function scopeJudulKonten(Builder $query, $search): void

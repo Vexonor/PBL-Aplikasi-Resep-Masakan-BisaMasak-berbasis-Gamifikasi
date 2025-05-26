@@ -23,6 +23,28 @@
             class="py-2.5 sm:py-3 px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
             placeholder="Masukkan level yang dibutuhkan" required>
     </div>
+    <!-- Input Categories -->
+    <div class="w-full">
+        <label for="hs-select-label" class="block text-sm font-medium mb-2">Kategori Resep</label>
+        <div class="w-full px-4 border border-cinnabar rounded-lg">
+            <select id="hs-select-label" name="kategori"
+                class="py-3 px-4 block w-full text-sm border-none focus:outline-none focus-within:ring-0 disabled:opacity-50 disabled:pointer-events-none">
+                <option selected disabled>Pilih Kategori</option>
+                @foreach ([
+                'Sarapan', 'Makan Siang', 'Makan Malam', 'Cemilan'
+                ] as $kategori)
+                <option value="{{ $kategori }}" {{ $kategori == $dataResep->kategori ? 'selected' : '' }}>
+                    {{ $kategori }}
+                </option>
+                @endforeach
+            </select>
+            @error('kategori')
+            <p class="text-sm 2xl:text-base text-red-600 mt-2" id="hs-validation-name-error-helper">
+                {{ $message }}
+            </p>
+            @enderror
+        </div>
+    </div>
     <!-- Input Ingredient -->
     <div class="ingredients-container flex flex-col gap-4">
         <div class="flex flex-col gap-4">
