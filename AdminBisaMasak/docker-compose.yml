@@ -47,7 +47,7 @@ services:
       dockerfile: Dockerfile
     container_name: php-service
     volumes:
-      - ./public_html:/var/www/html
+      - ./AdminBisaMasak:/var/www/html
     ports:
       - "9000:9000"
     networks:
