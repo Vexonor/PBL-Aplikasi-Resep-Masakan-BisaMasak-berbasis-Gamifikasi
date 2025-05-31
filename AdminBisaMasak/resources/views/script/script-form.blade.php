@@ -306,4 +306,19 @@
             }
         });
     });
+
+    // Photo Upload
+    function previewFoto(input) {
+        const file = input.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('File yang dipilih bukan gambar.');
+            input.value = '';
+        }
+    }
 </script>

@@ -42,18 +42,38 @@ class KontenResepModel extends Model
         return $this->hasMany(LangkahLangkahModel::class, "id_resep", "id_resep");
     }
 
-    public function BahanMasakTable()
-    {
-        return $this->hasMany(BahanMasakModel::class, "id_resep", "id_resep");
-    }
-
     public function LaporanKontenTable()
     {
         return $this->hasMany(LaporanKontenModel::class, "id_resep", "id_resep");
     }
-
-    public function scopeJudulKonten(Builder $query, $search): void
+    public function BahanMasakTable()
     {
-        $query->where('judul_konten', 'LIKE', '%' . $search . '%');
+        return $this->hasManyThrough(
+            BahanMasakModel::class,
+            BahanResepModel::class,
+            'id_resep',
+            'id_bahan',
+            'id_resep',
+            'id_bahan'
+        );
+    }
+
+    public function scopeJudulKonten(Builder $query, array $keywords): Builder
+    {
+        return $query->where(function ($q) use ($keywords) {
+            $q->where(function ($sub) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $sub->orWhere('judul_konten', 'LIKE', '%' . $keyword . '%');
+                }
+            });
+
+            $q->orWhereHas('BahanResepTable', function ($sub) use ($keywords) {
+                $sub->whereHas('BahanMasakTable', function ($innerSub) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $innerSub->where('nama_bahan', 'LIKE', '%' . $keyword . '%');
+                    }
+                });
+            });
+        });
     }
 }

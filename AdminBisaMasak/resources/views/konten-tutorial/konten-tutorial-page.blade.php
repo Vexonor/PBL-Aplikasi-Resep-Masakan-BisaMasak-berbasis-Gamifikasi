@@ -4,8 +4,8 @@
 <div class="flex justify-between items-center gap-4 w-full">
     <!-- Search Bar -->
     <div class="relative flex-1">
-        <form>
-            <input type="search" id="search" name="search"
+        <form method="GET" action="{{ route('konten-tutorial.index') }}">
+            <input type="search" id="search" name="search" value="{{ request('search') }}"
                 class="peer py-2.5 sm:py-3 pe-4 ps-8 block w-full bg-transparent border-2 border-cinnabar rounded-lg sm:text-sm focus:ring-0 focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
                 placeholder="Cari bahan masak..." autocomplete="off">
         </form>

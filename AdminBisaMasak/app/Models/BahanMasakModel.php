@@ -22,11 +22,6 @@ class BahanMasakModel extends Model
         return $this->hasMany(GiziModel::class, "id_bahan", "id_bahan");
     }
 
-    public function KontenResepTable()
-    {
-        return $this->belongsTo(KontenResepModel::class, "id_resep", "id_resep");
-    }
-
     public function BahanResepTable()
     {
         return $this->belongsTo(BahanResepModel::class, "id_bahan_resep", "id_bahan_resep");

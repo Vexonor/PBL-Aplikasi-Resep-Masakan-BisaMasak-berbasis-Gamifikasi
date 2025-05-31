@@ -26,8 +26,12 @@
             <div class="relative inline-block text-left">
                 <button id="dropdownButton"
                     class="flex justify-center items-center gap-4 w-full px-4 py-2 text-sm font-medium text-charcoal cursor-pointer">
-                    <img class="inline-block size-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+                    <img class="inline-block object-cover object-center size-8 rounded-full"
+                    src="{{ Auth::user()->foto_profil
+        ? asset('storage/' . Auth::user()->foto_profil)
+        : (Auth::user()->jenis_kelamin === 'Laki-laki'
+            ? asset('img/male-avatar.svg')
+            : asset('img/female-avatar.svg')) }}"
                         alt="Avatar">
                     Hi, {{ Auth::user() -> nama }}
                     <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
@@ -49,7 +53,7 @@
                         </svg>
                         Logout
                     </button>
-                    <a href="#"
+                    <a href="/profile"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal font-semibold hover:bg-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor"
                             viewBox="0 0 256 256">

@@ -22,9 +22,17 @@ class KontenTutorialController extends Controller
     {
         $search = $request->input('search');
         $dataCount = $request->input('data_count', 10);
-        $dataKontenResep = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->judulKonten($search)->latest();
 
-        $data = $dataKontenResep->paginate($dataCount);
+        $dataKontenResep = KontenResepModel::with([
+            'BahanResepTable.BahanMasakTable',
+        ]);
+
+        if (!empty($search)) {
+            $keywords = preg_split('/[\s,]+/', $search);
+            $dataKontenResep = $dataKontenResep->judulKonten($keywords);
+        }
+
+        $data = $dataKontenResep->latest()->paginate($dataCount);
 
         return view('konten-tutorial.konten-tutorial-page', [
             "title" => "Konten Tutorial",

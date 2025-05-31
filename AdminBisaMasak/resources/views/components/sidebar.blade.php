@@ -102,7 +102,7 @@
                     </li>
                     <!-- Manage Admin -->
                     <li>
-                        <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm {{ $title == 'Admin' || $title == 'Tambah Admin' ? 'bg-cinnabar text-white' : 'text-charcoal hover:bg-cinnabar/50' }} rounded-lg focus:outline-hidden"
+                        <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm {{ $title == 'Admin' || $title == 'Tambah Admin' ? 'bg-cinnabar text-white' : 'text-charcoal hover:bg-cinnabar/50' }} rounded-lg focus:outline-hidden {{  Auth::user() -> AdminTable -> peran_admin == 'Admin' ? 'hidden' : '' }}"
                             href="/admin">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor"
                                 viewBox="0 0 256 256">

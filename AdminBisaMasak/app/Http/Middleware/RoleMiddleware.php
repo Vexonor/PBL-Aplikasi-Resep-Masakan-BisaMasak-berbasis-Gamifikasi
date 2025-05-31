@@ -5,27 +5,24 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $role)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Mohon lakukan proses masuk terlebih dahulu!');
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
         }
 
-        if (Auth::user()->peran !== 'Admin') {
-            return redirect()->route('/')->with('error', 'Akun Anda tidak terdaftar sebagai admin!');
-        }
-
-        if (Auth::user()->peran !== 'Admin') {
-            return redirect('/');
+        $user = Auth::user();
+        // Pastikan pengguna memiliki relasi admin jika diperlukan
+        if ($role === 'Master Admin' || $role === 'Admin') {
+            if (!$user->AdminTable || $user->AdminTable->peran_admin !== $role) {
+                return back()->with('error', 'Anda tidak memiliki akses admin ke halaman ini.');
+            }
+        } elseif ($user->role !== $role) {
+            // Periksa role lainnya
+            return back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
 
         return $next($request);

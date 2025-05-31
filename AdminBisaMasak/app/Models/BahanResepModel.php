@@ -24,6 +24,6 @@ class BahanResepModel extends Model
 
     public function BahanMasakTable()
     {
-        return $this->belongsTo(BahanMasakModel::class, "id_bahan_resep", "id_bahan_resep");
+        return $this->belongsTo(BahanMasakModel::class, "id_bahan", "id_bahan");
     }
 }
