@@ -9,17 +9,36 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.example.bisamasak.component.CustomTextField
 import com.example.bisamasak.component.AppLogo
+import com.example.bisamasak.data.utils.DataStoreManager
+import com.example.bisamasak.data.viewModel.LoginViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController) {
+
+    val viewModel: LoginViewModel = viewModel()
+    LaunchedEffect(viewModel.isLoginSuccess) {
+        if (viewModel.isLoginSuccess) {
+            navController.navigate("home_screen") {
+                popUpTo("login_screen") { inclusive = true }
+            }
+        }
+    }
+
+    val context = LocalContext.current
+    val dataStore = remember { DataStoreManager(context) }
+    val coroutineScope = rememberCoroutineScope()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -78,7 +97,7 @@ fun LoginScreen(navController: NavController) {
                 label = "Email",
                 value = email,
                 onValueChange = { email = it },
-                isPassword = false // Not a password field
+                isPassword = false
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -106,6 +125,15 @@ fun LoginScreen(navController: NavController) {
             )
 
             Spacer(modifier = Modifier.weight(1f))
+
+            if (viewModel.responseMessage.isNotEmpty()) {
+                Text(
+                    text = viewModel.responseMessage,
+                    color = if (viewModel.responseMessage.contains("Success")) Color(0xFF4CAF50) else Color.Red,
+                    style = OutfitTypography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
         }
 
         Column(
@@ -118,8 +146,15 @@ fun LoginScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    navController.navigate("home_screen") {
-                        popUpTo("login_screen") { inclusive = true }
+                    if (email.isBlank() || password.isBlank()) {
+                        viewModel.responseMessage = "Email dan Kata Sandi Tidak Boleh Kosong"
+                    } else {
+                        viewModel.login(email, password) { nama ->
+                            coroutineScope.launch {
+                                dataStore.setLogin(true)
+                                dataStore.setUserName(nama)
+                            }
+                        }
                     }
                 },
                 modifier = Modifier
@@ -128,11 +163,19 @@ fun LoginScreen(navController: NavController) {
                 shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFED453A))
             ) {
+                if (viewModel.isLoading) {
+                    CircularProgressIndicator(
+                        color =  Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else {
                 Text(
                     text = "Masuk",
                     style = OutfitTypography.titleLarge,
                     color = Color.White
                 )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))

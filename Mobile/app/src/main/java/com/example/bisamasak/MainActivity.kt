@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bisamasak.component.Navigation
+import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.ui.theme.BisaMasakTheme
 import com.example.bisamasak.ui.theme.OutfitTypography
 import kotlinx.coroutines.delay
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SplashScreen (navController: NavController, modifier: Modifier = Modifier) {
+fun SplashScreen (navController: NavController, modifier: Modifier = Modifier, dataStore: DataStoreManager) {
     val image = painterResource(R.drawable.ic_app_logo)
     val scale = remember {
         Animatable(0f)
@@ -88,8 +89,25 @@ fun SplashScreen (navController: NavController, modifier: Modifier = Modifier) {
     }
     LaunchedEffect(key1 = true) {
         delay(2000)
-        navController.navigate("onBoarding_screen") {
-            popUpTo("splash_screen") { inclusive = true }
+        val isShown = dataStore.isOnboardingShow()
+        val isLogin = dataStore.isLogin()
+
+        when {
+            !isShown -> {
+                navController.navigate("onBoarding_screen") {
+                    popUpTo("splash_screen") { inclusive = true }
+                }
+            }
+            isLogin -> {
+                navController.navigate("home_screen") {
+                    popUpTo("splash_screen") { inclusive = true }
+                }
+            }
+            else -> {
+                navController.navigate("login_screen") {
+                    popUpTo("splash_screen") { inclusive = true }
+                }
+            }
         }
     }
 }

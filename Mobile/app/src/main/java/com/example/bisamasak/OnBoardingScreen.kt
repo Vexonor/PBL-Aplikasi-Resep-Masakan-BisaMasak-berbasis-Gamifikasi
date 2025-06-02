@@ -28,7 +28,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -41,7 +44,7 @@ import androidx.navigation.NavController
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun OnBoardingScreen (navController: NavController, modifier: Modifier = Modifier) {
+fun OnBoardingScreen (navController: NavController, modifier: Modifier = Modifier, onFinish: () -> Unit) {
 
     Column (
         modifier = modifier
@@ -109,7 +112,9 @@ fun OnBoardingScreen (navController: NavController, modifier: Modifier = Modifie
         }
 
         Row (
-            modifier = modifier.fillMaxWidth().weight(1f)
+            modifier = modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
             Box (
                 modifier = modifier
@@ -131,7 +136,11 @@ fun OnBoardingScreen (navController: NavController, modifier: Modifier = Modifie
                                 .size(100.dp)
                                 .padding(top = 4.dp)
                                 .absoluteOffset(x = 4.dp)
-                                .border(color = Color(0xE6ED453A), width = 1.dp, shape = CircleShape)
+                                .border(
+                                    color = Color(0xE6ED453A),
+                                    width = 1.dp,
+                                    shape = CircleShape
+                                )
                         )
                     }
                 }
@@ -153,10 +162,13 @@ fun OnBoardingScreen (navController: NavController, modifier: Modifier = Modifie
                         textAlign = TextAlign.Center
                     )
 
+                    var isCliclked by remember { mutableStateOf(false) }
+
                     Button(
                         onClick = {
-                            navController.navigate("login_screen") {
-                                popUpTo("onBoarding_screen") { inclusive = true }
+                            if (!isCliclked) {
+                                isCliclked = true
+                                onFinish()
                             }
                         },
                         modifier = Modifier

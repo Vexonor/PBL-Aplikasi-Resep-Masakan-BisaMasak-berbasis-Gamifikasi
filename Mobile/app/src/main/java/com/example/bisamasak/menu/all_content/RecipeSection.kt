@@ -1,4 +1,4 @@
-package com.example.bisamasak.menu.breakfast
+package com.example.bisamasak.menu.all_content
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,39 +18,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.bisamasak.component.MenuTabs
 import com.example.bisamasak.component.RecipeCard
-import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.ui.theme.OutfitTypography
+import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun BreakFastSection(
+fun RecipeSection(
     modifier: Modifier = Modifier,
+    kategori: String,
     windowSize: WindowSizeClass,
     pagerState: PagerState,
     scope: CoroutineScope,
     recipes: List<RecipeContentResponse>,
     onRecipeClick: (Int) -> Unit
 ) {
-    Column (
-        modifier = modifier
-            .fillMaxWidth()
+    Column(
+        modifier = modifier.fillMaxWidth()
     ) {
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Sarapan",
+                text = kategori,
                 style = OutfitTypography.titleLarge,
             )
             Button(
                 onClick = {
                     scope.launch {
-                        pagerState.animateScrollToPage(MenuTabs.Breakfast.ordinal)
+                        pagerState.animateScrollToPage(0)
                     }
                 },
                 colors = ButtonColors(
@@ -67,56 +66,46 @@ fun BreakFastSection(
                 )
             }
         }
-        when(windowSize.widthSizeClass) {
+
+        val filteredRecipes = recipes.filter { it.kategori.equals(kategori, ignoreCase = true) }
+
+        when (windowSize.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                PortraitBreakFast(recipes, onRecipeClick)
+                val randomRecipes = remember { filteredRecipes.shuffled().take(2) }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    randomRecipes.forEach { recipe ->
+                        RecipeCard(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { onRecipeClick(recipe.id_resep) },
+                            foodImg = "http://192.168.100.70:8000/storage/${'$'}{recipe.thumbnail}",
+                            foodName = recipe.judul_konten,
+                            duration = recipe.durasi.toString(),
+                        )
+                    }
+                }
             }
             WindowWidthSizeClass.Expanded -> {
-                LandscapeBreakFast(recipes, onRecipeClick)
+                val randomRecipes = remember { filteredRecipes.shuffled().take(4) }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    randomRecipes.forEach { recipe ->
+                        RecipeCard(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { onRecipeClick(recipe.id_resep) },
+                            foodImg = "http://192.168.100.70:8000/storage/${'$'}{recipe.thumbnail}",
+                            foodName = recipe.judul_konten,
+                            duration = recipe.durasi.toString(),
+                        )
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun PortraitBreakFast(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
-    val randomRecipes = remember { recipes.shuffled().take(2) }
-    Row (
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        randomRecipes.forEach { recipe ->
-            RecipeCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable{ onRecipeClick(recipe.id_resep) },
-                foodImg = "http://192.168.100.70:8000/storage/${recipe.thumbnail}",
-                foodName = recipe.judul_konten,
-                duration = recipe.durasi.toString(),
-            )
-        }
-    }
-}
-
-@Composable
-fun LandscapeBreakFast(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
-    val sarapanRecipe = recipes.filter { it.kategori.equals("Sarapan", ignoreCase = true) }
-    val randomRecipes = remember { sarapanRecipe.shuffled().take(4) }
-    Row (
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        randomRecipes.forEach { recipe ->
-            RecipeCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable{ onRecipeClick(recipe.id_resep) },
-                foodImg = "http://192.168.100.70:8000/storage/${recipe.thumbnail}",
-                foodName = recipe.judul_konten,
-                duration = recipe.durasi.toString(),
-            )
         }
     }
 }

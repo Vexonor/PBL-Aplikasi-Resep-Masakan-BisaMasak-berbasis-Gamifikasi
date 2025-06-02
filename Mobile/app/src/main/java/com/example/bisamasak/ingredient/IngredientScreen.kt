@@ -80,7 +80,6 @@ fun IngredientActivity(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientComponent(navController: NavController) {
-
 //    Bottom Bar
     var selectedIndex by remember { mutableIntStateOf(2) }
 

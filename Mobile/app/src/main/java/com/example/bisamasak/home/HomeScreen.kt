@@ -94,7 +94,6 @@ fun HomeComponent(navController: NavController) {
                 .verticalScroll(rememberScrollState())
         ) {
             Header(
-                name = "Shafiq",
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .wrapContentSize(),

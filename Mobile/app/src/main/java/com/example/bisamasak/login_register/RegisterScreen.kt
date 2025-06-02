@@ -9,18 +9,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.example.bisamasak.component.CustomTextField
 import com.example.bisamasak.component.AppLogo
+import com.example.bisamasak.data.utils.DataStoreManager
+import com.example.bisamasak.data.viewModel.RegisterViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController) {
+
+    val viewModel: RegisterViewModel = viewModel()
+    val context = LocalContext.current
+    val dataStore = remember { DataStoreManager(context) }
+    val coroutineScope = rememberCoroutineScope()
+
     var email by remember { mutableStateOf("") }
+    var nama by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPassword by remember { mutableStateOf("") }
@@ -76,7 +88,17 @@ fun RegisterScreen(navController: NavController) {
                 style = OutfitTypography.titleMedium,
                 modifier = Modifier.align(Alignment.Start)
             )
+
             Spacer(modifier = Modifier.height(32.dp))
+
+            CustomTextField(
+                label = "Nama",
+                value = nama,
+                onValueChange = { nama = it },
+                isPassword = false
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             CustomTextField(
                 label = "Email",
@@ -109,6 +131,15 @@ fun RegisterScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            if (viewModel.responseMessage.isNotEmpty()) {
+                Text(
+                    text = viewModel.responseMessage,
+                    color = if (viewModel.responseMessage.contains("Success")) Color(0xFF4CAF50) else Color.Red,
+                    style = OutfitTypography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.weight(1f))
         }
 
@@ -121,7 +152,22 @@ fun RegisterScreen(navController: NavController) {
         ) {
 
             Button(
-                onClick = { /* TODO: Handle Register */ },
+                onClick = {
+                    if (password != confirmPassword) {
+                        viewModel.responseMessage = "Kata Sandi dan Konfirmasi Kata Sandi Tidak Sama"
+                    } else if (nama.isBlank() || email.isBlank() || password.isBlank()) {
+                        viewModel.responseMessage = "Nama, Email dan Kata Sandi Tidak Boleh Kosong"
+                    } else {
+                        viewModel.register(nama, email, password)
+                        coroutineScope.launch {
+                            dataStore.setUserName(nama)
+                            dataStore.setLogin(true)
+                        }
+                        navController.navigate("login_screen") {
+                            popUpTo("register_screen") { inclusive = true }
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

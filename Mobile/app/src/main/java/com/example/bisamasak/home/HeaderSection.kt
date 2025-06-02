@@ -15,18 +15,33 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bisamasak.R
+import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun Header(name: String, navController: NavController, modifier: Modifier = Modifier
+fun Header(navController: NavController, modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val dataStore = remember { DataStoreManager(context) }
+    var userName by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        userName = dataStore.getUserName()
+    }
+
     Row (
         modifier = modifier
             .background(color = Color(0xE6ED453A))
@@ -42,7 +57,7 @@ fun Header(name: String, navController: NavController, modifier: Modifier = Modi
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Hi! $name",
+                text = "Hi! ${if (userName.isNotBlank()) userName.replaceFirstChar { it.uppercase() } else "Chef"}",
                 style = OutfitTypography.titleLarge,
                 color = Color.White
             )

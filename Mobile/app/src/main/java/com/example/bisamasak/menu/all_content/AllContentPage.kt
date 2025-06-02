@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.component.ShimmerCard
 import com.example.bisamasak.data.utils.RecipeCategory
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.data.viewModel.RecipeViewModel
 import com.example.bisamasak.menu.breakfast.BreakFastSection
 import com.example.bisamasak.menu.dinner.DinnerSection
@@ -43,12 +44,11 @@ fun AllContent(
 
 
 //    Recipe Model
-    val viewModel: RecipeViewModel = viewModel()
-    val recipesByCategory = viewModel.recipesByCategory.collectAsState().value
-    val isLoading = viewModel.isLoading.collectAsState().value
+    val recipeViewModel: RecipeContentViewModel = viewModel()
+    val isLoading = recipeViewModel.isLoading
 
     LaunchedEffect(Unit) {
-        viewModel.fetchAllCategories()
+        recipeViewModel.recipe()
     }
 
     if (isLoading) {
@@ -70,57 +70,23 @@ fun AllContent(
             modifier = Modifier
                 .fillMaxSize(),
         ) {
-            item {
-                BreakFastSection(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp),
-                    windowSize = windowSizeClass,
-                    pagerState = pagerState,
-                    scope = scope,
-                    recipes = recipesByCategory[RecipeCategory.SARAPAN] ?: emptyList(),
-                    onRecipeClick = { id ->
-                        navController.navigate("recipe_detail/$id")
-                    }
-                )
-            }
-            item {
-                LunchSection(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp),
-                    windowSize = windowSizeClass,
-                    pagerState = pagerState,
-                    scope = scope,
-                    recipes = recipesByCategory[RecipeCategory.MAKAN_SIANG] ?: emptyList(),
-                    onRecipeClick = { id ->
-                        navController.navigate("recipe_detail/$id")
-                    }
-                )
-            }
-            item {
-                SnackSection(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp),
-                    windowSize = windowSizeClass,
-                    pagerState = pagerState,
-                    scope = scope,
-                    recipes = recipesByCategory[RecipeCategory.CEMILAN] ?: emptyList(),
-                    onRecipeClick = { id ->
-                        navController.navigate("recipe_detail/$id")
-                    }
-                )
-            }
-            item {
-                DinnerSection(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp),
-                    windowSize = windowSizeClass,
-                    pagerState = pagerState,
-                    scope = scope,
-                    recipes = recipesByCategory[RecipeCategory.MAKAN_MALAM] ?: emptyList(),
-                    onRecipeClick = { id ->
-                        navController.navigate("recipe_detail/$id")
-                    }
-                )
+            val groupedRecipes = recipeViewModel.recipeList.groupBy { it.kategori }
+
+            groupedRecipes.forEach { (kategori, recipes) ->
+                item {
+                    RecipeSection(
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp),
+                        windowSize = windowSizeClass,
+                        pagerState = pagerState,
+                        kategori = kategori,
+                        scope = scope,
+                        recipes = recipes,
+                        onRecipeClick = { id ->
+                            navController.navigate("recipe_detail/$id")
+                        }
+                    )
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('judul_konten');
             $table->longText('deskripsi_konten');
+            $table->integer("durasi");
             $table->string('thumbnail');
             $table->string('video_tutorial')->nullable();
             $table->enum('status_konten', [

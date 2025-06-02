@@ -2,7 +2,6 @@ package com.example.bisamasak.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,10 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 
@@ -61,9 +62,16 @@ fun RecipeCard(foodImg: String, foodName: String, duration: String, modifier: Mo
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
-                        model = foodImg,
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(foodImg)
+                            .addHeader("User-Agent", "Mozilla/5.0")
+                            .crossfade(true)
+                            .build(),
                         contentDescription = "Food Image",
                         contentScale = ContentScale.Crop,
+                        onError = {
+                            println("COIL ERROR: ${it.result.throwable}")
+                        },
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(RoundedCornerShape(8.dp))
