@@ -13,4 +13,15 @@ class BahanMasakApiController extends Controller
         $data = BahanMasakModel::with('GiziTable')->get();
         return response()->json($data);
     }
+
+    public function show($id)
+    {
+        $bahan = BahanMasakModel::with('giziTable')->find($id);
+
+        if (!$bahan) {
+            return response()->json(['message' => 'Bahan tidak ditemukan'], 404);
+        }
+
+        return response()->json($bahan);
+    }
 }
