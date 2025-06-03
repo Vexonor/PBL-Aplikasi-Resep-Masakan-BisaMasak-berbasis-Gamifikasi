@@ -53,8 +53,9 @@ fun Navigation() {
     var startDestination by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(true) {
-        startDestination = if (dataStore.isOnboardingShow()) "splash_screen" else "login_screen"
+        startDestination = "splash_screen"
     }
+
 
     if (startDestination != null) {
         NavHost(navController = navController, startDestination = startDestination!!) {

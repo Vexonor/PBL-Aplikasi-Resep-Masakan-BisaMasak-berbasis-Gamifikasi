@@ -81,7 +81,7 @@ fun RecipeSection(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { onRecipeClick(recipe.id_resep) },
-                            foodImg = "http://192.168.100.70:8000/storage/${'$'}{recipe.thumbnail}",
+                            foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
                             foodName = recipe.judul_konten,
                             duration = recipe.durasi.toString(),
                         )

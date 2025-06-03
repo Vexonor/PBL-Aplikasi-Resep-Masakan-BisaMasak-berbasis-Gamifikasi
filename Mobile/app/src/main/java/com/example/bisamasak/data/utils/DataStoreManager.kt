@@ -3,6 +3,7 @@ package com.example.bisamasak.data.utils
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
@@ -15,6 +16,7 @@ class DataStoreManager(private val context: Context) {
     companion object {
         private val ONBOARDING_SHOW = booleanPreferencesKey("onboarding_show")
         private val IS_LOGIN = booleanPreferencesKey("is_login")
+        private val LAST_ACTIVE = longPreferencesKey("last_active")
         private val USER_NAME = stringPreferencesKey("user_name")
     }
 
@@ -48,6 +50,18 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { prefs ->
             prefs[IS_LOGIN] = false
         }
+    }
+
+    suspend fun setLastActive(time: Long) {
+        context.dataStore.edit { prefs ->
+            prefs[LAST_ACTIVE] = time
+        }
+    }
+
+    suspend fun getLastActive(): Long {
+        return context.dataStore.data
+            .map { it[LAST_ACTIVE] ?: 0L }
+            .first()
     }
 
 //    User State

@@ -14,8 +14,9 @@ class LoginViewModel : ViewModel() {
     var responseMessage by mutableStateOf("")
     var isLoginSuccess by mutableStateOf(false)
     var isLoading by mutableStateOf(false)
+    var loggedInUserName by mutableStateOf("")
 
-    fun login(email: String, password: String, onSuccess: (String) -> Unit) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
             isLoading = true
             responseMessage = ""
@@ -25,10 +26,9 @@ class LoginViewModel : ViewModel() {
                 val request = LoginRequest(email, password)
                 val response = BisaMasakInstance.bisaMasakService.loginUser(request)
                 if (response.isSuccessful) {
-                    val name = response.body()?.user?.nama ?: ""
+                    loggedInUserName = response.body()?.user?.nama ?: ""
                     responseMessage = response.body()?.message ?: "login Success"
                     isLoginSuccess = true
-                    onSuccess(name)
                 } else {
                     responseMessage = "Gagal Melakukan Proses Masuk"
                 }

@@ -1,70 +1,46 @@
 package com.example.bisamasak.data.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bisamasak.data.dataContainer.IngredientData
-import com.example.bisamasak.data.dataContainer.IngredientDetailData
-import com.example.bisamasak.data.instance.RetrofitInstance
-import com.example.bisamasak.data.instance.RetrofitInstance.api
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.example.bisamasak.data.dataContainer.IngredientResponse
+import com.example.bisamasak.data.instance.BisaMasakInstance
 import kotlinx.coroutines.launch
 
 class IngredientViewModel : ViewModel()  {
+    var ingredientList by mutableStateOf<List<IngredientResponse>>(emptyList())
+    var isLoading by mutableStateOf(false)
+    var errorMessage by mutableStateOf<String?>(null)
+    var ingredientDetail by mutableStateOf<IngredientResponse?>(null)
 
-    private val _ingredients = MutableStateFlow<List<IngredientData>>(emptyList())
-    val ingredients: StateFlow<List<IngredientData>> get() = _ingredients
-
-    private val _ingredientDetail = MutableStateFlow<IngredientDetailData?>(null)
-    val ingredientDetail: StateFlow<IngredientDetailData?> get() = _ingredientDetail
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> get() = _isLoading
-
-    fun fetchIngredients(query: String, apiKey: String) {
+    fun ingredient() {
         viewModelScope.launch {
+            isLoading = true
             try {
-                _isLoading.value = true
-                val response = RetrofitInstance.api.searchIngredients(query, 5, apiKey)
-                _ingredients.value = response.results
+                val response = BisaMasakInstance.bisaMasakService.ingredient()
+                ingredientList = response
             } catch (e: Exception) {
-                _ingredients.value = emptyList()
+                errorMessage = e.localizedMessage
             } finally {
-                _isLoading.value = false
+                isLoading = false
             }
         }
     }
 
-    fun fetchAllIngredients() {
+    fun ingredientDetail(id_bahan: Int) {
         viewModelScope.launch {
-            _isLoading.value = true
-            val allIngredients = mutableListOf<IngredientData>()
+            isLoading = true
             try {
-                for (char in 'a' .. 'e') {
-                    val response = api.searchIngredients(char.toString(), 2)
-                    allIngredients.addAll(response.results)
-                }
-                _ingredients.value = allIngredients
+                val response = BisaMasakInstance.bisaMasakService.ingredientDetail(id_bahan)
+                ingredientDetail = response
             } catch (e: Exception) {
-                Log.e("IngredientViewModel", "Failed to fetch: ${e.message}")
+                errorMessage = e.localizedMessage
+                Log.e("IngredientViewModel", "Failed to fetch detail: ${e.message}")
             } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun fetchIngredientDetail(id: Int) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val response = api.getIngredientInformation(id)
-                _ingredientDetail.value = response
-            } catch (e: Exception) {
-                Log.e("IngredientViewModel", "Failed to fetch: ${e.message}")
-                _ingredientDetail.value = null
-            } finally {
-                _isLoading.value = false
+                isLoading = false
             }
         }
     }

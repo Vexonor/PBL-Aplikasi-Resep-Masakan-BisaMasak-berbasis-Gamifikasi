@@ -27,17 +27,23 @@ import kotlinx.coroutines.launch
 fun LoginScreen(navController: NavController) {
 
     val viewModel: LoginViewModel = viewModel()
-    LaunchedEffect(viewModel.isLoginSuccess) {
-        if (viewModel.isLoginSuccess) {
-            navController.navigate("home_screen") {
-                popUpTo("login_screen") { inclusive = true }
-            }
-        }
-    }
 
     val context = LocalContext.current
     val dataStore = remember { DataStoreManager(context) }
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(viewModel.isLoginSuccess) {
+        if (viewModel.isLoginSuccess) {
+            coroutineScope.launch {
+                dataStore.setLogin(true)
+                dataStore.setLastActive(System.currentTimeMillis())
+                dataStore.setUserName(viewModel.loggedInUserName)
+                navController.navigate("home_screen") {
+                    popUpTo("login_screen") { inclusive = true }
+                }
+            }
+        }
+    }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -149,12 +155,7 @@ fun LoginScreen(navController: NavController) {
                     if (email.isBlank() || password.isBlank()) {
                         viewModel.responseMessage = "Email dan Kata Sandi Tidak Boleh Kosong"
                     } else {
-                        viewModel.login(email, password) { nama ->
-                            coroutineScope.launch {
-                                dataStore.setLogin(true)
-                                dataStore.setUserName(nama)
-                            }
-                        }
+                        viewModel.login(email, password)
                     }
                 },
                 modifier = Modifier

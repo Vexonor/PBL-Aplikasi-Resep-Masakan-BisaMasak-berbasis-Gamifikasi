@@ -53,19 +53,6 @@ fun SplashScreen (navController: NavController, modifier: Modifier = Modifier, d
     val scale = remember {
         Animatable(0f)
     }
-    LaunchedEffect(key1 = true) {
-        scale.animateTo(
-            targetValue = 1.3f,
-            animationSpec = tween(
-                durationMillis = 800,
-                easing = {
-                    OvershootInterpolator(2f).getInterpolation(it)
-                }
-            )
-        )
-        delay(3000L)
-        navController.navigate("onBoarding_screen")
-    }
 
     Column(
         modifier = modifier
@@ -88,7 +75,26 @@ fun SplashScreen (navController: NavController, modifier: Modifier = Modifier, d
         )
     }
     LaunchedEffect(key1 = true) {
+        scale.animateTo(
+            targetValue = 1.3f,
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = {
+                    OvershootInterpolator(2f).getInterpolation(it)
+                }
+            )
+        )
+
         delay(2000)
+
+        val lastActive = dataStore.getLastActive()
+        val currentTime = System.currentTimeMillis()
+        val sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000L
+
+        if (currentTime - lastActive > sevenDaysInMillis) {
+            dataStore.setLogin(false)
+        }
+
         val isShown = dataStore.isOnboardingShow()
         val isLogin = dataStore.isLogin()
 

@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -36,7 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,9 +51,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.platform.LocalConfiguration
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.data.provider.DataProvider
-import com.example.bisamasak.data.utils.formatIngredientName
 import com.example.bisamasak.data.viewModel.IngredientViewModel
-import com.example.bisamasak.data.viewModel.WikipediaViewModel
+import androidx.compose.foundation.lazy.grid.items
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,12 +61,8 @@ fun IngredientDetailScreen(
     ingredientId: Int,
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: IngredientViewModel = viewModel(),
-    wikipediaViewModel: WikipediaViewModel = viewModel()
+    viewModel: IngredientViewModel = viewModel()
 ) {
-    val detail = viewModel.ingredientDetail.collectAsState().value
-    val description by wikipediaViewModel.ingredientDescription.collectAsState()
-
 //    Sheet State
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -86,12 +79,11 @@ fun IngredientDetailScreen(
         .height(animatedScale)
 
     LaunchedEffect(ingredientId) {
-        viewModel.fetchIngredientDetail(ingredientId)
+        viewModel.ingredientDetail(ingredientId)
     }
 
-    LaunchedEffect(detail?.name) {
-        detail?.name?.let { wikipediaViewModel.fetchIngredientDescription(formatIngredientName(it)) }
-    }
+    val detail = viewModel.ingredientDetail
+    val isLoading = viewModel.isLoading
 
         Scaffold(
             containerColor = Color.White,
@@ -147,16 +139,26 @@ fun IngredientDetailScreen(
                     .padding(horizontal = 24.dp),
                 color = Color.White
             ) {
-                if (detail != null) {
+                if (isLoading || detail == null) {
                 Box(
-                    modifier = imageSizeModifier
-                ){
-                    AsyncImage(
-                        model = "https://spoonacular.com/cdn/ingredients_500x500/${detail.image}",
-                        contentDescription = detail.name,
-                        modifier = imageSizeModifier
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(24.dp)
                     )
                 }
+            }else {
+                    Box(
+                        modifier = imageSizeModifier
+                    ){
+                        AsyncImage(
+                            model = detail.gambar_bahan,
+                            contentDescription = detail.nama_bahan,
+                            modifier = imageSizeModifier
+                        )
+                    }
                     if (showBottomSheet) {
                         ModalBottomSheet(
                             onDismissRequest = {
@@ -179,11 +181,11 @@ fun IngredientDetailScreen(
                                     verticalArrangement = Arrangement.spacedBy(16.dp)
                                 ) {
                                     Text(
-                                        text = detail.name.replaceFirstChar { it.uppercase() },
+                                        text = detail.nama_bahan.replaceFirstChar { it.uppercase() },
                                         style = OutfitTypography.titleLarge
                                     )
                                     Text(
-                                        text = description ?: "Deskripsi Tidak Tersedia",
+                                        text = detail.deskripsi_bahan,
                                         style = OutfitTypography.bodyLarge
                                     )
                                 }
@@ -207,7 +209,7 @@ fun IngredientDetailScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                     ) {
-                                        items(detail.nutrition.nutrients) { nutrient->
+                                        items(detail.gizi_table) {  gizi ->
                                             Card(
                                                 modifier = Modifier
                                                     .width(150.dp)
@@ -223,11 +225,11 @@ fun IngredientDetailScreen(
                                                         .padding(4.dp)
                                                 ) {
                                                     Text(
-                                                        text = nutrient.name,
+                                                        text = gizi.nama_gizi,
                                                         style = OutfitTypography.labelLarge
                                                     )
                                                     Text(
-                                                        text = "± ${nutrient.amount.toInt()} ${nutrient.unit}",
+                                                        text = "± ${gizi.jumlah} ${gizi.satuan}",
                                                         style = OutfitTypography.labelMedium
                                                     )
                                                 }
@@ -267,11 +269,6 @@ fun IngredientDetailScreen(
                             }
                         }
                     }
-            }else {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(24.dp)
-                    )
                 }
         }
     }

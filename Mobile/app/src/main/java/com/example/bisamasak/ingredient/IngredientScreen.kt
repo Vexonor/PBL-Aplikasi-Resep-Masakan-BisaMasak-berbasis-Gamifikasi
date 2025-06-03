@@ -32,7 +32,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +39,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,7 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.bisamasak.component.BottomBar
-import com.example.bisamasak.data.dataContainer.IngredientData
+import com.example.bisamasak.data.dataContainer.IngredientResponse
 import com.example.bisamasak.data.viewModel.IngredientViewModel
 import com.example.bisamasak.ingredient.ui.theme.BisaMasakTheme
 import com.example.bisamasak.ui.theme.OutfitTypography
@@ -85,13 +86,13 @@ fun IngredientComponent(navController: NavController) {
 
 //    ViewModel
     val viewModel: IngredientViewModel = viewModel()
-    val ingredients by viewModel.ingredients.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val ingredients = viewModel.ingredientList
+    val isLoading = viewModel.isLoading
 
 //    Alphabet Bar
     val listState = rememberLazyListState()
-    val grouped = ingredients.filter { it.name.isNotEmpty() }
-        .groupBy { it.name.first().uppercaseChar() }
+    val grouped = ingredients.filter { it.nama_bahan.isNotEmpty() }
+        .groupBy { it.nama_bahan.first().uppercaseChar() }
         .toSortedMap()
     val letterPositions = remember(grouped) {
         val map = mutableMapOf<Char, Int>()
@@ -106,7 +107,7 @@ fun IngredientComponent(navController: NavController) {
 
     LaunchedEffect(Unit) {
         Log.d("IngredientComponent", "Fetching ingredients...")
-        viewModel.fetchAllIngredients()
+        viewModel.ingredient()
     }
 
     Scaffold(
@@ -219,23 +220,24 @@ fun IngredientComponent(navController: NavController) {
 }
 
 @Composable
-fun IngredientItem(ingredient: IngredientData, onClick: (Int) -> Unit) {
+fun IngredientItem(ingredient: IngredientResponse, onClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
-            .clickable { onClick(ingredient.id) },
+            .clickable { onClick(ingredient.id_bahan) },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = "https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}",
+            model = ingredient.gambar_bahan,
             contentDescription = null,
+            contentScale = ContentScale.Fit,
             modifier = Modifier
-                .size(40.dp)
+                .size(52.dp)
                 .padding(end = 16.dp)
         )
         Text(
-            text = ingredient.name.replaceFirstChar { it.uppercase() },
+            text = ingredient.nama_bahan.replaceFirstChar { it.uppercase() },
             style = OutfitTypography.titleMedium
         )
     }
@@ -270,7 +272,7 @@ fun Header(modifier: Modifier = Modifier) {
 
 @Composable
 fun AlphabetBar(
-    grouped: Map<Char, List<IngredientData>>,
+    grouped: Map<Char, List<IngredientResponse>>,
     letterPositions: Map<Char, Int>,
     toHeader: (Int) -> Unit,
     modifier: Modifier = Modifier
