@@ -1,10 +1,10 @@
 package com.example.bisamasak.menu
 
 import android.annotation.SuppressLint
-import android.text.Spanned
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -59,7 +59,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -74,23 +74,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bisamasak.R
 import com.example.bisamasak.component.RecipeCard
-import com.example.bisamasak.data.provider.DataProvider
-import com.example.bisamasak.data.viewModel.RecipeViewModel
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.profile.add_content.TextInput
 import com.example.bisamasak.ui.theme.OutfitFont
 import com.example.bisamasak.ui.theme.OutfitTypography
@@ -106,15 +102,27 @@ fun MenuDetailScreen(
     recipeId: Int,
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: RecipeViewModel = viewModel()
+    viewModel: RecipeContentViewModel = viewModel(),
 ) {
-    val menudetails = viewModel.recipeDetails.collectAsState().value
-    val isLoading = viewModel.isLoading.collectAsState().value
+    val menudetails = viewModel.selectedRecipe
+    val similarRecipes by remember(menudetails) {
+        derivedStateOf {
+            if (menudetails != null) {
+                viewModel.similarRecipe(
+                    recipeId,
+                    menudetails.bahan_resep_table
+                )
+            } else {
+                emptyList()
+            }
+        }
+    }
+    val isLoading = viewModel.isLoading
 
     var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(recipeId) {
-        viewModel.fetchRecipeDetails(recipeId)
+        viewModel.recipeDetails(recipeId)
     }
 
     Scaffold(
@@ -126,7 +134,7 @@ fun MenuDetailScreen(
                 navigationIcon = {
                     Button(
                         onClick = {
-                            navController.navigate("menu_screen")
+                            navController.popBackStack()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
@@ -205,8 +213,8 @@ fun MenuDetailScreen(
                         var portionToText by rememberSaveable { mutableStateOf(portion.toString()) }
 
                         AsyncImage(
-                            model = menudetails?.image,
-                            contentDescription = menudetails?.title,
+                            model = "http://192.168.100.97:8000/storage/${menudetails?.thumbnail ?: ""}",
+                            contentDescription = menudetails?.judul_konten,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -220,7 +228,7 @@ fun MenuDetailScreen(
                                 .offset { IntOffset(x = 0, y = offsetYPx) }
                                 .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
                                 .background(Color.White),
-                            contentPadding = PaddingValues(bottom = 100.dp)
+                            contentPadding = PaddingValues(bottom = 200.dp)
                         ) {
 //                     Title & Description
                             item {
@@ -237,7 +245,7 @@ fun MenuDetailScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = menudetails?.title.toString(),
+                                            text = menudetails?.judul_konten.toString(),
                                             style = OutfitTypography.titleLarge,
                                             modifier = Modifier
                                                 .width(250.dp)
@@ -255,7 +263,7 @@ fun MenuDetailScreen(
                                                     .size(20.dp)
                                             )
                                             Text(
-                                                text = "${menudetails?.readyInMinutes} menit",
+                                                text = "${menudetails?.durasi} menit",
                                                 style = OutfitTypography.labelLarge
                                             )
                                         }
@@ -267,7 +275,7 @@ fun MenuDetailScreen(
                                             .verticalScroll(rememberScrollState())
                                     ) {
                                         Text(
-                                            text = parseHtml(menudetails?.summary.orEmpty()),
+                                            text = menudetails?.deskripsi_konten.orEmpty(),
                                             style = OutfitTypography.bodyLarge
                                         )
                                     }
@@ -399,7 +407,7 @@ fun MenuDetailScreen(
                                         modifier = Modifier
                                             .fillMaxSize()
                                     ) {
-                                        items(menudetails?.nutrition?.nutrients ?: emptyList()) { nutrient->
+                                        items(menudetails?.gizi_table ?: emptyList()) { nutrient->
                                             Card(
                                                 modifier = Modifier
                                                     .width(150.dp)
@@ -415,12 +423,12 @@ fun MenuDetailScreen(
                                                         .padding(4.dp)
                                                 ) {
                                                     Text(
-                                                        text = nutrient.name,
+                                                        text = nutrient.nama_gizi,
                                                         style = OutfitTypography.labelLarge
                                                     )
-                                                    val nutrientAmount = nutrient.amount.toInt() * portion
+                                                    val nutrientAmount = nutrient.jumlah.toFloatOrNull()?.times(portion)
                                                     Text(
-                                                        text = "± ${nutrientAmount.toInt()} ${nutrient.unit}",
+                                                        text = if (nutrientAmount != null) "± ${nutrientAmount.toInt()} ${nutrient.satuan}" else "${nutrient.jumlah} ${nutrient.satuan}",
                                                         style = OutfitTypography.labelMedium
                                                     )
                                                 }
@@ -435,75 +443,9 @@ fun MenuDetailScreen(
                                     color = Color(0xFF748189)
                                 )
                             }
-//                     Caloric Breakdown
-                            item {
-                                Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
-                                    Text(
-                                        text = "Total Kalori",
-                                        style = OutfitTypography.titleLarge
-                                    )
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(vertical = 24.dp)
-                                    ) {
-                                        Column(
-                                            modifier = Modifier
-                                                .weight(1f),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                                        ) {
-                                            Text(
-                                                text = "Protein",
-                                                style = OutfitTypography.titleMedium
-                                            )
-                                            Text(
-                                                text = "${ menudetails?.nutrition?.caloricBreakdown?.percentProtein?.times(portion)?.toInt()} %",
-                                                style = OutfitTypography.titleLarge
-                                            )
-                                        }
-                                        Column(
-                                            modifier = Modifier
-                                                .weight(1f),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                                        ) {
-                                            Text(
-                                                text = "Lemak",
-                                                style = OutfitTypography.titleMedium
-                                            )
-                                            Text(
-                                                text = "${menudetails?.nutrition?.caloricBreakdown?.percentFat?.times(portion)?.toInt()} %",
-                                                style = OutfitTypography.titleLarge
-                                            )
-                                        }
-                                        Column(
-                                            modifier = Modifier
-                                                .weight(1f),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                                        ) {
-                                            Text(
-                                                text = "Karbohidrat",
-                                                style = OutfitTypography.titleMedium
-                                            )
-                                            Text(
-                                                text = "${menudetails?.nutrition?.caloricBreakdown?.percentCarbs?.times(portion)?.toInt()} %",
-                                                style = OutfitTypography.titleLarge
-                                            )
-                                        }
-                                    }
-                                }
-                                HorizontalDivider(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp),
-                                    color = Color(0xFF748189)
-                                )
-                            }
 //                     Ingredients
                             item {
-                                val totalIngredients = menudetails?.extendedIngredients?.size ?: 0
+                                val totalIngredients = menudetails?.bahan_resep_table?.size ?: 0
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -529,14 +471,14 @@ fun MenuDetailScreen(
                                     Column(
                                         modifier = Modifier
                                     ){
-                                        menudetails?.extendedIngredients?.forEach { ingredient ->
+                                        menudetails?.bahan_resep_table?.forEach { ingredient ->
                                             Row(
                                                 modifier = Modifier
                                                     .fillMaxWidth(),
                                                 horizontalArrangement = Arrangement.SpaceBetween
                                             ) {
                                                 Text(
-                                                    text = ingredient.name.replaceFirstChar { it.uppercase() },
+                                                    text = ingredient.bahan_masak_table?.nama_bahan?.replaceFirstChar { it.uppercase() } ?: "Tidak Ada Nama Bahan",
                                                     style = OutfitTypography.labelLarge
                                                 )
                                                 Row(
@@ -544,13 +486,14 @@ fun MenuDetailScreen(
                                                         .wrapContentWidth(),
                                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                                                 ) {
-                                                    val ingredientAmount =  ingredient.amount * portion
+                                                    val jumlahDasar = parseFractionalAmount(ingredient.jumlah_bahan)
+                                                    val jumlahPerPorsi = jumlahDasar?.times(portion)
                                                     Text(
-                                                        text = ingredientAmount.toString(),
+                                                        text = jumlahPerPorsi?.toString() ?: ingredient.jumlah_bahan,
                                                         style = OutfitTypography.labelLarge
                                                     )
                                                     Text(
-                                                        text = ingredient.unit.replaceFirstChar { it.uppercase() },
+                                                        text = ingredient.satuan_bahan.replaceFirstChar { it.uppercase() },
                                                         style = OutfitTypography.labelLarge,
                                                         textAlign = TextAlign.End,
                                                         modifier = Modifier
@@ -639,37 +582,30 @@ fun MenuDetailScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                     ){
-                                        val steps = menudetails?.parsedInstructions?.firstOrNull()?.steps
-                                        items(steps.orEmpty()) { step ->
-                                            val equipmentImage = step.equipment.firstOrNull()?.image
-                                            val ingredientImage = step.ingredients.firstOrNull()?.image
-                                            val imageUrl = if (!equipmentImage.isNullOrBlank()) {
-                                                "https://spoonacular.com/cdn/equipment_100x100/${step.equipment}"
-                                            } else {
-                                                "https://spoonacular.com/cdn/ingredients_500x500/${ingredientImage}"
-                                            }
+                                        val steps = menudetails?.langkah_langkah_table ?: emptyList()
+                                        items(steps) { step ->
                                             Column(
                                                 modifier = Modifier
                                                     .width(300.dp)
                                                     .height(250.dp)
                                                     .padding(horizontal = 12.dp),
-                                                verticalArrangement = Arrangement.Bottom
+                                                verticalArrangement = Arrangement.spacedBy(12.dp)
                                             ) {
                                                 AsyncImage(
-                                                    model = imageUrl,
-                                                    contentDescription = step.step,
+                                                    model = "http://192.168.100.97:8000/storage/${step.gambar_langkah ?: ""}",
+                                                    contentDescription = step.nomor_langkah.toString(),
                                                     modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .height(50.dp)
+                                                        .weight(1f)
                                                         .clip(RoundedCornerShape(8.dp))
                                                 )
                                                 Text(
-                                                    text = "Langkah ${step.number}",
+                                                    text = "Langkah ${step.nomor_langkah}",
                                                     style = OutfitTypography.labelLarge
                                                 )
                                                 Text(
-                                                    text = step.step,
+                                                    text = step.deskripsi_langkah,
                                                     style = OutfitTypography.bodyMedium,
+                                                    maxLines = 2,
                                                     modifier = Modifier
                                                         .height(50.dp)
                                                 )
@@ -704,7 +640,7 @@ fun MenuDetailScreen(
                                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                                         verticalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
-                                        items(menudetails?.dishTypes ?: emptyList()) { dish ->
+                                        item {
                                             Card(
                                                 colors = CardDefaults.cardColors(
                                                     containerColor = Color.Transparent,
@@ -723,7 +659,7 @@ fun MenuDetailScreen(
                                                     contentAlignment = Alignment.Center
                                                 ) {
                                                     Text(
-                                                        text = dish.replaceFirstChar { it.uppercase() },
+                                                        text = menudetails?.kategori?.replaceFirstChar { it.uppercase() } ?: "Tidak Ada Kategori",
                                                         style = OutfitTypography.titleMedium,
                                                     )
                                                 }
@@ -835,13 +771,29 @@ fun MenuDetailScreen(
                                         style = OutfitTypography.titleLarge,
                                         modifier = Modifier.padding(vertical = 12.dp)
                                     )
-                                    LazyRow {
-                                        items(DataProvider.ResepCemilan) { recipe ->
-                                            RecipeCard(
-                                                foodImg = recipe.foodImg,
-                                                foodName = recipe.foodName,
-                                                duration = recipe.duration.toString(),
-                                            )
+
+                                    if (similarRecipes.isEmpty()) {
+                                        Text(
+                                            text = "Tidak ada resep yang serupa",
+                                            style = OutfitTypography.bodyMedium,
+                                            color = Color.Gray
+                                        )
+                                    } else {
+                                        val onRecipeClick: (Int) -> Unit = { recipeId ->
+                                            navController.navigate("recipe_detail/$recipeId")
+                                        }
+                                        LazyRow {
+                                            items(similarRecipes) { recipe ->
+                                                RecipeCard(
+                                                    foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                                                    foodName = recipe.judul_konten,
+                                                    duration = recipe.durasi.toString(),
+                                                    modifier = Modifier
+                                                        .clickable {
+                                                            onRecipeClick(recipe.id_resep)
+                                                        }
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -904,11 +856,34 @@ fun MenuDetailScreen(
     }
 }
 
-fun parseHtml(html: String): AnnotatedString {
-    val spanned: Spanned = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
-    return buildAnnotatedString {
-        append(spanned.toString())
+fun parseFractionalAmount(input: String): Double? {
+    val trimmed = input.trim()
+
+    trimmed.toDoubleOrNull()?.let { return it }
+
+    if (trimmed.contains("/") && !trimmed.contains(" ")) {
+        val parts = trimmed.split("/")
+        if (parts.size == 2) {
+            val numerator = parts[0].toDoubleOrNull()
+            val denominator = parts[1].toDoubleOrNull()
+            if (numerator != null && denominator != null && denominator != 0.0) {
+                return numerator / denominator
+            }
+        }
     }
+
+    if (trimmed.contains(" ")) {
+        val parts = trimmed.split(" ")
+        if (parts.size == 2) {
+            val whole = parts[0].toDoubleOrNull()
+            val fraction = parseFractionalAmount(parts[1])
+            if (whole != null && fraction != null) {
+                return whole + fraction
+            }
+        }
+    }
+
+    return null
 }
 
 @Composable

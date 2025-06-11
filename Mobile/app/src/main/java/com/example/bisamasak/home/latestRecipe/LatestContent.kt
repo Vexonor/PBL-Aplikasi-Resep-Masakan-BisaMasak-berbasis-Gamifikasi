@@ -1,28 +1,45 @@
 package com.example.bisamasak.home.latestRecipe
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.component.BackButton
-import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.component.RecipeCard
+import com.example.bisamasak.component.ShimmerCard
+import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.createdToday
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun LatestContent(navController: NavController) {
+fun LatestContent(navController: NavController, windowSize: WindowSizeClass) {
+    val viewModel: RecipeContentViewModel = viewModel()
+    val recipes = viewModel.recipeList.collectAsState().value
+    val latestRecipe = recipes.filter { createdToday(it.created_at) }
+    val isLoading = viewModel.isLoading
+
+    LaunchedEffect(Unit) {
+        viewModel.recipe()
+    }
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -61,19 +78,48 @@ fun LatestContent(navController: NavController) {
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(19.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
-                modifier = Modifier
-                    .background(Color.White)
-            ) {
-                items(DataProvider.ResepTerbaru) { recipe ->
-                    RecipeCard(
-                        foodImg = recipe.foodImg,
-                        foodName = recipe.foodName,
-                        duration = recipe.duration.toString(),
+            if (isLoading) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
+                    modifier = Modifier
+                        .heightIn(max = 500.dp)
+                        .background(Color.White)
+                        .padding(horizontal = 24.dp)
+                ) {
+                    items(8) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            ShimmerCard(
+                                modifier = Modifier
+                                    .weight(1f)
+                            )
+                        }
+                    }
+                }
+            } else {
+                val onRecipeClick: (Int) -> Unit = { recipeId ->
+                    navController.navigate("recipe_detail/$recipeId")
+                }
+                if (latestRecipe.isNotEmpty()) {
+                    when(windowSize.widthSizeClass) {
+                        WindowWidthSizeClass.Compact -> {
+                            Portrait(latestRecipe, onRecipeClick)
+                        }
+                        WindowWidthSizeClass.Expanded -> {
+                            Landscape(latestRecipe, onRecipeClick)
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "Tidak ada resep praktis",
+                        modifier = Modifier.padding(16.dp),
+                        style = OutfitTypography.labelLarge
                     )
                 }
             }
@@ -81,6 +127,65 @@ fun LatestContent(navController: NavController) {
     }
 }
 
+@Composable
+fun Portrait(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        items(recipes.size) { index ->
+            val recipe = recipes[index]
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onRecipeClick(recipe.id_resep) }
+                )
+            }
+        }
+    }
+}
 
 
-
+@Composable
+fun Landscape(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(4),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        items(recipes.size) { index ->
+            val recipe = recipes[index]
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onRecipeClick(recipe.id_resep) }
+                )
+            }
+        }
+    }
+}

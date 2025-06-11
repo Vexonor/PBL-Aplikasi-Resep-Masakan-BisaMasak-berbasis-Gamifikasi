@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,7 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import androidx.compose.foundation.lazy.items
-import com.example.bisamasak.data.viewModel.RecipeViewModel
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
@@ -45,14 +44,14 @@ fun TutorialDetailScreen(
     recipeId: Int,
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: RecipeViewModel = viewModel()
+    viewModel: RecipeContentViewModel = viewModel()
 ) {
 
-    val tutorialDetails = viewModel.recipeDetails.collectAsState().value
-    val isLoading = viewModel.isLoading.collectAsState().value
+    val tutorialDetails = viewModel.selectedRecipe
+    val isLoading = viewModel.isLoading
 
     LaunchedEffect(recipeId) {
-        viewModel.fetchRecipeDetails(recipeId)
+        viewModel.recipeDetails(recipeId)
     }
 
     Scaffold(
@@ -111,8 +110,8 @@ fun TutorialDetailScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ){
-                val steps = tutorialDetails?.parsedInstructions?.firstOrNull()?.steps
-                items(steps.orEmpty()) { step ->
+                val steps = tutorialDetails?.langkah_langkah_table ?: emptyList()
+                items(steps) { step ->
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -120,7 +119,7 @@ fun TutorialDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         AsyncImage(
-                            model = tutorialDetails?.image,
+                            model = "http://192.168.100.97:8000/storage/${step.gambar_langkah ?: ""}",
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -129,11 +128,11 @@ fun TutorialDetailScreen(
                                 .clip(RoundedCornerShape(8.dp))
                         )
                         Text(
-                            text = "Langkah ${step.number}",
+                            text = "Langkah ${step.nomor_langkah}",
                             style = OutfitTypography.titleMedium
                         )
                         Text(
-                            text = step.step,
+                            text = step.deskripsi_langkah,
                             style = OutfitTypography.bodyMedium
                         )
                     }

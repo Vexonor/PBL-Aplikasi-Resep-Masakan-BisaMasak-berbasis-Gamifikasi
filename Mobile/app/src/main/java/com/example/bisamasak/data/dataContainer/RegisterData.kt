@@ -4,6 +4,7 @@ data class RegisterRequest(
     val nama: String,
     val email: String,
     val password: String,
+    val peran: String = "Pengguna"
 )
 
 data class RegisterResponse(
@@ -15,6 +16,7 @@ data class User(
     val id: Int,
     val nama: String,
     val email: String,
+    val peran: String = "Pengguna",
     val created_at: String,
     val updated_at: String
 )

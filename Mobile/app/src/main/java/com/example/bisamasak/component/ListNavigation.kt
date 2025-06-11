@@ -76,9 +76,9 @@ fun Navigation() {
             composable("register_screen") { RegisterScreen(navController = navController) }
             composable("forgot_screen") { ForgotScreen(navController = navController) }
             composable("new_password_screen") { NewPasswordScreen(navController = navController) }
-            composable("practice_content") { PracticeContent(navController = navController) }
-            composable("today_content") { TodayContent(navController = navController) }
-            composable("latest_content") { LatestContent(navController = navController) }
+            composable("practice_content") { PracticeContent(navController = navController, windowSize = windowSizeClass) }
+            composable("today_content") { TodayContent(navController = navController, windowSize = windowSizeClass) }
+            composable("latest_content") { LatestContent(navController = navController, windowSize = windowSizeClass) }
             composable("notification_screen") { NotificationContent(navController = navController) }
             composable("detailNotification_screen") {
                 NotificationDetailContent(navController = navController)

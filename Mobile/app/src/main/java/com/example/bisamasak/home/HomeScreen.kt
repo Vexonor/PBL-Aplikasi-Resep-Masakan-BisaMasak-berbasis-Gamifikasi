@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.component.BottomBar
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.home.latestRecipe.LatestRecipe
 import com.example.bisamasak.home.practiceRecipe.PracticeRecipe
 import com.example.bisamasak.home.todayRecipe.TodayRecipe
@@ -64,8 +67,13 @@ fun HomeComponent(navController: NavController) {
     val context = LocalContext.current
     val activity = context as Activity
     val windowSizeClass = calculateWindowSizeClass(activity = activity)
+    val viewModel: RecipeContentViewModel = viewModel()
 
     var selectedIndex by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        viewModel.recipe()
+    }
 
     Scaffold(
         modifier = Modifier
@@ -103,28 +111,26 @@ fun HomeComponent(navController: NavController) {
                 level = 10,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
-            CategoriesRecipe(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-                windowSize = windowSizeClass
-            )
             PracticeRecipe(
                 modifier = Modifier
                     .padding(horizontal = 24.dp),
                 navController = navController,
-                windowSize = windowSizeClass
+                windowSize = windowSizeClass,
+                viewModel = viewModel,
             )
             TodayRecipe(
                 modifier = Modifier
                     .padding(horizontal = 24.dp, vertical = 16.dp),
                 navController = navController,
-                windowSize = windowSizeClass
+                windowSize = windowSizeClass,
+                viewModel = viewModel,
             )
             LatestRecipe(
                 modifier = Modifier
                     .padding(horizontal = 24.dp),
                 navController = navController,
-                windowSize = windowSizeClass
+                windowSize = windowSizeClass,
+                viewModel = viewModel,
             )
         }
     }

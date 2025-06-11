@@ -51,6 +51,11 @@ class UserModel extends Authenticatable
         return $this->hasOne(AdminModel::class, 'id_user', 'id_user');
     }
 
+    public function PenggunaTable()
+    {
+        return $this->hasOne(PenggunaModel::class, 'id_user', 'id_user');
+    }
+
     public function KontenResepTable()
     {
         return $this->hasOne(KontenResepModel::class, 'id_user', 'id_user');

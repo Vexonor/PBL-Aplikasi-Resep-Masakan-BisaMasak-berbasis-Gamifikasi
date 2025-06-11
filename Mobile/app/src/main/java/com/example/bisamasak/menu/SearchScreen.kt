@@ -1,11 +1,13 @@
 package com.example.bisamasak.menu
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.foundation.layout.padding
@@ -29,29 +31,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
-import com.example.bisamasak.data.dataContainer.Recipe
-import com.example.bisamasak.data.provider.DataProvider
-import com.example.bisamasak.data.utils.RecipeCategory
-import com.example.bisamasak.data.viewModel.RecipeViewModel
+import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
+import com.example.bisamasak.R
+
 
 @Composable
 fun SearchScreen(
     navController: NavController,
     windowSize: WindowSizeClass
 ) {
-    val viewModel: RecipeViewModel = viewModel()
-    val searchQuery = remember { mutableStateOf("") }
+    val viewModel: RecipeContentViewModel = viewModel()
+    val searchQuery = rememberSaveable { mutableStateOf("") }
     val searchResult = viewModel.searchResult.collectAsState().value
+    val onRecipeClick: (Int) -> Unit = { recipeId ->
+        navController.navigate("recipe_detail/$recipeId")
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -86,7 +92,7 @@ fun SearchScreen(
                     value = searchQuery.value,
                     onValueChange = {
                         searchQuery.value = it
-                        viewModel.smartSearch(it)
+                        viewModel.searchRecipes(it)
                     },
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -124,10 +130,22 @@ fun SearchScreen(
         ) {
             if (searchQuery.value.isNotBlank()){
                 if (searchResult.isEmpty()){
-                    Text(
-                        text = "Tidak ada hasil",
-                        style = OutfitTypography.titleMedium
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.empty_query),
+                            contentDescription = "Empty Query",
+                            modifier = Modifier.size(200.dp)
+                        )
+                        Text(
+                            text = "Resep belum tersedia",
+                            style = OutfitTypography.titleLarge
+                        )
+                    }
                 }
                 else{
                     Column(
@@ -140,10 +158,10 @@ fun SearchScreen(
                             style = OutfitTypography.titleLarge,
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
-                        val isLoading = viewModel.isLoading.collectAsState().value
+                        val isLoading = viewModel.isLoading
 
                         LaunchedEffect(Unit) {
-                            viewModel.fetchAllCategories()
+                            viewModel.recipe()
                         }
 
                         if (isLoading) {
@@ -171,13 +189,11 @@ fun SearchScreen(
                             ) {
                                 items(searchResult) { recipe ->
                                     RecipeCard(
-                                        foodImg = recipe.image,
-                                        foodName = recipe.title,
-                                        duration = recipe.readyInMinutes.toString(),
+                                        foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
+                                        foodName = recipe.judul_konten,
+                                        duration = recipe.durasi.toString(),
                                         modifier = Modifier
-                                            .clickable{
-                                                navController.navigate("recipe_detail/${recipe.id}")
-                                            }
+                                            .clickable{ onRecipeClick(recipe.id_resep) }
                                     )
                                 }
                             }
@@ -197,12 +213,10 @@ fun SearchScreen(
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
                     //    Recipe Model
-                    val viewModel: RecipeViewModel = viewModel()
-                    val recipesByCategory = viewModel.recipesByCategory.collectAsState().value
-                    val isLoading = viewModel.isLoading.collectAsState().value
+                    val isLoading = viewModel.isLoading
 
                     LaunchedEffect(Unit) {
-                        viewModel.fetchAllCategories()
+                        viewModel.recipe()
                     }
 
                     if (isLoading) {
@@ -220,13 +234,14 @@ fun SearchScreen(
                             }
                         }
                     } else {
+                        val randomRecipes = viewModel.recipeList.collectAsState().value.shuffled().take(4)
                         when(windowSize.widthSizeClass) {
                             WindowWidthSizeClass.Compact -> {
-                                PortraitSpesial(recipes = recipesByCategory[RecipeCategory.CEMILAN] ?: emptyList())
+                                PortraitSpesial(randomRecipes, onRecipeClick)
                             }
 
                             WindowWidthSizeClass.Expanded -> {
-                                LandscapeSpesial(recipes = recipesByCategory[RecipeCategory.CEMILAN] ?: emptyList())
+                                LandscapeSpesial(randomRecipes, onRecipeClick)
                             }
                         }
                     }
@@ -237,7 +252,7 @@ fun SearchScreen(
 }
 
 @Composable
-fun PortraitSpesial(recipes: List<Recipe>) {
+fun PortraitSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -246,25 +261,20 @@ fun PortraitSpesial(recipes: List<Recipe>) {
         modifier = Modifier
             .background(Color.White)
     ) {
-        items(DataProvider.ResepCemilan) { recipe ->
-            RecipeCard(
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
-            )
-        }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = recipe.image,
-                foodName = recipe.title,
-                duration = recipe.readyInMinutes.toString(),
+                foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
+                foodName = recipe.judul_konten,
+                duration = recipe.durasi.toString(),
+                modifier = Modifier
+                    .clickable{ onRecipeClick(recipe.id_resep) }
             )
         }
     }
 }
 
 @Composable
-fun LandscapeSpesial(recipes: List<Recipe>) {
+fun LandscapeSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -274,18 +284,13 @@ fun LandscapeSpesial(recipes: List<Recipe>) {
             .background(Color.White)
             .padding(horizontal = 24.dp)
     ) {
-        items(DataProvider.ResepCemilan) { recipe ->
-            RecipeCard(
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
-            )
-        }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = recipe.image,
-                foodName = recipe.title,
-                duration = recipe.readyInMinutes.toString(),
+                foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
+                foodName = recipe.judul_konten,
+                duration = recipe.durasi.toString(),
+                modifier = Modifier
+                    .clickable{ onRecipeClick(recipe.id_resep) }
             )
         }
     }

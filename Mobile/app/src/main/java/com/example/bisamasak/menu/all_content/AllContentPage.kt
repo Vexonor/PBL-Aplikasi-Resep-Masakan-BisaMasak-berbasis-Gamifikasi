@@ -70,22 +70,26 @@ fun AllContent(
             modifier = Modifier
                 .fillMaxSize(),
         ) {
-            val groupedRecipes = recipeViewModel.recipeList.groupBy { it.kategori }
+            val groupedRecipes = recipeViewModel.recipeList.value.groupBy { it.kategori }
+            val orderedCategories = listOf("Sarapan", "Makan Siang", "Cemilan", "Makan Malam")
 
-            groupedRecipes.forEach { (kategori, recipes) ->
-                item {
-                    RecipeSection(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp),
-                        windowSize = windowSizeClass,
-                        pagerState = pagerState,
-                        kategori = kategori,
-                        scope = scope,
-                        recipes = recipes,
-                        onRecipeClick = { id ->
-                            navController.navigate("recipe_detail/$id")
-                        }
-                    )
+            orderedCategories.forEach { kategori ->
+                val recipes = groupedRecipes[kategori]
+                if (!recipes.isNullOrEmpty()) {
+                    item {
+                        RecipeSection(
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp),
+                            windowSize = windowSizeClass,
+                            pagerState = pagerState,
+                            kategori = kategori,
+                            scope = scope,
+                            recipes = recipes,
+                            onRecipeClick = { id ->
+                                navController.navigate("recipe_detail/$id")
+                            }
+                        )
+                    }
                 }
             }
         }

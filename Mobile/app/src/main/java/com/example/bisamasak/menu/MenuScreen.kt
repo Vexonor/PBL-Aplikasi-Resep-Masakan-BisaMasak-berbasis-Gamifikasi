@@ -195,8 +195,6 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                     }
                     MenuTabs.Breakfast -> {
                         BreakfastContent(
-                            pagerState = pagerState,
-                            scope = scope,
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
@@ -205,8 +203,6 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                     }
                     MenuTabs.Lunch -> {
                         LunchContent(
-                            pagerState = pagerState,
-                            scope = scope,
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
@@ -215,8 +211,6 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                     }
                     MenuTabs.Snack -> {
                         SnackContent(
-                            pagerState = pagerState,
-                            scope = scope,
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
@@ -225,8 +219,6 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                     }
                     MenuTabs.Dinner -> {
                         DinnerContent(
-                            pagerState = pagerState,
-                            scope = scope,
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")

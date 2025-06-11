@@ -25,11 +25,11 @@ import com.valentinilk.shimmer.shimmer
 
 
 @Composable
-fun ShimmerCard() {
+fun ShimmerCard(modifier: Modifier = Modifier) {
     val shimmer = rememberShimmer(shimmerBounds = ShimmerBounds.View)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(180.dp)
             .height(200.dp)
             .shimmer(shimmer)

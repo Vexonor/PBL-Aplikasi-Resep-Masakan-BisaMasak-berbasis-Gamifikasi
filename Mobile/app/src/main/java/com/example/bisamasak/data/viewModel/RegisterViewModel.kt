@@ -11,14 +11,18 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
     var responseMessage by mutableStateOf("")
+    var isRegisterSuccess by mutableStateOf(false)
+    var registerUserName by mutableStateOf("")
 
-    fun register(nama: String, email: String, password: String) {
+    fun register(nama: String, email: String, password: String, peran: String = "Pengguna") {
         viewModelScope.launch {
             try {
-                val request = RegisterRequest(nama, email, password)
+                val request = RegisterRequest(nama, email, password, peran)
                 val response = BisaMasakInstance.bisaMasakService.registerUser(request)
                 if (response.isSuccessful) {
                     responseMessage = response.body()?.message ?: "Success"
+                    isRegisterSuccess = true
+                    registerUserName = response.body()?.user?.nama ?: nama
                 } else {
                     responseMessage = "Register Failed: ${response.code()}"
                 }

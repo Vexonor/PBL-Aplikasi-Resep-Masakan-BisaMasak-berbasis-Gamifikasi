@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('pengguna', function (Blueprint $table) {
             $table->id('id_pengguna');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
-            $table->bigInteger('poin_level');
-            $table->integer('level_pengguna');
+            $table->bigInteger('poin_level')->default(0);
+            $table->integer('level_pengguna')->default(1);
             $table->timestamps();
         });
     }

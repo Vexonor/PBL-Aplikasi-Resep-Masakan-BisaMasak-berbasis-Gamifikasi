@@ -17,4 +17,5 @@ Route::post('login', [AuthController::class, 'login']);
 Route::get('/bahan-masak', [BahanMasakApiController::class, 'index']);
 Route::get('/bahan-masak/{id}', [BahanMasakApiController::class, 'show']);
 Route::get('/konten-tutorial', [KontenTutorialApiController::class, 'index']);
+Route::get('/search', [KontenTutorialApiController::class, 'search']);
 Route::get('/stats/konten-resep', [KontenTutorialApiController::class, 'getMonthlyStats']);

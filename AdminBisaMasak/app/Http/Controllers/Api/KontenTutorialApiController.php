@@ -12,7 +12,7 @@ class KontenTutorialApiController extends Controller
 {
     public function index()
     {
-        $data = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->get();
+        $data = KontenResepModel::with('BahanResepTable.BahanMasakTable', 'GiziTable', 'LangkahLangkahTable',)->get();
         return response()->json($data);
     }
 
@@ -42,6 +42,18 @@ class KontenTutorialApiController extends Controller
 
             $result[] = $monthData;
         }
+
+        return response()->json($result);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        $keywords = explode(' ', strtolower($query));
+
+        $result = KontenResepModel::with(['BahanResepTable.BahanMasakTable'])
+            ->judulKonten($keywords)
+            ->get();
 
         return response()->json($result);
     }

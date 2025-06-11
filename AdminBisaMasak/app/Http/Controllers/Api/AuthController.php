@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PenggunaModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,8 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8'
+            'password' => 'required|string|min:8',
+            'peran' => 'nullable|string|in:Pengguna,Admin'
         ]);
 
         if ($validator->fails()) {
@@ -26,12 +28,18 @@ class AuthController extends Controller
         $user = UserModel::create([
             'nama' => $request->nama,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'peran' => $request->peran
+        ]);
+
+        $pengguna = PenggunaModel::create([
+            'id_user' => $user->id_user,
         ]);
 
         return response()->json([
             'message' => 'Register Successful',
-            'user' => $user
+            'user' => $user,
+            'pengguna' => $pengguna
         ], 201);
     }
 

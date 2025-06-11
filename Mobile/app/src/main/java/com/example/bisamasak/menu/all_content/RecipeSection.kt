@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.bisamasak.component.MenuTabs
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
@@ -49,7 +50,11 @@ fun RecipeSection(
             Button(
                 onClick = {
                     scope.launch {
-                        pagerState.animateScrollToPage(0)
+                        val tabIndex  = MenuTabs.entries.indexOfFirst {
+                            it.text.equals(kategori, ignoreCase = true)
+                        }.takeIf { it >= 0 } ?: 0
+
+                        pagerState.animateScrollToPage(tabIndex)
                     }
                 },
                 colors = ButtonColors(
@@ -58,7 +63,7 @@ fun RecipeSection(
                     disabledContainerColor = Color.Transparent,
                     disabledContentColor = Color.Transparent
                 ),
-                contentPadding = PaddingValues(0.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 Text(
                     text = "Lihat Semua",
@@ -81,7 +86,7 @@ fun RecipeSection(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { onRecipeClick(recipe.id_resep) },
-                            foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
+                            foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
                             foodName = recipe.judul_konten,
                             duration = recipe.durasi.toString(),
                         )
@@ -99,7 +104,7 @@ fun RecipeSection(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { onRecipeClick(recipe.id_resep) },
-                            foodImg = "http://192.168.100.70:8000/storage/${'$'}{recipe.thumbnail}",
+                            foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
                             foodName = recipe.judul_konten,
                             duration = recipe.durasi.toString(),
                         )

@@ -38,6 +38,18 @@ fun RegisterScreen(navController: NavController) {
     var confirmPassword by remember { mutableStateOf("") }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
+    LaunchedEffect(viewModel.isRegisterSuccess) {
+        if (viewModel.isRegisterSuccess) {
+            coroutineScope.launch {
+                dataStore.setUserName(viewModel.registerUserName)
+                dataStore.setLogin(true)
+            }
+            navController.navigate("login_screen") {
+                popUpTo("register_screen") { inclusive = true }
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -159,13 +171,6 @@ fun RegisterScreen(navController: NavController) {
                         viewModel.responseMessage = "Nama, Email dan Kata Sandi Tidak Boleh Kosong"
                     } else {
                         viewModel.register(nama, email, password)
-                        coroutineScope.launch {
-                            dataStore.setUserName(nama)
-                            dataStore.setLogin(true)
-                        }
-                        navController.navigate("login_screen") {
-                            popUpTo("register_screen") { inclusive = true }
-                        }
                     }
                 },
                 modifier = Modifier

@@ -5,19 +5,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,28 +24,23 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
-import com.example.bisamasak.data.dataContainer.Recipe
-import com.example.bisamasak.data.provider.DataProvider
-import com.example.bisamasak.data.utils.RecipeCategory
-import com.example.bisamasak.data.viewModel.RecipeViewModel
+import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun BreakfastContent(
-    pagerState: PagerState, 
-    scope: CoroutineScope,
     windowSize: WindowSizeClass,
     onRecipeClick: (Int) -> Unit
 ) {
 
 //    Recipe Model
-    val viewModel: RecipeViewModel = viewModel()
-    val recipesByCategory = viewModel.recipesByCategory.collectAsState().value
-    val isLoading = viewModel.isLoading.collectAsState().value
+    val viewModel: RecipeContentViewModel = viewModel()
+    val recipesByCategory = viewModel.groupedRecipes
+    val isLoading = viewModel.isLoading
 
     LaunchedEffect(Unit) {
-        viewModel.fetchAllCategories()
+        viewModel.recipe()
     }
 
     if (isLoading) {
@@ -64,19 +58,20 @@ fun BreakfastContent(
             }
         }
     } else {
+        val categories = recipesByCategory["sarapan"] ?: emptyList()
         when(windowSize.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                PortraitBreakfastContent(recipes = recipesByCategory[RecipeCategory.SARAPAN] ?: emptyList(), onRecipeClick)
+                PortraitBreakfastContent(categories, onRecipeClick)
             }
             WindowWidthSizeClass.Expanded -> {
-                LandscapeBreakfastContent(recipes = recipesByCategory[RecipeCategory.SARAPAN] ?: emptyList(), onRecipeClick)
+                LandscapeBreakfastContent(categories, onRecipeClick)
             }
         }
     }
 }
 
 @Composable
-fun PortraitBreakfastContent(recipes: List<Recipe>, onRecipeClick: (Int) -> Unit) {
+fun PortraitBreakfastContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -103,33 +98,27 @@ fun PortraitBreakfastContent(recipes: List<Recipe>, onRecipeClick: (Int) -> Unit
                 )
             }
         }
-        items(DataProvider.ResepSarapan) { recipe ->
-            RecipeCard(
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
-            )
-        }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = recipe.image,
-                foodName = recipe.title,
-                duration = recipe.readyInMinutes.toString(),
+                foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                foodName = recipe.judul_konten,
+                duration = recipe.durasi.toString(),
                 modifier = Modifier
-                    .clickable{ onRecipeClick(recipe.id) }
+                    .clickable{ onRecipeClick(recipe.id_resep) }
             )
         }
     }
 }
 
 @Composable
-fun LandscapeBreakfastContent(recipes: List<Recipe>, onRecipeClick: (Int) -> Unit) {
+fun LandscapeBreakfastContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
         modifier = Modifier
+            .fillMaxHeight()
             .background(Color.White)
             .padding(horizontal = 24.dp)
     ) {
@@ -150,20 +139,13 @@ fun LandscapeBreakfastContent(recipes: List<Recipe>, onRecipeClick: (Int) -> Uni
                 )
             }
         }
-        items(DataProvider.ResepSarapan) { recipe ->
-            RecipeCard(
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
-            )
-        }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = recipe.image,
-                foodName = recipe.title,
-                duration = recipe.readyInMinutes.toString(),
+                foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                foodName = recipe.judul_konten,
+                duration = recipe.durasi.toString(),
                 modifier = Modifier
-                    .clickable{ onRecipeClick(recipe.id) }
+                    .clickable{ onRecipeClick(recipe.id_resep) }
             )
         }
     }
