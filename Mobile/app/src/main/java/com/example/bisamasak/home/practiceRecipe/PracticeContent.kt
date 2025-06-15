@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
@@ -155,7 +156,7 @@ fun Portrait(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit)
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 RecipeCard(
-                    foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                    foodImg = recipe.imageUrl,
                     foodName = recipe.judul_konten,
                     duration = recipe.durasi.toString(),
                     modifier = Modifier
@@ -187,7 +188,7 @@ fun Landscape(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 RecipeCard(
-                    foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                    foodImg = recipe.imageUrl,
                     foodName = recipe.judul_konten,
                     duration = recipe.durasi.toString(),
                     modifier = Modifier

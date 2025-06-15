@@ -17,14 +17,17 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bisamasak.component.EmptyContent
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
@@ -35,7 +38,8 @@ fun LunchContent(
 ) {
 //    Recipe Model
     val viewModel: RecipeContentViewModel = viewModel()
-    val recipesByCategory = viewModel.groupedRecipes
+    val recipes = viewModel.recipeList.collectAsState().value
+    val recipesByCategory = recipes.groupBy { it.kategori.trim().lowercase() }
     val isLoading = viewModel.isLoading
 
     LaunchedEffect(Unit) {
@@ -58,12 +62,17 @@ fun LunchContent(
         }
     } else {
         val categories = recipesByCategory["makan siang"] ?: emptyList()
-        when(windowSize.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> {
-                PortraitLunchContent(categories, onRecipeClick)
-            }
-            WindowWidthSizeClass.Expanded -> {
-                LandscapeLunchContent(categories, onRecipeClick)
+        if (categories.isEmpty()) {
+            EmptyContent(text = "Konten Masih Belum Tersedia")
+        } else {
+            when (windowSize.widthSizeClass) {
+                WindowWidthSizeClass.Compact -> {
+                    PortraitLunchContent(categories, onRecipeClick)
+                }
+
+                WindowWidthSizeClass.Expanded -> {
+                    LandscapeLunchContent(categories, onRecipeClick)
+                }
             }
         }
     }
@@ -100,7 +109,7 @@ fun PortraitLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (I
         }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier
@@ -140,7 +149,7 @@ fun LandscapeLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (
         }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier

@@ -22,6 +22,7 @@ import com.example.bisamasak.component.MenuTabs
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.imageUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -86,7 +87,7 @@ fun RecipeSection(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { onRecipeClick(recipe.id_resep) },
-                            foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                            foodImg = recipe.imageUrl,
                             foodName = recipe.judul_konten,
                             duration = recipe.durasi.toString(),
                         )
@@ -104,7 +105,7 @@ fun RecipeSection(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { onRecipeClick(recipe.id_resep) },
-                            foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                            foodImg = recipe.imageUrl,
                             foodName = recipe.judul_konten,
                             duration = recipe.durasi.toString(),
                         )

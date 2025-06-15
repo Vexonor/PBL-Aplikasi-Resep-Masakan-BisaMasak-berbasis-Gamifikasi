@@ -13,6 +13,42 @@
             class="py-2 px-3 sm:py-3 sm:px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
             rows="3" placeholder="Ketikkan deskripsi disini..." readonly>{{ $dataResep -> deskripsi_konten }}</textarea>
     </div>
+    <!-- Input Duration -->
+    <div class="w-full">
+        <label for="input-level" class="block text-sm font-medium mb-2">Durasi Memasak</label>
+        <input type="number" id="input-level" name="durasi"
+            class="py-2.5 sm:py-3 px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
+            placeholder="Masukkan durasi memasak" value="{{ $dataResep -> durasi }}" readonly>
+    </div>
+    <!-- Input Level Requirement -->
+    <div class="w-full">
+        <label for="input-level" class="block text-sm font-medium mb-2">Level Untuk Membuka Resep Ini</label>
+        <input type="number" id="input-level" name="terbuka_di_level" value="{{ $dataResep -> terbuka_di_level }}"
+            class="py-2.5 sm:py-3 px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
+            placeholder="Masukkan level yang dibutuhkan" readonly>
+    </div>
+    <!-- Input Categories -->
+    <div class="w-full">
+        <label for="hs-select-label" class="block text-sm font-medium mb-2">Kategori Resep</label>
+        <div class="w-full px-4 border border-cinnabar rounded-lg">
+            <select id="hs-select-label" name="kategori"
+                class="py-3 px-4 block w-full text-sm border-none focus:outline-none focus-within:ring-0 disabled:opacity-50 pointer-events-none">
+                <option selected disabled>Pilih Kategori</option>
+                @foreach ([
+                'Sarapan', 'Makan Siang', 'Makan Malam', 'Cemilan'
+                ] as $kategori)
+                <option value="{{ $kategori }}" {{ $kategori == $dataResep->kategori ? 'selected' : '' }}>
+                    {{ $kategori }}
+                </option>
+                @endforeach
+            </select>
+            @error('kategori')
+            <p class="text-sm 2xl:text-base text-red-600 mt-2" id="hs-validation-name-error-helper">
+                {{ $message }}
+            </p>
+            @enderror
+        </div>
+    </div>
     <!-- Input Ingredient -->
     <div class="flex flex-col gap-4">
         <label for="title" class="block text-sm font-medium w-full">Bahan

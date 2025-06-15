@@ -155,7 +155,7 @@ fun LoginScreen(navController: NavController) {
                     if (email.isBlank() || password.isBlank()) {
                         viewModel.responseMessage = "Email dan Kata Sandi Tidak Boleh Kosong"
                     } else {
-                        viewModel.login(email, password)
+                        viewModel.login(email, password, dataStore)
                     }
                 },
                 modifier = Modifier

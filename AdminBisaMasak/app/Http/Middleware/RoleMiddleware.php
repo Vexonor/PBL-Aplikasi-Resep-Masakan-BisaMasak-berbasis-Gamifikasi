@@ -15,13 +15,11 @@ class RoleMiddleware
         }
 
         $user = Auth::user();
-        // Pastikan pengguna memiliki relasi admin jika diperlukan
         if ($role === 'Master Admin' || $role === 'Admin') {
-            if (!$user->AdminTable || $user->AdminTable->peran_admin !== $role) {
+            if (!$user->AdminTable) {
                 return back()->with('error', 'Anda tidak memiliki akses admin ke halaman ini.');
             }
         } elseif ($user->role !== $role) {
-            // Periksa role lainnya
             return back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
 

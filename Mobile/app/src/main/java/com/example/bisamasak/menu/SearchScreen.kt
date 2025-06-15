@@ -45,6 +45,7 @@ import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.example.bisamasak.R
+import com.example.bisamasak.data.utils.imageUrl
 
 
 @Composable
@@ -189,7 +190,7 @@ fun SearchScreen(
                             ) {
                                 items(searchResult) { recipe ->
                                     RecipeCard(
-                                        foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
+                                        foodImg = recipe.imageUrl,
                                         foodName = recipe.judul_konten,
                                         duration = recipe.durasi.toString(),
                                         modifier = Modifier
@@ -263,7 +264,7 @@ fun PortraitSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -
     ) {
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier
@@ -286,7 +287,7 @@ fun LandscapeSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) 
     ) {
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.71:8000/storage/${'$'}{recipe.thumbnail}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier

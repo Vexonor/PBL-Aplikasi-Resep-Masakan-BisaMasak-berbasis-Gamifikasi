@@ -9,13 +9,19 @@ import com.example.bisamasak.data.dataContainer.BahanResep
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.instance.BisaMasakInstance
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class RecipeContentViewModel : ViewModel() {
     private val _recipeList = MutableStateFlow<List<RecipeContentResponse>>(emptyList())
     private val _searchResult = MutableStateFlow<List<RecipeContentResponse>>(emptyList())
-    var recipeList = _recipeList.asStateFlow()
+
+    var recipeList = _recipeList
+        .map { list -> list.filter { it.status_konten == "Terunggah" } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val groupedRecipes: Map<String, List<RecipeContentResponse>>
         get() = _recipeList.value.groupBy { it.kategori?.trim()?.lowercase() ?: "Lainnya" }
     var selectedRecipe by mutableStateOf<RecipeContentResponse?>(null)

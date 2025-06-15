@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -16,14 +17,17 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bisamasak.component.EmptyContent
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
@@ -35,7 +39,8 @@ fun DinnerContent(
 
 //    Recipe Model
     val viewModel: RecipeContentViewModel = viewModel()
-    val recipesByCategory = viewModel.groupedRecipes
+    val recipes = viewModel.recipeList.collectAsState().value
+    val recipesByCategory = recipes.groupBy { it.kategori.trim().lowercase() }
     val isLoading = viewModel.isLoading
 
     LaunchedEffect(Unit) {
@@ -58,12 +63,17 @@ fun DinnerContent(
         }
     } else {
         val categories = recipesByCategory["makan malam"] ?: emptyList()
-        when(windowSize.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> {
-                PortraitDinnerContent(categories, onRecipeClick)
-            }
-            WindowWidthSizeClass.Expanded -> {
-                LandscapeDinnerContent(categories, onRecipeClick)
+        if (categories.isEmpty()) {
+            EmptyContent(text = "Konten Masih Belum Tersedia")
+        } else {
+            when (windowSize.widthSizeClass) {
+                WindowWidthSizeClass.Compact -> {
+                    PortraitDinnerContent(categories, onRecipeClick)
+                }
+
+                WindowWidthSizeClass.Expanded -> {
+                    LandscapeDinnerContent(categories, onRecipeClick)
+                }
             }
         }
     }
@@ -77,6 +87,7 @@ fun PortraitDinnerContent(recipes: List<RecipeContentResponse>, onRecipeClick: (
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
         modifier = Modifier
+            .fillMaxHeight()
             .background(Color.White)
             .padding(horizontal = 24.dp)
     ) {
@@ -99,7 +110,7 @@ fun PortraitDinnerContent(recipes: List<RecipeContentResponse>, onRecipeClick: (
         }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier
@@ -117,6 +128,7 @@ fun LandscapeDinnerContent(recipes: List<RecipeContentResponse>, onRecipeClick: 
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
         modifier = Modifier
+            .fillMaxHeight()
             .background(Color.White)
             .padding(horizontal = 24.dp)
     ) {
@@ -139,7 +151,7 @@ fun LandscapeDinnerContent(recipes: List<RecipeContentResponse>, onRecipeClick: 
         }
         items(recipes) { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier

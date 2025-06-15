@@ -110,7 +110,9 @@ class LaporanKontenController extends Controller
     {
         DB::beginTransaction();
         try {
-            $data = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable')->findOrFail($id);
+            $laporan = LaporanKontenModel::findOrFail($id);
+
+            $data = KontenResepModel::findOrFail($laporan->id_resep);
 
             $data->update([
                 'status_konten' => 'Terblokir'

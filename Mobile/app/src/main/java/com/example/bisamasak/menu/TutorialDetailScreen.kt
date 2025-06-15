@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import androidx.compose.foundation.lazy.items
+import com.example.bisamasak.data.utils.stepImageUrl
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.valentinilk.shimmer.ShimmerBounds
@@ -65,7 +66,7 @@ fun TutorialDetailScreen(
             ) {
                 Button(
                     onClick = {
-                        navController.navigate("recipe_detail/$recipeId")
+                        navController.popBackStack()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
@@ -119,7 +120,7 @@ fun TutorialDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         AsyncImage(
-                            model = "http://192.168.100.97:8000/storage/${step.gambar_langkah ?: ""}",
+                            model = step.stepImageUrl,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier

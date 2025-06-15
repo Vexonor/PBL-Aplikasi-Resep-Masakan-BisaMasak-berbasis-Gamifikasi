@@ -27,6 +27,7 @@ import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.utils.createdToday
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
@@ -127,7 +128,7 @@ fun PortraitLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) ->
     ) {
         recipe.forEach { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier
@@ -156,7 +157,7 @@ fun LandscapeLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -
     ) {
         recipe.forEach { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier

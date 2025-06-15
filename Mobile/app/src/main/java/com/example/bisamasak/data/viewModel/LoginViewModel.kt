@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bisamasak.data.dataContainer.LoginRequest
 import com.example.bisamasak.data.instance.BisaMasakInstance
+import com.example.bisamasak.data.utils.DataStoreManager
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -16,7 +17,7 @@ class LoginViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
     var loggedInUserName by mutableStateOf("")
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, dataStoreManager: DataStoreManager) {
         viewModelScope.launch {
             isLoading = true
             responseMessage = ""
@@ -26,9 +27,16 @@ class LoginViewModel : ViewModel() {
                 val request = LoginRequest(email, password)
                 val response = BisaMasakInstance.bisaMasakService.loginUser(request)
                 if (response.isSuccessful) {
+                    val user = response.body()?.user
                     loggedInUserName = response.body()?.user?.nama ?: ""
                     responseMessage = response.body()?.message ?: "login Success"
                     isLoginSuccess = true
+
+                    user?.let {
+                        dataStoreManager.setUserId(it.id.toLong())
+                        dataStoreManager.setUserName(it.nama)
+                        dataStoreManager.setLogin(true)
+                    }
                 } else {
                     responseMessage = "Gagal Melakukan Proses Masuk"
                 }

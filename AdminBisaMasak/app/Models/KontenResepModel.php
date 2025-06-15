@@ -15,6 +15,7 @@ class KontenResepModel extends Model
         "id_user",
         "judul_konten",
         "deskripsi_konten",
+        "durasi",
         "terbuka_di_level",
         "thumbnail",
         "video_tutorial",
@@ -46,6 +47,12 @@ class KontenResepModel extends Model
     {
         return $this->hasMany(LaporanKontenModel::class, "id_resep", "id_resep");
     }
+
+    public function KomentarTable()
+    {
+        return $this->hasMany(KomentarModel::class, "id_resep", "id_user");
+    }
+
     public function BahanMasakTable()
     {
         return $this->hasManyThrough(

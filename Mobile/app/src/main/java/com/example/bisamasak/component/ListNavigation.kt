@@ -31,7 +31,7 @@ import com.example.bisamasak.login_register.LoginScreen
 import com.example.bisamasak.login_register.NewPasswordScreen
 import com.example.bisamasak.login_register.RegisterScreen
 import com.example.bisamasak.menu.MenuActivity
-import com.example.bisamasak.menu.MenuDetailScreen
+import com.example.bisamasak.menu.menu_detail.MenuDetailScreen
 import com.example.bisamasak.menu.SearchScreen
 import com.example.bisamasak.menu.TutorialDetailScreen
 import com.example.bisamasak.profile.ProfileActivity

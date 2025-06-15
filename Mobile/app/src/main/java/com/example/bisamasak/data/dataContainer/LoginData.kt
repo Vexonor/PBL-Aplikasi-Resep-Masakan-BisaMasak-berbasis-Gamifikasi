@@ -1,5 +1,7 @@
 package com.example.bisamasak.data.dataContainer
 
+import com.google.gson.annotations.SerializedName
+
 data class LoginRequest(
     val email: String,
     val password: String
@@ -11,7 +13,8 @@ data class LoginResponse(
 )
 
 data class Users(
-    val id: Int,
+    @SerializedName("id_user")
+    val id: Long,
     val email: String,
     val nama: String
 )

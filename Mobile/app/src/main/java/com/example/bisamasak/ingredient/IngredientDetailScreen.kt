@@ -1,6 +1,7 @@
 package com.example.bisamasak.ingredient
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -50,9 +52,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.platform.LocalConfiguration
 import com.example.bisamasak.component.RecipeCard
-import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.data.viewModel.IngredientViewModel
 import androidx.compose.foundation.lazy.grid.items
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,12 +80,18 @@ fun IngredientDetailScreen(
         .fillMaxWidth()
         .height(animatedScale)
 
+    val detail = viewModel.ingredientDetail
+    val isLoading = viewModel.isLoading
+
     LaunchedEffect(ingredientId) {
         viewModel.ingredientDetail(ingredientId)
     }
 
-    val detail = viewModel.ingredientDetail
-    val isLoading = viewModel.isLoading
+    LaunchedEffect(detail?.nama_bahan) {
+        detail?.nama_bahan?.let {
+            viewModel.recipeByIngredient(it)
+        }
+    }
 
         Scaffold(
             containerColor = Color.White,
@@ -176,7 +184,8 @@ fun IngredientDetailScreen(
 //                                Title & Description Section
                                 Column (
                                     modifier = Modifier
-                                        .weight(1f)
+                                        .fillMaxWidth()
+                                        .heightIn(min = 80.dp, max = 200.dp)
                                         .padding(vertical = 12.dp),
                                     verticalArrangement = Arrangement.spacedBy(16.dp)
                                 ) {
@@ -257,11 +266,15 @@ fun IngredientDetailScreen(
                                         modifier = Modifier
                                             .weight(1f)
                                     ) {
-                                        items(DataProvider.ResepCemilan) { recipe ->
+                                        val relatedRecipe = viewModel.relatedRecipes
+                                        items(relatedRecipe.take(6)) { recipe ->
                                             RecipeCard(
-                                                foodImg = recipe.foodImg,
-                                                foodName = recipe.foodName,
-                                                duration = recipe.duration.toString(),
+                                                foodImg = recipe.imageUrl,
+                                                foodName = recipe.judul_konten,
+                                                duration = recipe.durasi.toString(),
+                                                modifier = Modifier.clickable {
+                                                    navController.navigate("recipe_detail/${recipe.id_resep}")
+                                                }
                                             )
                                         }
                                     }

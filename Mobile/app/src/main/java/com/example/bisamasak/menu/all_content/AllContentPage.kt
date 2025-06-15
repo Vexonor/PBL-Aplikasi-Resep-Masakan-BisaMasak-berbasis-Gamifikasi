@@ -22,13 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.component.ShimmerCard
-import com.example.bisamasak.data.utils.RecipeCategory
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
-import com.example.bisamasak.data.viewModel.RecipeViewModel
-import com.example.bisamasak.menu.breakfast.BreakFastSection
-import com.example.bisamasak.menu.dinner.DinnerSection
-import com.example.bisamasak.menu.lunch.LunchSection
-import com.example.bisamasak.menu.snack.SnackSection
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -45,6 +39,7 @@ fun AllContent(
 
 //    Recipe Model
     val recipeViewModel: RecipeContentViewModel = viewModel()
+    val recipes = recipeViewModel.recipeList.collectAsState().value
     val isLoading = recipeViewModel.isLoading
 
     LaunchedEffect(Unit) {
@@ -70,7 +65,7 @@ fun AllContent(
             modifier = Modifier
                 .fillMaxSize(),
         ) {
-            val groupedRecipes = recipeViewModel.recipeList.value.groupBy { it.kategori }
+            val groupedRecipes = recipes.groupBy { it.kategori }
             val orderedCategories = listOf("Sarapan", "Makan Siang", "Cemilan", "Makan Malam")
 
             orderedCategories.forEach { kategori ->

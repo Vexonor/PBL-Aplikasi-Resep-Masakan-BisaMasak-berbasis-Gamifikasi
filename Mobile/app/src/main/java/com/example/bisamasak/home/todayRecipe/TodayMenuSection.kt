@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
@@ -118,7 +119,7 @@ fun PortraitToday(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> 
     ) {
         recipe.forEach { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.97:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier
@@ -147,7 +148,7 @@ fun LandscapeToday(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) ->
     ) {
         recipe.forEach { recipe ->
             RecipeCard(
-                foodImg = "http://192.168.100.96:8000/storage/${recipe.thumbnail ?: ""}",
+                foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
                 modifier = Modifier

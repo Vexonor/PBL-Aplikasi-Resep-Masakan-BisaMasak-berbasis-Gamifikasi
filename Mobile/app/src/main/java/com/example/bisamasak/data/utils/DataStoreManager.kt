@@ -17,6 +17,7 @@ class DataStoreManager(private val context: Context) {
         private val ONBOARDING_SHOW = booleanPreferencesKey("onboarding_show")
         private val IS_LOGIN = booleanPreferencesKey("is_login")
         private val LAST_ACTIVE = longPreferencesKey("last_active")
+        private val USER_ID = longPreferencesKey("user_id")
         private val USER_NAME = stringPreferencesKey("user_name")
     }
 
@@ -74,6 +75,18 @@ class DataStoreManager(private val context: Context) {
     suspend fun getUserName(): String {
         return context.dataStore.data
             .map { it[USER_NAME] ?: "" }
+            .first()
+    }
+
+    suspend fun setUserId(id: Long) {
+        context.dataStore.edit { prefs ->
+            prefs[USER_ID] = id
+        }
+    }
+
+    suspend fun getUserId(): Long {
+        return context.dataStore.data
+            .map { it[USER_ID] ?: -1L }
             .first()
     }
 }

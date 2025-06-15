@@ -60,4 +60,9 @@ class UserModel extends Authenticatable
     {
         return $this->hasOne(KontenResepModel::class, 'id_user', 'id_user');
     }
+
+    public function KomentarTable()
+    {
+        return $this->hasMany(KomentarModel::class, 'id_user', 'id_user');
+    }
 }

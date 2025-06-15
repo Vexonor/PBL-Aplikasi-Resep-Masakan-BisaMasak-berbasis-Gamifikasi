@@ -7,14 +7,21 @@
         <label for="input-title" class="block text-sm font-medium mb-2">Judul Konten</label>
         <input type="text" id="input-title" name="judul_konten" value="{{ $dataResep -> judul_konten }}"
             class="py-2.5 sm:py-3 px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
-            placeholder="Masukkan judul konten" readonly>
+            placeholder="Masukkan judul konten" required>
     </div>
     <!-- Input Description -->
     <div class="w-full">
         <label for="textarea-label" class="block text-sm font-medium mb-2">Deskripsi Konten</label>
         <textarea id="textarea-label" name="deskripsi_konten"
             class="py-2 px-3 sm:py-3 sm:px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
-            rows="3" placeholder="Ketikkan deskripsi disini..." readonly>{{ $dataResep -> deskripsi_konten }}</textarea>
+            rows="3" placeholder="Ketikkan deskripsi disini..." required>{{ $dataResep -> deskripsi_konten }}</textarea>
+    </div>
+    <!-- Input Duration -->
+    <div class="w-full">
+        <label for="input-level" class="block text-sm font-medium mb-2">Durasi Memasak</label>
+        <input type="number" id="input-level" name="durasi"
+            class="py-2.5 sm:py-3 px-4 block w-full border border-cinnabar rounded-lg sm:text-sm focus:outline-none focus-within:ring-cinnabar disabled:opacity-50 disabled:pointer-events-none"
+            placeholder="Masukkan durasi memasak" value="{{ $dataResep -> durasi }}" required>
     </div>
     <!-- Input Level Requirement -->
     <div class="w-full">

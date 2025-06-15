@@ -17,9 +17,17 @@ class KonfirmasiKontenController extends Controller
     {
         $search = $request->input('search');
         $dataCount = $request->input('data_count', 10);
-        $dataKontenResep = KontenResepModel::with('BahanResepTable', 'GiziTable', 'LangkahLangkahTable',)->where('status_konten', 'Draf')->judulKonten($search)->latest();
 
-        $data = $dataKontenResep->paginate($dataCount);
+        $dataKontenResep = KontenResepModel::with([
+            'BahanResepTable.BahanMasakTable',
+        ])->where('status_konten', 'Draf');
+
+        if (!empty($search)) {
+            $keywords = preg_split('/[\s,]+/', $search);
+            $dataKontenResep = $dataKontenResep->judulKonten($keywords);
+        }
+
+        $data = $dataKontenResep->latest()->paginate($dataCount);
 
         return view('konfirmasi-konten.konfirmasi-konten-page', [
             "title" => "Konfirmasi Konten",
