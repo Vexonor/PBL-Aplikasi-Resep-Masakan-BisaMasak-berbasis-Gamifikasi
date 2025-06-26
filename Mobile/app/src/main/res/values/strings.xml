@@ -5,4 +5,5 @@
     <string name="title_activity_menu">MenuActivity</string>
     <string name="title_activity_ingredient_screen">IngredientScreen</string>
     <string name="title_activity_profile_screen">ProfileScreen</string>
+    <string name="fullscreen">Fullscreen</string>
 </resources>

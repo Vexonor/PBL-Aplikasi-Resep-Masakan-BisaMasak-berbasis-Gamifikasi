@@ -15,17 +15,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
@@ -62,17 +61,19 @@ fun VideoPlayer(uri: Uri) {
 }
 
 @Composable
-fun VideoScreen(modifier: Modifier = Modifier) {
-    var videoUri by remember { mutableStateOf<Uri?>(null) }
+fun VideoScreen(viewModel: RecipeContentViewModel = viewModel()) {
+    val videoUri = viewModel.addRecipeState.video
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        videoUri = uri
+        uri?.let {
+            viewModel.addRecipeState = viewModel.addRecipeState.copy(video = it)
+        }
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -92,4 +93,3 @@ fun VideoScreen(modifier: Modifier = Modifier) {
         }
     }
 }
-

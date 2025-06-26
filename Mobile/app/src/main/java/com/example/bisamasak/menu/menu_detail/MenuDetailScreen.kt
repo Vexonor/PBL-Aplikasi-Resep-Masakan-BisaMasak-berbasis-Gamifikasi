@@ -68,6 +68,7 @@ import com.example.bisamasak.data.utils.videoUrl
 import com.example.bisamasak.data.viewModel.CommentViewModel
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.data.viewModel.ReportViewModel
+import com.example.bisamasak.ui.theme.OutfitTypography
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
@@ -103,6 +104,8 @@ fun MenuDetailScreen(
             }
         }
     }
+    val uploadSuccessMessage = viewModel.uploadSuccessMessage
+
     val isLoading = viewModel.isLoading
 
     var showDialog by remember { mutableStateOf(false) }
@@ -139,6 +142,16 @@ fun MenuDetailScreen(
         }
     }
 
+    LaunchedEffect(uploadSuccessMessage) {
+        uploadSuccessMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            navController.navigate("profile_screen?tab=recipe") {
+                popUpTo("recipe_detail/$recipeId") { inclusive = true }
+            }
+            viewModel.clearUploadSuccessMessage()
+        }
+    }
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -168,6 +181,7 @@ fun MenuDetailScreen(
                     }
                 },
                 actions = {
+                    if (menudetails?.status_konten == "Terunggah") {
                     Button(
                         onClick = { showDialog = true },
                         colors = ButtonDefaults.buttonColors(
@@ -185,6 +199,33 @@ fun MenuDetailScreen(
                             modifier = Modifier.size(24.dp)
                         )
                     }
+                    } else {
+                        Button(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .width(100.dp),
+                            onClick = {
+                                menudetails?.let { recipe ->
+                                    viewModel.uploadContent(recipe.id_resep)
+                                    Toast.makeText(context, "Mengunggah konten...", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFED453A),
+                                contentColor = Color.White,
+                                disabledContainerColor = Color.Transparent,
+                                disabledContentColor = Color.Transparent
+                            ),
+                            contentPadding = PaddingValues(0.dp),
+                            elevation = null,
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = "Unggah",
+                                style = OutfitTypography.labelLarge
+                            )
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0x66FAFAFA),
@@ -192,6 +233,15 @@ fun MenuDetailScreen(
                     actionIconContentColor = Color.Transparent
                 ),
             )
+        },
+        floatingActionButton = {
+            if (menudetails?.id_user == userId.toInt()) {
+                FloatingMenu(
+                    isDraft = menudetails.status_konten != "Terunggah",
+                    onEditClick = { },
+                    onDeleteClick = { }
+                )
+            }
         }
     ) { innerPadding ->
         Surface(
@@ -290,6 +340,7 @@ fun MenuDetailScreen(
 //                     Nutrition
                             item {
                                 val nutritionList = menudetails?.gizi_table ?: emptyList()
+                                if (nutritionList.isNotEmpty()) {
                                 NutritionSection(
                                     nutritionList = nutritionList,
                                     portion = portion
@@ -300,6 +351,7 @@ fun MenuDetailScreen(
                                         .padding(horizontal = 24.dp),
                                     color = Color(0xFF748189)
                                 )
+                                }
                             }
 //                     Ingredients
                             item {
@@ -353,6 +405,7 @@ fun MenuDetailScreen(
                                 )
                             }
 //                     Comment Section
+                            if (menudetails?.status_konten == "Terunggah") {
                             if (!isUserLoaded) {
                                 item {
                                     Text("Memuat komentar...", modifier = Modifier.padding(24.dp))
@@ -374,14 +427,17 @@ fun MenuDetailScreen(
                                     )
                                 }
                             }
+                            }
 //                     Similar Recipe
                             item {
+                                if (menudetails?.status_konten == "Terunggah") {
                                 SimilarRecipeSection(
                                     similarRecipes = similarRecipes,
                                     onRecipeClick = { recipeId ->
                                         navController.navigate("recipe_detail/$recipeId")
                                     }
                                 )
+                                }
                             }
                         }
 //                      Report Dialog
@@ -391,7 +447,6 @@ fun MenuDetailScreen(
                                 recipeId = recipeId,
                                 reportViewModel = reportViewModel
                             )
-
                         }
                     }
                 }

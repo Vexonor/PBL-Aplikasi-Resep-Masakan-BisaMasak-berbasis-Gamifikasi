@@ -7,6 +7,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object BisaMasakInstance {
     private val client = OkHttpClient.Builder()
+        .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
         .addInterceptor { chain ->
             val request = chain.request().newBuilder()
                 .addHeader("Accept", "application/json")
@@ -16,7 +19,7 @@ object BisaMasakInstance {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.100.102:8000/api/")
+        .baseUrl("http://192.168.100.133:8000/api/")
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.bisamasak.component.ProfileTabs
 import com.example.bisamasak.component.RecipeCard
+import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.provider.DataProvider
 import com.example.bisamasak.ui.theme.OutfitTypography
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +30,7 @@ fun MyRecipeSection(
     modifier: Modifier = Modifier,
     windowSize: WindowSizeClass,
     pagerState: PagerState,
-    scope: CoroutineScope,
+    scope: CoroutineScope
 ) {
     Column (
         modifier = modifier

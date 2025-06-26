@@ -1,5 +1,6 @@
 package com.example.bisamasak.component
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -11,12 +12,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.bisamasak.OnBoardingScreen
 import com.example.bisamasak.SplashScreen
 import com.example.bisamasak.data.utils.DataStoreManager
+import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.home.HomeActivity
 import com.example.bisamasak.home.dailyTask.DailyTaskContent
 import com.example.bisamasak.home.latestRecipe.LatestContent
@@ -34,13 +39,14 @@ import com.example.bisamasak.menu.MenuActivity
 import com.example.bisamasak.menu.menu_detail.MenuDetailScreen
 import com.example.bisamasak.menu.SearchScreen
 import com.example.bisamasak.menu.TutorialDetailScreen
-import com.example.bisamasak.profile.ProfileActivity
+import com.example.bisamasak.profile.ProfileScreen
 import com.example.bisamasak.profile.SettingContent
 import com.example.bisamasak.profile.add_content.AddContentScreen
 import com.example.bisamasak.profile.setting.account.AccountContent
 import com.example.bisamasak.profile.setting.recently.RecentlyContent
 import kotlinx.coroutines.launch
 
+@SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun Navigation() {
@@ -92,13 +98,35 @@ fun Navigation() {
             composable("home_screen") { HomeActivity(navController = navController) }
             composable("menu_screen") { MenuActivity(navController = navController) }
             composable("ingredient_screen") { IngredientActivity(navController = navController) }
-            composable("profile_screen") { ProfileActivity(navController = navController) }
+            composable(
+                route = "profile_screen?tab={tab}",
+                arguments = listOf(navArgument("tab") {
+                    defaultValue = "recipe"
+                })
+            ) { backStackEntry ->
+                val tabArg = backStackEntry.arguments?.getString("tab") ?: "recipe"
+                val initialTab = when (tabArg) {
+                    "recipe" -> ProfileTabs.Recipe
+                    "saved" -> ProfileTabs.Saved
+                    "viewed" -> ProfileTabs.Viewed
+                    else -> ProfileTabs.All_Profile
+                }
+                ProfileScreen(
+                    navController = navController,
+                    initialTab = initialTab
+                )
+            }
 
             //          Profil Setting
             composable("setting_screen") { SettingContent(navController = navController) }
             composable("account_screen") { AccountContent(navController = navController) }
             composable("recently_screen") { RecentlyContent(navController = navController) }
-            composable("add_content_screen") { AddContentScreen(navController = navController) }
+            composable("add_content_screen") { backStackEntry ->
+                val activity = LocalContext.current as Activity
+                val sharedViewModel: RecipeContentViewModel = viewModel(viewModelStoreOwner = activity as ViewModelStoreOwner)
+                AddContentScreen(navController = navController, viewModel = sharedViewModel)
+
+            }
 
             //        Ingredient Detail Screen
             composable("ingredient_detail/{id}") { backStackEntry ->

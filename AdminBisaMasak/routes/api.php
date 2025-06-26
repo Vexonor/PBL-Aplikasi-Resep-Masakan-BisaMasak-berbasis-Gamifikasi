@@ -24,6 +24,8 @@ Route::get('/bahan-masak/{id}', [BahanMasakApiController::class, 'show']);
 Route::get('/konten-tutorial', [KontenTutorialApiController::class, 'index']);
 Route::get('/search', [KontenTutorialApiController::class, 'search']);
 Route::get('/stats/konten-resep', [KontenTutorialApiController::class, 'getMonthlyStats']);
+Route::post('/konten-tutorial', [KontenTutorialApiController::class, 'storeRecipe']);
+Route::patch('konten-tutorial/{id}/status', [KontenTutorialApiController::class, 'updateStatus']);
 
 // Report Content
 Route::post('/laporan-konten', [LaporanKontenApiController::class, 'storeLaporan']);
