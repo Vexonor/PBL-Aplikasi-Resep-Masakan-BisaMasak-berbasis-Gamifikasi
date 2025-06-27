@@ -78,6 +78,7 @@ fun InputStepItem(
     stepNumber: Int,
     initialDescription: String = "",
     initialImage: Uri? = null,
+    existingImageUrl: String? = null,
     onChange: (LangkahInput) -> Unit,
     onRemove: () -> Unit,
     showRemoveButton: Boolean
@@ -159,18 +160,16 @@ fun InputStepItem(
                 }
             }
         }
+        val displayImage = imageUri ?: existingImageUrl
+        if (displayImage != null) {
+            val imagePainter = rememberAsyncImagePainter(displayImage)
 
-        imageUri?.let { uri ->
             Box(
                 modifier = Modifier
-                    .border(
-                        width = 1.dp,
-                        color = Color(0xFFED453A),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-            ){
+                    .border(1.dp, Color(0xFFED453A), RoundedCornerShape(12.dp))
+            ) {
                 Image(
-                    painter = rememberAsyncImagePainter(uri),
+                    painter = imagePainter,
                     contentDescription = "Selected Image",
                     modifier = Modifier
                         .padding(12.dp)
@@ -210,6 +209,7 @@ fun StepInputList(viewModel: RecipeContentViewModel = viewModel()) {
                 stepNumber = step.nomor,
                 initialDescription = step.deskripsi,
                 initialImage = step.imageUri,
+                existingImageUrl = step.existingImageUrl,
                 onChange = { updateStep ->
                     viewModel.updateLangkah(index, updateStep)
                 },

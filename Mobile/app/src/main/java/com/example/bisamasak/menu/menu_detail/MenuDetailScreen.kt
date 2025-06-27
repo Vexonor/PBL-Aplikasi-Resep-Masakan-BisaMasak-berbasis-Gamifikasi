@@ -1,7 +1,6 @@
 package com.example.bisamasak.menu.menu_detail
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -109,6 +108,7 @@ fun MenuDetailScreen(
     val isLoading = viewModel.isLoading
 
     var showDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
 //    Report Content
     var reportText by remember { mutableStateOf("") }
@@ -118,7 +118,6 @@ fun MenuDetailScreen(
     LaunchedEffect(Unit) {
         val id = dataStoreManager.getUserId()
         val name = dataStoreManager.getUserName()
-        Log.d("DEBUG_USERID", "User ID berhasil dimuat: $id")
         userId = id
         userName.value = name
         isUserLoaded = true
@@ -238,8 +237,13 @@ fun MenuDetailScreen(
             if (menudetails?.id_user == userId.toInt()) {
                 FloatingMenu(
                     isDraft = menudetails.status_konten != "Terunggah",
-                    onEditClick = { },
-                    onDeleteClick = { }
+                    onEditClick = {
+                        menudetails.let { content ->
+                            viewModel.startEditingContent(content)
+                            navController.navigate("add_content_screen?mode=edit&id=${menudetails.id_resep}")
+                        }
+                    },
+                    onDeleteClick = { showDeleteDialog = true }
                 )
             }
         }
@@ -448,6 +452,28 @@ fun MenuDetailScreen(
                                 reportViewModel = reportViewModel
                             )
                         }
+//                      Delete Dialog
+                        if (showDeleteDialog) {
+                            DeleteDialog(
+                                onDismiss = { showDeleteDialog = false },
+                                onConfirmDelete = {
+                                    viewModel.deleteRecipe(
+                                        recipeId = recipeId,
+                                        onSuccess = {
+                                            Toast.makeText(context, "Resep berhasil dihapus", Toast.LENGTH_SHORT).show()
+                                            navController.navigate("profile_screen?tab=recipe") {
+                                                popUpTo("recipe_detail/$recipeId") { inclusive = true }
+                                            }
+                                        },
+                                        onError = {
+                                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                },
+                                isDeleting = viewModel.isLoading
+                            )
+                        }
+
                     }
                 }
             }

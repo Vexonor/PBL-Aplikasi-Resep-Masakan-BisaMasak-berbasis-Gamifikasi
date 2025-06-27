@@ -1,7 +1,5 @@
 package com.example.bisamasak.profile.add_content
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -27,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,14 +40,39 @@ import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitFont
 import com.example.bisamasak.ui.theme.OutfitTypography
+import kotlinx.coroutines.delay
 
 @Composable
-fun AddContentScreen(navController: NavController, viewModel: RecipeContentViewModel) {
+fun AddContentScreen(navController: NavController, viewModel: RecipeContentViewModel, isEditMode: Boolean = false, editedRecipeId: Int? = null) {
     val context = LocalContext.current
     val dataStoreManager = remember { DataStoreManager(context) }
+    val isEditInitialized = remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadIngredient()
+    LaunchedEffect(isEditMode, editedRecipeId) {
+        if (!isEditMode) {
+            viewModel.resetAddRecipe()
+            viewModel.loadIngredient()
+        } else if (editedRecipeId != null && !isEditInitialized.value) {
+            viewModel.loadIngredient()
+            viewModel.recipeDetails(editedRecipeId, forEdit = true)
+
+            while (viewModel.selectedRecipe == null) {
+                delay(50)
+            }
+
+            viewModel.startEditingContent(viewModel.selectedRecipe!!)
+            viewModel.editingRecipeId = editedRecipeId
+            isEditInitialized.value = true
+        }
+    }
+
+    LaunchedEffect(viewModel.navigateAfterUpload) {
+        if (viewModel.navigateAfterUpload) {
+            navController.navigate("profile_screen?tab=recipe") {
+                popUpTo("add_content_screen") { inclusive = true }
+            }
+            viewModel.clearUploadSuccessMessage()
+        }
     }
 
     Scaffold(
@@ -97,12 +122,15 @@ fun AddContentScreen(navController: NavController, viewModel: RecipeContentViewM
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     onClick = {
-                        navController.navigate("profile_screen?tab=recipe") {
-                            popUpTo("add_content_screen") { inclusive = true }
-                        }
-                        Handler(Looper.getMainLooper()).postDelayed({
+                        if (isEditMode && editedRecipeId != null) {
+                            viewModel.addRecipeState = viewModel.addRecipeState.copy(
+                                bahan = viewModel.ingredientInputs.toList(),
+                                langkah = viewModel.langkahInputs.toList()
+                            )
+                            viewModel.updateRecipeContent(context = context)
+                        } else {
                             viewModel.storeRecipeContent(context, dataStoreManager)
-                        }, 500)
+                        }
                         },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFED453A),
@@ -112,7 +140,7 @@ fun AddContentScreen(navController: NavController, viewModel: RecipeContentViewM
                     ),
                 ) {
                     if (viewModel.isLoading) {
-                        androidx.compose.material3.CircularProgressIndicator(
+                        CircularProgressIndicator(
                             color = Color.White,
                             modifier = Modifier
                                 .size(20.dp)

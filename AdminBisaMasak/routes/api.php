@@ -25,7 +25,10 @@ Route::get('/konten-tutorial', [KontenTutorialApiController::class, 'index']);
 Route::get('/search', [KontenTutorialApiController::class, 'search']);
 Route::get('/stats/konten-resep', [KontenTutorialApiController::class, 'getMonthlyStats']);
 Route::post('/konten-tutorial', [KontenTutorialApiController::class, 'storeRecipe']);
+Route::get('/resep/{id}', [KontenTutorialApiController::class, 'show']);
 Route::patch('konten-tutorial/{id}/status', [KontenTutorialApiController::class, 'updateStatus']);
+Route::post('konten-tutorial/{id}/update', [KontenTutorialApiController::class, 'updateRecipe']);
+Route::delete('/konten-resep/{id}', [KontenTutorialApiController::class, 'destroy']);
 
 // Report Content
 Route::post('/laporan-konten', [LaporanKontenApiController::class, 'storeLaporan']);

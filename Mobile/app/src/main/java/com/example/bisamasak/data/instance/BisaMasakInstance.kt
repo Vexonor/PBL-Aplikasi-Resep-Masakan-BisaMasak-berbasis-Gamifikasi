@@ -19,7 +19,7 @@ object BisaMasakInstance {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.100.133:8000/api/")
+        .baseUrl("http://192.168.100.134:8000/api/")
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

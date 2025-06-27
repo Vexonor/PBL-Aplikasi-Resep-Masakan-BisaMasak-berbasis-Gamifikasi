@@ -121,11 +121,18 @@ fun Navigation() {
             composable("setting_screen") { SettingContent(navController = navController) }
             composable("account_screen") { AccountContent(navController = navController) }
             composable("recently_screen") { RecentlyContent(navController = navController) }
-            composable("add_content_screen") { backStackEntry ->
+            composable("add_content_screen?mode={mode}&id={id}" ,
+                arguments = listOf(
+                    navArgument("mode") { defaultValue = "create" },
+                    navArgument("id") { nullable = true }
+                )) { backStackEntry ->
+                val mode = backStackEntry.arguments?.getString("mode") ?: "create"
+                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+
                 val activity = LocalContext.current as Activity
                 val sharedViewModel: RecipeContentViewModel = viewModel(viewModelStoreOwner = activity as ViewModelStoreOwner)
-                AddContentScreen(navController = navController, viewModel = sharedViewModel)
 
+                AddContentScreen(navController = navController, viewModel = sharedViewModel, isEditMode = mode == "edit", editedRecipeId = id)
             }
 
             //        Ingredient Detail Screen

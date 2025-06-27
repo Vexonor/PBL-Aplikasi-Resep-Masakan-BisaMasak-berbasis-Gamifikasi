@@ -46,6 +46,9 @@ class RecipeContentViewModel : ViewModel() {
     var uploadProgress by mutableFloatStateOf(0f)
 
     var isLoading by mutableStateOf(false)
+    var loadingState by mutableStateOf(LoadingState.Idle)
+    var navigateAfterUpload by mutableStateOf(false)
+        private set
     var errorMessage by mutableStateOf<String?>(null)
     var uploadSuccessMessage by mutableStateOf<String?>(null)
     var uploadErrorMessage by mutableStateOf<String?>(null)
@@ -55,6 +58,10 @@ class RecipeContentViewModel : ViewModel() {
     var ingredientList by  mutableStateOf<List<IngredientResponse>>(emptyList())
     val langkahInputs: List<LangkahInput> = _langkahInputs
     var addRecipeState by mutableStateOf(AddRecipeState())
+
+//    Edit Content
+    var isEditMode by mutableStateOf(false)
+    var editingRecipeId: Int? = null
 
     fun recipe() {
         viewModelScope.launch {
@@ -71,18 +78,21 @@ class RecipeContentViewModel : ViewModel() {
         }
     }
 
-    fun recipeDetails(recipeId: Int) {
+    fun recipeDetails(recipeId: Int, forEdit: Boolean = false) {
         viewModelScope.launch {
-            isLoading = true
-            errorMessage = null
+            if (forEdit) {
+                loadingState = LoadingState.Editing
+            } else {
+                loadingState = LoadingState.Loading
+            }
+
             try {
-                val response = BisaMasakInstance.bisaMasakService.recipeContent()
-                _recipeList.value = response
-                selectedRecipe = response.find { it.id_resep == recipeId }
+                val response = BisaMasakInstance.bisaMasakService.getRecipeById(recipeId)
+                selectedRecipe = response
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
             } finally {
-                isLoading = false
+                loadingState = LoadingState.Idle
             }
         }
     }
@@ -128,7 +138,7 @@ class RecipeContentViewModel : ViewModel() {
         }
     }
 
-//    Store Recipe
+    //    Store Recipe
     fun loadIngredient() {
         viewModelScope.launch {
             try {
@@ -265,6 +275,7 @@ class RecipeContentViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     uploadSuccessMessage = "Resep berhasil diunggah!"
+                    navigateAfterUpload = true
                     recipe()
                     var attempts = 0
                     val maxAttempts = 20
@@ -280,12 +291,128 @@ class RecipeContentViewModel : ViewModel() {
                         recipe()
                         attempts++
                     }
-                    recipe()
                 } else {
                     uploadErrorMessage = response.errorBody()?.string() ?: "Gagal mengunggah resep."
                 }
             } catch (e: Exception) {
                 uploadErrorMessage = e.localizedMessage ?: "Terjadi kesalahan saat upload."
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+//    Update Recipe
+    fun updateRecipeContent(context: Context) {
+    viewModelScope.launch {
+        isLoading = true
+        uploadSuccessMessage = null
+        uploadErrorMessage = null
+
+        try {
+            val recipeId = editingRecipeId ?: return@launch
+            val currentLangkah = _langkahInputs.toList()
+            addRecipeState = addRecipeState.copy(
+                bahan = ingredientInputs.toList(),
+                langkah = currentLangkah
+            )
+
+            val thumbnailPart = addRecipeState.thumbnail?.let {
+                prepareFilePart("thumbnail", it, context)
+            }
+
+            val videoPart = addRecipeState.video?.let {
+                prepareFilePart("video_tutorial", it, context)
+            }
+
+            val response = BisaMasakInstance.bisaMasakService.updateContentRecipe(
+                id = recipeId,
+                judul = stringPart(addRecipeState.judul),
+                deskripsi = stringPart(addRecipeState.deskripsi),
+                durasi = stringPart(addRecipeState.durasi),
+                kategori = stringPart(addRecipeState.kategori),
+                thumbnail = thumbnailPart,
+                video_tutorial = videoPart,
+                bahan = createBahanParts(addRecipeState.bahan),
+                langkah = createLangkahParts(addRecipeState.langkah, context)
+            )
+
+            if (response.isSuccessful) {
+                uploadSuccessMessage = "Konten berhasil diperbarui!"
+                isEditMode = false
+                editingRecipeId = null
+                recipe()
+            } else {
+                uploadErrorMessage = response.errorBody()?.string() ?: "Gagal memperbarui konten."
+            }
+        } catch (e: Exception) {
+            uploadErrorMessage = e.localizedMessage ?: "Terjadi kesalahan saat update."
+        } finally {
+            isLoading = false
+        }
+    }
+}
+
+    fun startEditingContent(content: RecipeContentResponse) {
+        if (addRecipeState.judul.isNotBlank()) return
+
+        isEditMode = true
+        editingRecipeId = content.id_resep
+
+        addRecipeState = addRecipeState.copy(
+            judul = content.judul_konten,
+            deskripsi = content.deskripsi_konten,
+            durasi = content.durasi.toString(),
+            kategori = content.kategori
+        )
+
+        if (ingredientInputs.isEmpty()) {
+            content.bahan_resep_table.forEach {
+                ingredientInputs.add(
+                    IngredientInput(
+                        idBahan = it.id_bahan,
+                        namaBahan = it.bahan_masak_table?.nama_bahan ?: "",
+                        jumlah = it.jumlah_bahan,
+                        satuan = it.satuan_bahan
+                    )
+                )
+            }
+        }
+
+        if (_langkahInputs.isEmpty()) {
+            content.langkah_langkah_table.forEachIndexed { index, langkah ->
+                _langkahInputs.add(
+                    LangkahInput(
+                        nomor = index + 1,
+                        deskripsi = langkah.deskripsi_langkah,
+                        imageUri = null,
+                        existingImageUrl = langkah.gambar_langkah
+                    )
+                )
+            }
+        }
+
+        addRecipeState = addRecipeState.copy(
+            bahan = ingredientInputs.toList(),
+            langkah = _langkahInputs.toList()
+        )
+    }
+
+//    Delete Recipe
+    fun deleteRecipe(recipeId: Int, onSuccess: () -> Unit = {}, onError: (String) -> Unit = {}) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                val response = BisaMasakInstance.bisaMasakService.deleteContentRecipe(recipeId)
+                if (response.isSuccessful) {
+                    _recipeList.value = _recipeList.value.filterNot { it.id_resep == recipeId }
+                    onSuccess()
+                } else {
+                    val errorMsg = response.errorBody()?.string() ?: "Gagal menghapus resep"
+                    onError(errorMsg)
+                }
+            } catch (e: Exception) {
+                onError(e.localizedMessage ?: "Terjadi kesalahan saat menghapus resep")
             } finally {
                 isLoading = false
             }
@@ -321,6 +448,15 @@ class RecipeContentViewModel : ViewModel() {
                         )
                     )
                 }
+
+                if (langkah.imageUri == null && langkah.existingImageUrl != null) {
+                    add(
+                        MultipartBody.Part.createFormData(
+                            "langkah[$index][existing_image_url]",
+                            langkah.existingImageUrl
+                        )
+                    )
+                }
             }
         }
     }
@@ -328,6 +464,15 @@ class RecipeContentViewModel : ViewModel() {
     fun clearUploadSuccessMessage() {
         uploadSuccessMessage = null
     }
+
+    fun resetAddRecipe() {
+        addRecipeState = AddRecipeState()
+        ingredientInputs.clear()
+        _langkahInputs.clear()
+        isEditMode = false
+        editingRecipeId = null
+    }
+
 
 }
 
@@ -352,5 +497,13 @@ data class IngredientInput(
 data class LangkahInput(
     val nomor: Int,
     var deskripsi: String = "",
-    val imageUri: Uri? = null
+    val imageUri: Uri? = null,
+    val existingImageUrl: String? = null
 )
+
+enum class LoadingState {
+    Idle,
+    Loading,
+    Editing,
+    Uploading
+}

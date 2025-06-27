@@ -59,7 +59,27 @@ interface BisaMasakService {
         @Body body: Map<String, String>
     ): Response<Unit>
 
-//    Ingredient
+    @GET("resep/{id}")
+    suspend fun getRecipeById(@Path("id") id: Int): RecipeContentResponse
+
+    @Multipart
+    @POST("konten-tutorial/{id}/update")
+    suspend fun updateContentRecipe(
+        @Path("id") id: Int,
+        @Part("judul_konten") judul: RequestBody,
+        @Part("deskripsi_konten") deskripsi: RequestBody,
+        @Part("durasi") durasi: RequestBody,
+        @Part("kategori") kategori: RequestBody,
+        @Part thumbnail: MultipartBody.Part?,
+        @Part video_tutorial: MultipartBody.Part?,
+        @Part bahan: List<MultipartBody.Part>,
+        @Part langkah: List<MultipartBody.Part>
+    ): Response<ResponseBody>
+
+    @DELETE("konten-resep/{id}")
+    suspend fun deleteContentRecipe(@Path("id") id: Int): Response<Unit>
+
+    //    Ingredient
     @GET("bahan-masak")
     suspend fun ingredient(): List<IngredientResponse>
     @GET("bahan-masak/{id_bahan}")
