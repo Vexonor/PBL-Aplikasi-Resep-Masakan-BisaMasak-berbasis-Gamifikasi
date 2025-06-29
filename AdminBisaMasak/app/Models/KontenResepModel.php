@@ -65,6 +65,13 @@ class KontenResepModel extends Model
         );
     }
 
+    public function SavedTable()
+    {
+        return $this->belongsToMany(PenggunaModel::class, 'simpan_resep', 'id_resep', 'id_pengguna')
+            ->withTimestamps()
+            ->withPivot('id_simpan');
+    }
+
     public function scopeJudulKonten(Builder $query, array $keywords): Builder
     {
         return $query->where(function ($q) use ($keywords) {

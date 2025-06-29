@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\BahanMasakApiController;
 use App\Http\Controllers\Api\KomentarApiController;
 use App\Http\Controllers\Api\KontenTutorialApiController;
 use App\Http\Controllers\Api\LaporanKontenApiController;
+use App\Http\Controllers\Api\SimpanResepApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,13 @@ Route::delete('/konten-resep/{id}', [KontenTutorialApiController::class, 'destro
 
 // Report Content
 Route::post('/laporan-konten', [LaporanKontenApiController::class, 'storeLaporan']);
+
+// Save Content
+Route::get('/simpan-resep', [SimpanResepApiController::class, 'index']);
+Route::post('/simpan-resep', [SimpanResepApiController::class, 'store']);
+Route::delete('/simpan-resep', [SimpanResepApiController::class, 'destroy']);
+Route::get('/simpan-resep/{id_user}', [SimpanResepApiController::class, 'show']);
+Route::get('/cek-simpan', [SimpanResepApiController::class, 'check']);
 
 // Comment
 Route::get('/komentar', [KomentarApiController::class, 'index']);

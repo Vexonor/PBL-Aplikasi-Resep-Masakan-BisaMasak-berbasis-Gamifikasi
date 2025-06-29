@@ -65,4 +65,14 @@ class UserModel extends Authenticatable
     {
         return $this->hasMany(KomentarModel::class, 'id_user', 'id_user');
     }
+
+    public function savedRecipes()
+    {
+        return $this->hasMany(SimpanResepModel::class, 'id_user', 'id_user')
+            ->with([
+                'KontenResepTable' => function ($query) {
+                    $query->with(['BahanResepTable', 'GiziTable', 'LangkahLangkahTable']);
+                }
+            ]);
+    }
 }

@@ -341,6 +341,7 @@ class RecipeContentViewModel : ViewModel() {
                 uploadSuccessMessage = "Konten berhasil diperbarui!"
                 isEditMode = false
                 editingRecipeId = null
+                navigateAfterUpload = true
                 recipe()
             } else {
                 uploadErrorMessage = response.errorBody()?.string() ?: "Gagal memperbarui konten."
@@ -473,6 +474,9 @@ class RecipeContentViewModel : ViewModel() {
         editingRecipeId = null
     }
 
+    fun resetNavigateAfterUpload() {
+        navigateAfterUpload = false
+    }
 
 }
 

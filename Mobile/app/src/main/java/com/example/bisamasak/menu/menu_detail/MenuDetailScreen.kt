@@ -24,6 +24,8 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -38,6 +40,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -67,13 +70,16 @@ import com.example.bisamasak.data.utils.videoUrl
 import com.example.bisamasak.data.viewModel.CommentViewModel
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.data.viewModel.ReportViewModel
+import com.example.bisamasak.data.viewModel.SaveRecipeViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedBoxWithConstraintsScope")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedBoxWithConstraintsScope",
+    "UnrememberedGetBackStackEntry"
+)
 @Composable
 fun MenuDetailScreen(
     recipeId: Int,
@@ -88,6 +94,10 @@ fun MenuDetailScreen(
     var userId by remember { mutableStateOf(-1L) }
     var isUserLoaded by remember { mutableStateOf(false) }
     val userName = remember { mutableStateOf("") }
+
+//    Saved Recipe
+    val saveRecipeViewModel: SaveRecipeViewModel = viewModel()
+    val isSaved by saveRecipeViewModel.isSaved.collectAsState()
 
 //    Recipe Content
     val menudetails = viewModel.selectedRecipe
@@ -151,6 +161,12 @@ fun MenuDetailScreen(
         }
     }
 
+    LaunchedEffect(isUserLoaded, recipeId) {
+        if (isUserLoaded && userId != -1L) {
+            saveRecipeViewModel.checkSaved(userId.toInt(), recipeId)
+        }
+    }
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -180,31 +196,64 @@ fun MenuDetailScreen(
                     }
                 },
                 actions = {
-                    if (menudetails?.status_konten == "Terunggah") {
-                    Button(
-                        onClick = { showDialog = true },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            disabledContentColor = Color.Transparent
-                        ),
-                        contentPadding = PaddingValues(0.dp),
-                        elevation = null
+                    if (menudetails?.status_konten == "Terunggah" && menudetails.id_user != userId.toInt()) {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_warning),
-                            contentDescription = "Report",
-                            modifier = Modifier.size(24.dp)
-                        )
+//                        Report Button
+                        Button(
+                            onClick = { showDialog = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                disabledContentColor = Color.Transparent
+                            ),
+                            contentPadding = PaddingValues(0.dp),
+                            elevation = null
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_warning),
+                                contentDescription = "Report",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+//                        Save Button
+                        Button(
+                            onClick = {
+                                if (isSaved) {
+                                    saveRecipeViewModel.deleteSavedRecipe(userId.toInt(), recipeId)
+                                    Toast.makeText(context, "Dihapus dari simpanan", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    saveRecipeViewModel.saveRecipe(userId.toInt(), recipeId)
+                                    Toast.makeText(context, "Disimpan ke favorit", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                disabledContentColor = Color.Transparent
+                            ),
+                            contentPadding = PaddingValues(0.dp),
+                            elevation = null
+                        ) {
+                            Icon(
+                                imageVector = if (isSaved) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = "Save",
+                                tint = Color(0xFFED453A),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
-                    } else {
+                    } else if (menudetails?.status_konten != "Terunggah" && menudetails?.id_user == userId.toInt()) {
                         Button(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .width(100.dp),
                             onClick = {
-                                menudetails?.let { recipe ->
+                                menudetails.let { recipe ->
                                     viewModel.uploadContent(recipe.id_resep)
                                     Toast.makeText(context, "Mengunggah konten...", Toast.LENGTH_SHORT).show()
                                 }
@@ -240,6 +289,8 @@ fun MenuDetailScreen(
                     onEditClick = {
                         menudetails.let { content ->
                             viewModel.startEditingContent(content)
+                            viewModel.resetNavigateAfterUpload()
+                            viewModel.clearUploadSuccessMessage()
                             navController.navigate("add_content_screen?mode=edit&id=${menudetails.id_resep}")
                         }
                     },

@@ -153,7 +153,7 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                         0 -> navController.navigate("home_screen")
                         1 -> navController.navigate("menu_screen")
                         2 -> navController.navigate("ingredient_screen")
-                        3 -> navController.navigate("profile_screen")
+                        3 -> navController.navigate("profile_screen?tab=all")
                     }
                 }
             )

@@ -1,14 +1,18 @@
 package com.example.bisamasak.data.service
 
+import com.example.bisamasak.data.dataContainer.CheckSaveRecipe
 import com.example.bisamasak.data.dataContainer.CommentResponse
 import com.example.bisamasak.data.dataContainer.CommentStore
 import com.example.bisamasak.data.dataContainer.IngredientResponse
+import com.example.bisamasak.data.dataContainer.ListSavedResponse
 import com.example.bisamasak.data.dataContainer.LoginRequest
 import com.example.bisamasak.data.dataContainer.LoginResponse
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.dataContainer.RegisterRequest
 import com.example.bisamasak.data.dataContainer.RegisterResponse
 import com.example.bisamasak.data.dataContainer.ReportResponse
+import com.example.bisamasak.data.dataContainer.SaveRecipeRequest
+import com.example.bisamasak.data.dataContainer.SaveRecipeResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -16,6 +20,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -88,6 +93,24 @@ interface BisaMasakService {
 //    Report Content
     @POST("laporan-konten")
     suspend fun reportContent(@Body report: ReportResponse): Response<Unit>
+
+//    Save Content
+    @POST("simpan-resep")
+    suspend fun saveRecipe(@Body body: SaveRecipeRequest): Response<SaveRecipeResponse>
+
+    @HTTP(method = "DELETE", path = "simpan-resep", hasBody = true)
+    suspend fun deleteSavedRecipe(@Body body: SaveRecipeRequest): Response<SaveRecipeResponse>
+
+    @GET("cek-simpan")
+    suspend fun checkSaved(
+        @Query("id_user") userId: Int,
+        @Query("id_resep") recipeId: Int
+    ): Response<CheckSaveRecipe>
+
+    @GET("simpan-resep/{id_user}")
+    suspend fun getSavedRecipes(
+        @Path("id_user") userId: Int
+    ): Response<ListSavedResponse>
 
 //    Comment
     @GET("komentar/resep/{id_resep}")

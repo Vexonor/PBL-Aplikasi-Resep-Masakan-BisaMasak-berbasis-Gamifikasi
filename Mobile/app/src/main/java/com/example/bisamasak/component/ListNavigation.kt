@@ -109,6 +109,7 @@ fun Navigation() {
                     "recipe" -> ProfileTabs.Recipe
                     "saved" -> ProfileTabs.Saved
                     "viewed" -> ProfileTabs.Viewed
+                    "all" -> ProfileTabs.All_Profile
                     else -> ProfileTabs.All_Profile
                 }
                 ProfileScreen(

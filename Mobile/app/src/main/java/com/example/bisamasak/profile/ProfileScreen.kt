@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,6 +54,7 @@ import com.example.bisamasak.component.ProfilePortraitTab
 import com.example.bisamasak.component.ProfileLandscapeTab
 import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
+import com.example.bisamasak.data.viewModel.SaveRecipeViewModel
 import com.example.bisamasak.home.HeroSection
 import com.example.bisamasak.profile.all_profile.AllProfileContent
 import com.example.bisamasak.profile.viewed.LastViewedContent
@@ -80,19 +82,23 @@ fun ProfileScreen(navController: NavController, initialTab: ProfileTabs = Profil
 fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, initialTab: ProfileTabs = ProfileTabs.Recipe) {
     val context = LocalContext.current
     val recipeViewModel: RecipeContentViewModel = viewModel(viewModelStoreOwner = LocalContext.current as ViewModelStoreOwner)
+    val saveRecipeViewModel: SaveRecipeViewModel = viewModel(viewModelStoreOwner = LocalContext.current as ViewModelStoreOwner)
+    val savedRecipes by saveRecipeViewModel.savedRecipes.collectAsState()
     val dataStoreManager = remember { DataStoreManager(context) }
     val recipeList by recipeViewModel.recipeList.collectAsState()
     val allRecipeList by recipeViewModel.allRecipeList.collectAsState()
 
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(initialPage = initialTab.ordinal, pageCount = { ProfileTabs.entries.size })
-    val selectedIndex by remember { derivedStateOf { pagerState.currentPage } }
+    val pagerState = key(initialTab) {
+        rememberPagerState(initialPage = initialTab.ordinal, pageCount = { ProfileTabs.entries.size })
+    }
 
     var userId by remember { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(Unit) {
         userId = dataStoreManager.getUserId().toInt()
         recipeViewModel.recipe()
+        userId?.let { saveRecipeViewModel.getSavedRecipes(it) }
     }
 
     LaunchedEffect(recipeViewModel.uploadingRecipe, allRecipeList) {
@@ -158,11 +164,11 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
         },
         bottomBar = {
             BottomBar(
-                selectedIndex = selectedIndex,
+                selectedIndex = 3,
                 onItemSelected = { index ->
                     scope.launch {
                         if (index == 3) {
-                            pagerState.animateScrollToPage(ProfileTabs.Recipe.ordinal)
+                            pagerState.animateScrollToPage(ProfileTabs.All_Profile.ordinal)
                         } else {
                             when (index) {
                                 0 -> navController.navigate("home_screen")
@@ -255,11 +261,20 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
                     }
 
                     ProfileTabs.Saved -> {
-                        SaveRecipeContent(
-                            pagerState = pagerState,
-                            scope = scope,
-                            windowSize = windowSize
-                        )
+                        userId?.let {
+                            val selectedIndex = 1
+                            LaunchedEffect(it, selectedIndex) {
+                                if (ProfileTabs.entries[selectedIndex] == ProfileTabs.Saved) {
+                                    saveRecipeViewModel.getSavedRecipes(it)
+                                }
+                            }
+
+                            SaveRecipeContent(
+                                navController = navController,
+                                windowSize = windowSize,
+                                savedRecipes = savedRecipes.sortedByDescending { it.saved_at }
+                            )
+                        }
                     }
 
                     ProfileTabs.Viewed -> {
