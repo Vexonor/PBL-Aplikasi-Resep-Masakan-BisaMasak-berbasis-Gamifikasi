@@ -34,7 +34,7 @@ class LoginViewModel : ViewModel() {
 
                     user?.let {
                         dataStoreManager.setUserId(it.id.toLong())
-                        dataStoreManager.setUserName(it.nama)
+                        dataStoreManager.setUser(it)
                         dataStoreManager.setLogin(true)
                     }
                 } else {

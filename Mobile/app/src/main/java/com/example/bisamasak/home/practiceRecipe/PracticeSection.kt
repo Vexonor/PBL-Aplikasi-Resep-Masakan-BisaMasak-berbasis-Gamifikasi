@@ -1,7 +1,6 @@
 package com.example.bisamasak.home.practiceRecipe
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,9 +30,15 @@ import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun PracticeRecipe(navController: NavController, modifier: Modifier = Modifier, windowSize: WindowSizeClass, viewModel: RecipeContentViewModel) {
+fun PracticeRecipe(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
+    viewModel: RecipeContentViewModel,
+    userLevel: Int
+) {
     val recipes = viewModel.recipeList.collectAsState().value
-    val practiceRecipe = recipes.filter { (it.durasi ?: 0) < 20 }
+    val practiceRecipe = recipes.filter { it.durasi < 20 }
     val isLoading = viewModel.isLoading
 
     Column (
@@ -93,10 +97,10 @@ fun PracticeRecipe(navController: NavController, modifier: Modifier = Modifier, 
             if (practiceRecipe.isNotEmpty()) {
                 when(windowSize.widthSizeClass) {
                     WindowWidthSizeClass.Compact -> {
-                        PortraitPractice(practiceRecipe, onRecipeClick)
+                        PortraitPractice(practiceRecipe, onRecipeClick, userLevel)
                     }
                     WindowWidthSizeClass.Expanded -> {
-                        LandscapePractice(practiceRecipe, onRecipeClick)
+                        LandscapePractice(practiceRecipe, onRecipeClick, userLevel)
                     }
                 }
             } else {
@@ -111,8 +115,10 @@ fun PracticeRecipe(navController: NavController, modifier: Modifier = Modifier, 
 }
 
 @Composable
-fun PortraitPractice(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
-    val recipe = recipes.shuffled().take(2)
+fun PortraitPractice(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
+    val recipe = recipes
+        .sortedWith(compareBy({ it.terbuka_di_level }, { it.id_resep }))
+        .take(2)
     if (recipe.isEmpty()) {
         Text(
             text = "Belum ada resep praktis yang tersedia",
@@ -127,21 +133,25 @@ fun PortraitPractice(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) 
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         recipe.forEach { recipe ->
+            val unlocked = userLevel >= recipe.terbuka_di_level
             RecipeCard(
                 foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable{ onRecipeClick(recipe.id_resep) }
+                isUnlocked = unlocked,
+                requiredLevel = recipe.terbuka_di_level,
+                onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                modifier = Modifier.weight(1f)
             )
         }
     }
 }
 
 @Composable
-fun LandscapePractice(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
-    val recipe = recipes.shuffled().take(4)
+fun LandscapePractice(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
+    val recipe = recipes
+        .sortedWith(compareBy({ it.terbuka_di_level }, { it.id_resep }))
+        .take(4)
     if (recipe.isEmpty()) {
         Text(
             text = "Belum ada resep praktis yang tersedia",
@@ -156,13 +166,15 @@ fun LandscapePractice(recipes: List<RecipeContentResponse>, onRecipeClick: (Int)
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         recipe.forEach { recipe ->
+            val unlocked = userLevel >= recipe.terbuka_di_level
             RecipeCard(
                 foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable{ onRecipeClick(recipe.id_resep) }
+                isUnlocked = unlocked,
+                requiredLevel = recipe.terbuka_di_level,
+                onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                modifier = Modifier.weight(1f)
             )
         }
     }

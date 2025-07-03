@@ -1,7 +1,6 @@
 package com.example.bisamasak.ingredient
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,7 +62,8 @@ fun IngredientDetailScreen(
     ingredientId: Int,
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: IngredientViewModel = viewModel()
+    viewModel: IngredientViewModel = viewModel(),
+    userLevel: Int
 ) {
 //    Sheet State
     val sheetState = rememberModalBottomSheetState()
@@ -268,13 +268,15 @@ fun IngredientDetailScreen(
                                     ) {
                                         val relatedRecipe = viewModel.relatedRecipes
                                         items(relatedRecipe.take(6)) { recipe ->
+                                            val unlocked = userLevel >= recipe.terbuka_di_level
                                             RecipeCard(
                                                 foodImg = recipe.imageUrl,
                                                 foodName = recipe.judul_konten,
                                                 duration = recipe.durasi.toString(),
-                                                modifier = Modifier.clickable {
-                                                    navController.navigate("recipe_detail/${recipe.id_resep}")
-                                                }
+                                                isUnlocked = unlocked,
+                                                requiredLevel = recipe.terbuka_di_level,
+                                                onClick = if (unlocked) { {  navController.navigate("recipe_detail/${recipe.id_resep}") } } else null,
+                                                modifier = Modifier.weight(1f)
                                             )
                                         }
                                     }

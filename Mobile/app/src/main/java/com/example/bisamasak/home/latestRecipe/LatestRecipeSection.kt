@@ -1,7 +1,6 @@
 package com.example.bisamasak.home.latestRecipe
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +31,13 @@ import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun LatestRecipe(navController: NavController, modifier: Modifier = Modifier, windowSize: WindowSizeClass, viewModel: RecipeContentViewModel) {
+fun LatestRecipe(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
+    viewModel: RecipeContentViewModel,
+    userLevel: Int
+) {
     val recipes = viewModel.recipeList.collectAsState().value
     val latestRecipe = recipes.filter { createdToday(it.created_at) }
     val isLoading = viewModel.isLoading
@@ -93,10 +98,10 @@ fun LatestRecipe(navController: NavController, modifier: Modifier = Modifier, wi
             if (latestRecipe.isNotEmpty()) {
                 when(windowSize.widthSizeClass) {
                     WindowWidthSizeClass.Compact -> {
-                        PortraitLatest(latestRecipe, onRecipeClick)
+                        PortraitLatest(latestRecipe, onRecipeClick, userLevel)
                     }
                     WindowWidthSizeClass.Expanded -> {
-                        LandscapeLatest(latestRecipe, onRecipeClick)
+                        LandscapeLatest(latestRecipe, onRecipeClick, userLevel)
                     }
                 }
             } else {
@@ -111,8 +116,10 @@ fun LatestRecipe(navController: NavController, modifier: Modifier = Modifier, wi
 }
 
 @Composable
-fun PortraitLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
-    val recipe = recipes.shuffled().take(2)
+fun PortraitLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
+    val recipe = recipes
+        .sortedWith(compareBy({ it.terbuka_di_level }, { it.id_resep }))
+        .take(2)
     if (recipe.isEmpty()) {
         Text(
             text = "Belum ada resep praktis diupload hari ini",
@@ -127,21 +134,25 @@ fun PortraitLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) ->
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         recipe.forEach { recipe ->
+            val unlocked = userLevel >= recipe.terbuka_di_level
             RecipeCard(
                 foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable{ onRecipeClick(recipe.id_resep) }
+                isUnlocked = unlocked,
+                requiredLevel = recipe.terbuka_di_level,
+                onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                modifier = Modifier.weight(1f)
             )
         }
     }
 }
 
 @Composable
-fun LandscapeLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
-    val recipe = recipes.shuffled().take(4)
+fun LandscapeLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
+    val recipe = recipes
+        .sortedWith(compareBy({ it.terbuka_di_level }, { it.id_resep }))
+        .take(4)
     if (recipe.isEmpty()) {
         Text(
             text = "Belum ada resep praktis diupload hari ini",
@@ -156,13 +167,15 @@ fun LandscapeLatest(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         recipe.forEach { recipe ->
+            val unlocked = userLevel >= recipe.terbuka_di_level
             RecipeCard(
                 foodImg = recipe.imageUrl,
                 foodName = recipe.judul_konten,
                 duration = recipe.durasi.toString(),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable{ onRecipeClick(recipe.id_resep) }
+                isUnlocked = unlocked,
+                requiredLevel = recipe.terbuka_di_level,
+                onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                modifier = Modifier.weight(1f)
             )
         }
     }

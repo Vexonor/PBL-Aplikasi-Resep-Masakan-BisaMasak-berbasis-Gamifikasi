@@ -25,7 +25,7 @@ import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun HeroSection(level: Int, modifier: Modifier = Modifier) {
+fun HeroSection(level: Int, exp: Float, maxExp: Float, modifier: Modifier = Modifier) {
     Surface (
         modifier = modifier
             .fillMaxWidth()
@@ -65,7 +65,7 @@ fun HeroSection(level: Int, modifier: Modifier = Modifier) {
                         contentDescription = "Exp Icon",
                         modifier = Modifier.size(24.dp)
                     )
-                    ExpBar(400f, 1000f)
+                    ExpBar(exp, maxExp)
                 }
             }
         }
@@ -91,9 +91,9 @@ fun ExpBar(exp: Float, maxExp: Float) {
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
                 .height(8.dp)
-                .background(Color.Gray, shape = RoundedCornerShape(24.dp)),
+                .background(Color.LightGray, shape = RoundedCornerShape(24.dp)),
             color = Color(0xE6ED453A),
-            trackColor = Color.Gray,
+            trackColor = Color.LightGray,
         )
     }
 }

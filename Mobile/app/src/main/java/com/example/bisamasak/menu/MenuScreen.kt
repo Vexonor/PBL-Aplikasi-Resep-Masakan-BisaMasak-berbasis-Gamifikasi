@@ -34,6 +34,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ import com.example.bisamasak.component.BottomBar
 import com.example.bisamasak.component.LandscapeTab
 import com.example.bisamasak.component.MenuTabs
 import com.example.bisamasak.component.PortraitTab
+import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.menu.all_content.AllContent
 import com.example.bisamasak.menu.breakfast.BreakfastContent
 import com.example.bisamasak.menu.dinner.DinnerContent
@@ -76,6 +78,8 @@ fun MenuActivity(navController: NavController) {
     val context = LocalContext.current
     val activity = context as Activity
     val windowSizeClass = calculateWindowSizeClass(activity = activity)
+    val dataStore = remember { DataStoreManager(context) }
+    val userLevel by dataStore.userLevelFlow.collectAsState(initial = 1)
 
     Surface(
         modifier = Modifier
@@ -83,14 +87,15 @@ fun MenuActivity(navController: NavController) {
     ) {
         MenuComponent(
             navController = navController,
-            windowSize = windowSizeClass
+            windowSize = windowSizeClass,
+            userLevel = userLevel
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
+fun MenuComponent(navController: NavController, windowSize: WindowSizeClass, userLevel: Int) {
     var selectedIndex by remember { mutableIntStateOf(1) }
 
 //    Pager State
@@ -190,7 +195,8 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                         AllContent(
                             pagerState = pagerState,
                             scope = scope,
-                            navController = navController
+                            navController = navController,
+                            userLevel = userLevel
                         )
                     }
                     MenuTabs.Breakfast -> {
@@ -198,7 +204,8 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
-                            }
+                            },
+                            userLevel = userLevel
                         )
                     }
                     MenuTabs.Lunch -> {
@@ -206,7 +213,8 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
-                            }
+                            },
+                            userLevel = userLevel
                         )
                     }
                     MenuTabs.Snack -> {
@@ -214,7 +222,8 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
-                            }
+                            },
+                            userLevel = userLevel
                         )
                     }
                     MenuTabs.Dinner -> {
@@ -222,7 +231,8 @@ fun MenuComponent(navController: NavController, windowSize: WindowSizeClass) {
                             windowSize = windowSize,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
-                            }
+                            },
+                            userLevel = userLevel
                         )
                     }
                 }

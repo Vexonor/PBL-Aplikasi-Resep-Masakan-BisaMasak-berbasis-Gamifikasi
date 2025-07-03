@@ -1,6 +1,5 @@
 package com.example.bisamasak.menu.menu_detail
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +18,8 @@ import com.example.bisamasak.ui.theme.OutfitTypography
 @Composable
 fun SimilarRecipeSection(
     similarRecipes: List<RecipeContentResponse>,
-    onRecipeClick: (Int) -> Unit
+    onRecipeClick: (Int) -> Unit,
+    userLevel: Int
 ) {
     Column(
         modifier = Modifier
@@ -39,16 +39,18 @@ fun SimilarRecipeSection(
                 color = Color.Gray
             )
         } else {
+            val sortedRecipes = similarRecipes.sortedBy { it.terbuka_di_level }
             LazyRow {
-                items(similarRecipes) { recipe ->
+                items(sortedRecipes) { recipe ->
+                    val unlocked = userLevel >= recipe.terbuka_di_level
                     RecipeCard(
                         foodImg = recipe.imageUrl,
                         foodName = recipe.judul_konten,
                         duration = recipe.durasi.toString(),
-                        modifier = Modifier
-                            .clickable {
-                                onRecipeClick(recipe.id_resep)
-                            }
+                        isUnlocked = unlocked,
+                        requiredLevel = recipe.terbuka_di_level,
+                        onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }

@@ -4,13 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -19,35 +18,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.bisamasak.component.EmptyContent
 import com.example.bisamasak.component.RecipeCard
-import com.example.bisamasak.data.provider.DataProvider
+import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.ui.theme.OutfitTypography
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun LastViewedContent(
-    pagerState: PagerState,
-    scope: CoroutineScope,
-    windowSize: WindowSizeClass
+    navController: NavController,
+    windowSize: WindowSizeClass,
+    recipes: List<RecipeContentResponse>,
+    userLevel: Int
 ) {
+    val onRecipeClick: (Int) -> Unit = { recipeId ->
+        navController.navigate("recipe_detail/$recipeId")
+    }
+    if (recipes.isNotEmpty()) {
     when(windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            PortraitLastViewedContent()
+            PortraitLastViewedContent(recipes, onRecipeClick, userLevel)
         }
         WindowWidthSizeClass.Expanded -> {
-            LandscapeLastViewedContent()
+            LandscapeLastViewedContent(recipes, onRecipeClick, userLevel)
         }
+    }
+    } else {
+        EmptyContent(text = "Anda belum melihat resep apapun")
     }
 }
 
 @Composable
-fun PortraitLastViewedContent() {
+fun PortraitLastViewedContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
         modifier = Modifier
+            .fillMaxHeight()
             .background(Color.White)
             .padding(horizontal = 24.dp)
     ) {
@@ -68,18 +78,30 @@ fun PortraitLastViewedContent() {
                 )
             }
         }
-        items(DataProvider.ResepTerakhir) { recipe ->
-            RecipeCard(
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
-            )
+        items(recipes.size) { index ->
+            val recipe = recipes[index]
+            val unlocked = userLevel >= recipe.terbuka_di_level
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = recipe.imageUrl,
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun LandscapeLastViewedContent() {
+fun LandscapeLastViewedContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -106,12 +128,24 @@ fun LandscapeLastViewedContent() {
                 )
             }
         }
-        items(DataProvider.ResepTerakhir) { recipe ->
-            RecipeCard(
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
-            )
+        items(recipes.size) { index ->
+            val recipe = recipes[index]
+            val unlocked = userLevel >= recipe.terbuka_di_level
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = recipe.imageUrl,
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }

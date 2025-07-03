@@ -12,15 +12,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.bisamasak.component.ProfileTabs
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
-import com.example.bisamasak.data.provider.DataProvider
+import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.ui.theme.OutfitTypography
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -30,8 +30,17 @@ fun MyRecipeSection(
     modifier: Modifier = Modifier,
     windowSize: WindowSizeClass,
     pagerState: PagerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    recipeList: List<RecipeContentResponse>,
+    navController: NavController,
+    userLevel: Int
 ) {
+    val onRecipeClick: (Int) -> Unit = { recipeId ->
+        navController.navigate("recipe_detail/$recipeId")
+    }
+    val combinedList = recipeList
+        .distinctBy { it.created_at }
+
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -65,54 +74,63 @@ fun MyRecipeSection(
                 )
             }
         }
+        if (combinedList.isNotEmpty()) {
         when(windowSize.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                PortraitMyRecipeSection()
+                PortraitMyRecipeSection(combinedList, onRecipeClick, userLevel)
             }
             WindowWidthSizeClass.Expanded -> {
-                LandscapeMyRecipeSection()
+                LandscapeMyRecipeSection(combinedList, onRecipeClick, userLevel)
             }
         }
-    }
-}
-
-@Composable
-fun PortraitMyRecipeSection() {
-    val randomRecipes = rememberSaveable {
-        DataProvider.ResepSaya.shuffled().take(2)
-    }
-    Row (
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        randomRecipes.forEach { recipe ->
-            RecipeCard(
-                modifier = Modifier.weight(1f),
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
+        } else {
+            Text(
+                text = "Anda belum mengupload resep apapun",
+                style = OutfitTypography.bodyMedium
             )
         }
     }
 }
 
 @Composable
-fun LandscapeMyRecipeSection() {
-    val randomRecipes = rememberSaveable {
-        DataProvider.ResepSaya.shuffled().take(4)
-    }
+fun PortraitMyRecipeSection(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     Row (
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        randomRecipes.forEach { recipe ->
+        recipes.take(2).forEach { recipe ->
+            val unlocked = userLevel >= recipe.terbuka_di_level
             RecipeCard(
-                modifier = Modifier.weight(1f),
-                foodImg = recipe.foodImg,
-                foodName = recipe.foodName,
-                duration = recipe.duration.toString(),
+                foodImg = recipe.imageUrl,
+                foodName = recipe.judul_konten,
+                duration = recipe.durasi.toString(),
+                isUnlocked = unlocked,
+                requiredLevel = recipe.terbuka_di_level,
+                onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+fun LandscapeMyRecipeSection(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        recipes.take(4).forEach { recipe ->
+            val unlocked = userLevel >= recipe.terbuka_di_level
+            RecipeCard(
+                foodImg = recipe.imageUrl,
+                foodName = recipe.judul_konten,
+                duration = recipe.durasi.toString(),
+                isUnlocked = unlocked,
+                requiredLevel = recipe.terbuka_di_level,
+                onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                modifier = Modifier.weight(1f)
             )
         }
     }

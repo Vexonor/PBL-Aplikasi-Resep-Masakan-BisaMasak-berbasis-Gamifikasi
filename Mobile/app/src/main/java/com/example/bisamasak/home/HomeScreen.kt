@@ -18,8 +18,10 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,7 +32,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.component.BottomBar
+import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
+import com.example.bisamasak.data.viewModel.UsersViewModel
 import com.example.bisamasak.home.latestRecipe.LatestRecipe
 import com.example.bisamasak.home.practiceRecipe.PracticeRecipe
 import com.example.bisamasak.home.todayRecipe.TodayRecipe
@@ -67,13 +71,27 @@ fun HomeComponent(navController: NavController) {
     val context = LocalContext.current
     val activity = context as Activity
     val windowSizeClass = calculateWindowSizeClass(activity = activity)
+
+    val dataStore = remember { DataStoreManager(context) }
     val viewModel: RecipeContentViewModel = viewModel()
+    val penggunaViewModel: UsersViewModel = viewModel()
+
+    val pengguna by penggunaViewModel.pengguna.collectAsState()
+    var idUser by remember { mutableLongStateOf(-1L) }
 
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         viewModel.recipe()
     }
+
+    LaunchedEffect(Unit) {
+        idUser = dataStore.getUserId()
+        if (idUser != -1L) {
+            penggunaViewModel.fetchPengguna(idUser)
+        }
+    }
+
 
     Scaffold(
         modifier = Modifier
@@ -108,7 +126,9 @@ fun HomeComponent(navController: NavController) {
                 navController = navController,
             )
             HeroSection(
-                level = 10,
+                level = pengguna?.levelPengguna ?: 1,
+                exp = pengguna?.poinLevel?.toFloat() ?: 0f,
+                maxExp = 1000f,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             PracticeRecipe(
@@ -117,6 +137,7 @@ fun HomeComponent(navController: NavController) {
                 navController = navController,
                 windowSize = windowSizeClass,
                 viewModel = viewModel,
+                userLevel = pengguna?.levelPengguna ?: 1
             )
             TodayRecipe(
                 modifier = Modifier
@@ -124,6 +145,7 @@ fun HomeComponent(navController: NavController) {
                 navController = navController,
                 windowSize = windowSizeClass,
                 viewModel = viewModel,
+                userLevel = pengguna?.levelPengguna ?: 1
             )
             LatestRecipe(
                 modifier = Modifier
@@ -131,6 +153,7 @@ fun HomeComponent(navController: NavController) {
                 navController = navController,
                 windowSize = windowSizeClass,
                 viewModel = viewModel,
+                userLevel = pengguna?.levelPengguna ?: 1
             )
         }
     }

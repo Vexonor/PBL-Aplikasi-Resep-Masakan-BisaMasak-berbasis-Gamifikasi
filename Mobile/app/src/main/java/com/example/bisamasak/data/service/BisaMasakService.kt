@@ -7,6 +7,7 @@ import com.example.bisamasak.data.dataContainer.IngredientResponse
 import com.example.bisamasak.data.dataContainer.ListSavedResponse
 import com.example.bisamasak.data.dataContainer.LoginRequest
 import com.example.bisamasak.data.dataContainer.LoginResponse
+import com.example.bisamasak.data.dataContainer.Pengguna
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.dataContainer.RegisterRequest
 import com.example.bisamasak.data.dataContainer.RegisterResponse
@@ -24,6 +25,7 @@ import retrofit2.http.HTTP
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -37,7 +39,32 @@ interface BisaMasakService {
     @POST("login")
     suspend fun loginUser(@Body request: LoginRequest): Response<LoginResponse>
 
-//    Recipe Content
+//    User
+    @GET("pengguna/{id_user}")
+    suspend fun getPengguna(
+        @Path("id_user") userId: Long
+    ): Pengguna
+
+    @POST("pengguna/{id_user}/update-level")
+    suspend fun updateLevelPengguna(
+        @Path("id_user") idUser: Long,
+        @Body body: Map<String, Int>
+    ): Pengguna
+
+
+    @Multipart
+    @POST("user/profile/{id_user}")
+    suspend fun updateProfile(
+        @Path("id_user") userId: Long,
+        @Part("nama") nama: RequestBody?,
+        @Part("tanggal_lahir") tanggalLahir: RequestBody?,
+        @Part("jenis_kelamin") jenisKelamin: RequestBody?,
+        @Part("email") email: RequestBody?,
+        @Part("password") password: RequestBody?,
+        @Part fotoProfil: MultipartBody.Part?
+    ): Response<LoginResponse>
+
+    //    Recipe Content
     @GET("konten-tutorial")
     suspend fun recipeContent(): List<RecipeContentResponse>
 

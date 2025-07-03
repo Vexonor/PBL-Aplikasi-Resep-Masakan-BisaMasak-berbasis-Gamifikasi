@@ -1,7 +1,6 @@
 package com.example.bisamasak.menu.lunch
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import  androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,7 +33,8 @@ import com.example.bisamasak.ui.theme.OutfitTypography
 @Composable
 fun LunchContent(
     windowSize: WindowSizeClass,
-    onRecipeClick: (Int) -> Unit
+    onRecipeClick: (Int) -> Unit,
+    userLevel: Int
 ) {
 //    Recipe Model
     val viewModel: RecipeContentViewModel = viewModel()
@@ -61,17 +61,19 @@ fun LunchContent(
             }
         }
     } else {
-        val categories = recipesByCategory["makan siang"] ?: emptyList()
+        val categories = recipesByCategory["makan siang"]
+            ?.sortedBy { it.terbuka_di_level }
+            ?: emptyList()
         if (categories.isEmpty()) {
             EmptyContent(text = "Konten Masih Belum Tersedia")
         } else {
             when (windowSize.widthSizeClass) {
                 WindowWidthSizeClass.Compact -> {
-                    PortraitLunchContent(categories, onRecipeClick)
+                    PortraitLunchContent(categories, onRecipeClick, userLevel)
                 }
 
                 WindowWidthSizeClass.Expanded -> {
-                    LandscapeLunchContent(categories, onRecipeClick)
+                    LandscapeLunchContent(categories, onRecipeClick, userLevel)
                 }
             }
         }
@@ -79,7 +81,7 @@ fun LunchContent(
 }
 
 @Composable
-fun PortraitLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+fun PortraitLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -108,19 +110,28 @@ fun PortraitLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (I
             }
         }
         items(recipes) { recipe ->
-            RecipeCard(
-                foodImg = recipe.imageUrl,
-                foodName = recipe.judul_konten,
-                duration = recipe.durasi.toString(),
+            val unlocked = userLevel >= recipe.terbuka_di_level
+            Row(
                 modifier = Modifier
-                    .clickable{ onRecipeClick(recipe.id_resep) }
-            )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = recipe.imageUrl,
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun LandscapeLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+fun LandscapeLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -148,13 +159,22 @@ fun LandscapeLunchContent(recipes: List<RecipeContentResponse>, onRecipeClick: (
             }
         }
         items(recipes) { recipe ->
-            RecipeCard(
-                foodImg = recipe.imageUrl,
-                foodName = recipe.judul_konten,
-                duration = recipe.durasi.toString(),
+            val unlocked = userLevel >= recipe.terbuka_di_level
+            Row(
                 modifier = Modifier
-                    .clickable{ onRecipeClick(recipe.id_resep) }
-            )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = recipe.imageUrl,
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }

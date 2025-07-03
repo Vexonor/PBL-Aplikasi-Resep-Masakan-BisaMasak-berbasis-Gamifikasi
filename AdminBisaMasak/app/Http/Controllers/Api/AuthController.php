@@ -60,4 +60,10 @@ class AuthController extends Controller
             ], 401);
         }
     }
+
+    public function getPenggunaByUser($id_user)
+    {
+        $pengguna = PenggunaModel::where('id_user', $id_user)->with('UserTable')->first();
+        return response()->json($pengguna);
+    }
 }

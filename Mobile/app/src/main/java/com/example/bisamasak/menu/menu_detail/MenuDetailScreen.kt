@@ -1,7 +1,9 @@
 package com.example.bisamasak.menu.menu_detail
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -76,6 +78,7 @@ import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedBoxWithConstraintsScope",
     "UnrememberedGetBackStackEntry"
@@ -86,7 +89,8 @@ fun MenuDetailScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: RecipeContentViewModel = viewModel(),
-    reportViewModel: ReportViewModel = viewModel()
+    reportViewModel: ReportViewModel = viewModel(),
+    userLevel: Int
 ) {
 //    User Data
     val context = LocalContext.current
@@ -131,6 +135,12 @@ fun MenuDetailScreen(
         userId = id
         userName.value = name
         isUserLoaded = true
+    }
+
+    LaunchedEffect(menudetails) {
+        if (isUserLoaded && userId != -1L && menudetails?.status_konten == "Terunggah") {
+            dataStoreManager.setViewedRecipe(userId, recipeId)
+        }
     }
 
     LaunchedEffect(recipeId) {
@@ -490,7 +500,8 @@ fun MenuDetailScreen(
                                     similarRecipes = similarRecipes,
                                     onRecipeClick = { recipeId ->
                                         navController.navigate("recipe_detail/$recipeId")
-                                    }
+                                    },
+                                    userLevel = userLevel
                                 )
                                 }
                             }

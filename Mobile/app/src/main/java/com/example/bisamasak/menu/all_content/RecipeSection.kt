@@ -1,6 +1,5 @@
 package com.example.bisamasak.menu.all_content
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,7 +33,8 @@ fun RecipeSection(
     pagerState: PagerState,
     scope: CoroutineScope,
     recipes: List<RecipeContentResponse>,
-    onRecipeClick: (Int) -> Unit
+    onRecipeClick: (Int) -> Unit,
+    userLevel: Int
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -73,7 +73,9 @@ fun RecipeSection(
             }
         }
 
-        val filteredRecipes = recipes.filter { it.kategori.equals(kategori, ignoreCase = true) }
+        val filteredRecipes = recipes
+            .filter { it.kategori.equals(kategori, ignoreCase = true) }
+            .sortedBy { it.terbuka_di_level }
 
         when (windowSize.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
@@ -83,13 +85,15 @@ fun RecipeSection(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     randomRecipes.forEach { recipe ->
+                        val unlocked = userLevel >= recipe.terbuka_di_level
                         RecipeCard(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable { onRecipeClick(recipe.id_resep) },
                             foodImg = recipe.imageUrl,
                             foodName = recipe.judul_konten,
                             duration = recipe.durasi.toString(),
+                            isUnlocked = unlocked,
+                            requiredLevel = recipe.terbuka_di_level,
+                            onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }
@@ -101,13 +105,15 @@ fun RecipeSection(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     randomRecipes.forEach { recipe ->
+                        val unlocked = userLevel >= recipe.terbuka_di_level
                         RecipeCard(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable { onRecipeClick(recipe.id_resep) },
                             foodImg = recipe.imageUrl,
                             foodName = recipe.judul_konten,
                             duration = recipe.durasi.toString(),
+                            isUnlocked = unlocked,
+                            requiredLevel = recipe.terbuka_di_level,
+                            onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }

@@ -105,15 +105,15 @@ fun NotificationDetailContent(navController: NavController) {
                 color = Color.Black
             )
 
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(DataProvider.ResepCemilan) { recipe ->
-                    RecipeCard(
-                        foodImg = recipe.foodImg,
-                        foodName = recipe.foodName,
-                        duration = recipe.duration.toString(),
-                    )
-                }
-            }
+//            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+//                items(DataProvider.ResepCemilan) { recipe ->
+//                    RecipeCard(
+//                        foodImg = recipe.foodImg,
+//                        foodName = recipe.foodName,
+//                        duration = recipe.duration.toString(),
+//                    )
+//                }
+//            }
         }
     }
 }

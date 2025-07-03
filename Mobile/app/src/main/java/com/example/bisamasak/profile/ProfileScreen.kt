@@ -34,9 +34,9 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,9 +52,11 @@ import com.example.bisamasak.component.BottomBar
 import com.example.bisamasak.component.ProfileTabs
 import com.example.bisamasak.component.ProfilePortraitTab
 import com.example.bisamasak.component.ProfileLandscapeTab
+import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.data.viewModel.SaveRecipeViewModel
+import com.example.bisamasak.data.viewModel.UsersViewModel
 import com.example.bisamasak.home.HeroSection
 import com.example.bisamasak.profile.all_profile.AllProfileContent
 import com.example.bisamasak.profile.viewed.LastViewedContent
@@ -65,7 +67,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun ProfileScreen(navController: NavController, initialTab: ProfileTabs = ProfileTabs.Recipe) {
+fun ProfileScreen(navController: NavController, initialTab: ProfileTabs = ProfileTabs.Recipe, userLevel: Int) {
     val context = LocalContext.current
     val activity = context as Activity
     val windowSizeClass = calculateWindowSizeClass(activity = activity)
@@ -73,20 +75,26 @@ fun ProfileScreen(navController: NavController, initialTab: ProfileTabs = Profil
     ProfileComponent(
         navController = navController,
         windowSize = windowSizeClass,
-        initialTab = initialTab
+        initialTab = initialTab,
+        userLevel = userLevel
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, initialTab: ProfileTabs = ProfileTabs.Recipe) {
+fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, initialTab: ProfileTabs = ProfileTabs.Recipe, userLevel: Int) {
     val context = LocalContext.current
     val recipeViewModel: RecipeContentViewModel = viewModel(viewModelStoreOwner = LocalContext.current as ViewModelStoreOwner)
     val saveRecipeViewModel: SaveRecipeViewModel = viewModel(viewModelStoreOwner = LocalContext.current as ViewModelStoreOwner)
     val savedRecipes by saveRecipeViewModel.savedRecipes.collectAsState()
+    val viewedRecipes = remember { mutableStateOf<List<RecipeContentResponse>>(emptyList()) }
     val dataStoreManager = remember { DataStoreManager(context) }
     val recipeList by recipeViewModel.recipeList.collectAsState()
     val allRecipeList by recipeViewModel.allRecipeList.collectAsState()
+
+    val penggunaViewModel: UsersViewModel = viewModel()
+    val pengguna by penggunaViewModel.pengguna.collectAsState()
+    var idUser by remember { mutableLongStateOf(-1L) }
 
     val scope = rememberCoroutineScope()
     val pagerState = key(initialTab) {
@@ -99,6 +107,10 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
         userId = dataStoreManager.getUserId().toInt()
         recipeViewModel.recipe()
         userId?.let { saveRecipeViewModel.getSavedRecipes(it) }
+        idUser = dataStoreManager.getUserId()
+        if (idUser != -1L) {
+            penggunaViewModel.fetchPengguna(idUser)
+        }
     }
 
     LaunchedEffect(recipeViewModel.uploadingRecipe, allRecipeList) {
@@ -112,6 +124,16 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
         if (uploaded) {
             recipeViewModel.uploadingRecipe = null
             recipeViewModel.uploadProgress = 0f
+        }
+    }
+
+    LaunchedEffect(userId, allRecipeList) {
+        userId?.let {
+            val viewedIds = dataStoreManager.getViewedRecipeIds(it.toLong())
+            val matchedRecipes = viewedIds.mapNotNull { id ->
+                allRecipeList.find { it.id_resep == id && it.status_konten == "Terunggah" }
+            }
+            viewedRecipes.value = matchedRecipes
         }
     }
 
@@ -207,7 +229,9 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
             Spacer(modifier = Modifier.padding(top = 16.dp))
 
             HeroSection(
-                level = 10,
+                level = pengguna?.levelPengguna ?: 1,
+                exp = pengguna?.poinLevel?.toFloat() ?: 0f,
+                maxExp = 1000f,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
 
@@ -236,10 +260,17 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
             ) { page ->
                 when (ProfileTabs.entries[page]) {
                     ProfileTabs.All_Profile -> {
-                        AllProfileContent(
-                            pagerState = pagerState,
-                            scope = scope
-                        )
+                        userId?.let { uid ->
+                            AllProfileContent(
+                                pagerState = pagerState,
+                                scope = scope,
+                                recipeList = recipeList.filter { it.id_user == userId },
+                                allRecipeList = allRecipeList,
+                                navController = navController,
+                                userId = uid.toLong(),
+                                userLevel = userLevel
+                            )
+                        }
                     }
 
                     ProfileTabs.Recipe -> {
@@ -255,7 +286,8 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
                                 windowSize = windowSize,
                                 recipeList = recipes,
                                 navController = navController,
-                                uploadProgress = recipeViewModel.uploadProgress
+                                uploadProgress = recipeViewModel.uploadProgress,
+                                userLevel = userLevel
                             )
                         }
                     }
@@ -272,16 +304,18 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
                             SaveRecipeContent(
                                 navController = navController,
                                 windowSize = windowSize,
-                                savedRecipes = savedRecipes.sortedByDescending { it.saved_at }
+                                savedRecipes = savedRecipes.sortedByDescending { it.saved_at },
+                                userLevel = userLevel
                             )
                         }
                     }
 
                     ProfileTabs.Viewed -> {
                         LastViewedContent(
-                            pagerState = pagerState,
-                            scope = scope,
-                            windowSize = windowSize
+                            windowSize = windowSize,
+                            navController = navController,
+                            recipes = viewedRecipes.value,
+                            userLevel = userLevel
                         )
                     }
 

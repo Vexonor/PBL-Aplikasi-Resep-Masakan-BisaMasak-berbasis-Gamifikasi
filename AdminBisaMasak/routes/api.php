@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\BahanMasakApiController;
 use App\Http\Controllers\Api\KomentarApiController;
 use App\Http\Controllers\Api\KontenTutorialApiController;
 use App\Http\Controllers\Api\LaporanKontenApiController;
+use App\Http\Controllers\Api\LevelingApiController;
+use App\Http\Controllers\Api\ProfileApiController;
 use App\Http\Controllers\Api\SimpanResepApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +18,11 @@ Route::get('/user', function (Request $request) {
 // Auth
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+Route::get('/pengguna/{id_user}', [AuthController::class, 'getPenggunaByUser']);
+
+// User
+Route::post('/user/profile/{id_user}', [ProfileApiController::class, 'updateProfile']);
+Route::post('/pengguna/{id_user}/update-level', [LevelingApiController::class, 'updateLevel']);
 
 // Ingredient
 Route::get('/bahan-masak', [BahanMasakApiController::class, 'index']);

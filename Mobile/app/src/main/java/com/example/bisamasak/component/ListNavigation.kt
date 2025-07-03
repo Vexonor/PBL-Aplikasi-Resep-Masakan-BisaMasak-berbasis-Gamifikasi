@@ -2,10 +2,13 @@ package com.example.bisamasak.component
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +49,7 @@ import com.example.bisamasak.profile.setting.account.AccountContent
 import com.example.bisamasak.profile.setting.recently.RecentlyContent
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -57,11 +61,12 @@ fun Navigation() {
 
     val dataStore = remember { DataStoreManager(context) }
     var startDestination by remember { mutableStateOf<String?>(null) }
+    val userLevelState = dataStore.userLevelFlow.collectAsState(initial = 1)
+    val userLevel = userLevelState.value
 
     LaunchedEffect(true) {
         startDestination = "splash_screen"
     }
-
 
     if (startDestination != null) {
         NavHost(navController = navController, startDestination = startDestination!!) {
@@ -82,9 +87,9 @@ fun Navigation() {
             composable("register_screen") { RegisterScreen(navController = navController) }
             composable("forgot_screen") { ForgotScreen(navController = navController) }
             composable("new_password_screen") { NewPasswordScreen(navController = navController) }
-            composable("practice_content") { PracticeContent(navController = navController, windowSize = windowSizeClass) }
-            composable("today_content") { TodayContent(navController = navController, windowSize = windowSizeClass) }
-            composable("latest_content") { LatestContent(navController = navController, windowSize = windowSizeClass) }
+            composable("practice_content") { PracticeContent(navController = navController, windowSize = windowSizeClass, userLevel = userLevel) }
+            composable("today_content") { TodayContent(navController = navController, windowSize = windowSizeClass, userLevel = userLevel) }
+            composable("latest_content") { LatestContent(navController = navController, windowSize = windowSizeClass, userLevel = userLevel) }
             composable("notification_screen") { NotificationContent(navController = navController) }
             composable("detailNotification_screen") {
                 NotificationDetailContent(navController = navController)
@@ -92,7 +97,7 @@ fun Navigation() {
             composable("daily_screen") { DailyTaskContent(navController = navController) }
 
             composable("search_screen") {
-                SearchScreen(navController = navController, windowSize = windowSizeClass)
+                SearchScreen(navController = navController, windowSize = windowSizeClass, userLevel = userLevel)
             }
             //        Main Screen
             composable("home_screen") { HomeActivity(navController = navController) }
@@ -114,13 +119,14 @@ fun Navigation() {
                 }
                 ProfileScreen(
                     navController = navController,
-                    initialTab = initialTab
+                    initialTab = initialTab,
+                    userLevel = userLevel
                 )
             }
 
             //          Profil Setting
             composable("setting_screen") { SettingContent(navController = navController) }
-            composable("account_screen") { AccountContent(navController = navController) }
+            composable("account_screen") { AccountContent(navController = navController, dataStoreManager = dataStore) }
             composable("recently_screen") { RecentlyContent(navController = navController) }
             composable("add_content_screen?mode={mode}&id={id}" ,
                 arguments = listOf(
@@ -139,7 +145,7 @@ fun Navigation() {
             //        Ingredient Detail Screen
             composable("ingredient_detail/{id}") { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
-                id?.let { IngredientDetailScreen(ingredientId = it, navController = navController) }
+                id?.let { IngredientDetailScreen(ingredientId = it, navController = navController, userLevel = userLevel) }
             }
             //        Tutorial Detail Screen
             composable("tutorial_detail/{id}") { backStackEntry ->
@@ -149,7 +155,7 @@ fun Navigation() {
             //        Recipe Detail Screen
             composable("recipe_detail/{id}") { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
-                id?.let { MenuDetailScreen(recipeId = it, navController = navController) }
+                id?.let { MenuDetailScreen(recipeId = it, navController = navController, userLevel = userLevel) }
             }
         }
     }

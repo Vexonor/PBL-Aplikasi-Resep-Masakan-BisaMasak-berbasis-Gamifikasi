@@ -2,6 +2,7 @@ package com.example.bisamasak.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,17 +16,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -34,24 +40,44 @@ import com.example.bisamasak.R
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun RecipeCard(foodImg: String, foodName: String, duration: String, modifier: Modifier = Modifier) {
-    Card (
-        modifier = modifier
+fun RecipeCard(
+    foodImg: String,
+    foodName: String,
+    duration: String,
+    isUnlocked: Boolean,
+    requiredLevel: Int,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
+    val alpha = if (isUnlocked) 1f else 0.15f
+
+    Box(
+        modifier = Modifier
             .width(180.dp)
             .height(200.dp),
-        colors = CardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black,
-            disabledContainerColor = Color(0XFFFAFAFA),
-            disabledContentColor = Color(0XFFFAFAFA)
-        ),
-        shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(width = 3.dp, color = Color(0XFFFAFAFA))
+        contentAlignment = Alignment.Center
     ) {
-                 Column (
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .fillMaxSize(),
+        Card (
+            modifier = modifier
+                .matchParentSize()
+                .graphicsLayer { this.alpha = alpha }
+                .then(
+                    if (isUnlocked && onClick != null) Modifier.clickable { onClick() }
+                    else Modifier
+                ),
+            colors = CardColors(
+                containerColor = Color.White,
+                contentColor = Color.Black,
+                disabledContainerColor = Color(0XFFFAFAFA),
+                disabledContentColor = Color(0XFFFAFAFA)
+            ),
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(width = 3.dp, color = Color(0XFFFAFAFA))
+        ) {
+            Column (
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceAround
             ) {
@@ -69,9 +95,6 @@ fun RecipeCard(foodImg: String, foodName: String, duration: String, modifier: Mo
                             .build(),
                         contentDescription = "Food Image",
                         contentScale = ContentScale.Crop,
-                        onError = {
-                            println("COIL ERROR: ${it.result.throwable}")
-                        },
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(RoundedCornerShape(8.dp))
@@ -80,46 +103,70 @@ fun RecipeCard(foodImg: String, foodName: String, duration: String, modifier: Mo
                 Spacer(
                     modifier = Modifier
                         .height(4.dp)
-            )
-            Box (
-                modifier = Modifier
-                    .height(40.dp),
-                contentAlignment = Alignment.TopStart
-            ) {
-                Text(
-                    text = foodName,
-                    style = OutfitTypography.titleMedium,
-                    textAlign = TextAlign.Start,
-                    maxLines = 2,
+                )
+                Box (
+                    modifier = Modifier
+                        .height(40.dp),
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    Text(
+                        text = foodName,
+                        style = OutfitTypography.titleMedium,
+                        textAlign = TextAlign.Start,
+                        maxLines = 2,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+                Spacer(
+                    modifier = Modifier
+                        .height(12.dp)
+                )
+                Box (
                     modifier = Modifier
                         .fillMaxWidth()
-                )
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(12.dp)
-            )
-            Box (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                Row (
-                    modifier = Modifier
-                        .wrapContentWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .height(100.dp),
+                    contentAlignment = Alignment.CenterEnd
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_timer),
-                        contentDescription = "Timer",
+                    Row (
                         modifier = Modifier
-                            .size(16.dp)
+                            .wrapContentWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_timer),
+                            contentDescription = "Timer",
+                            modifier = Modifier
+                                .size(16.dp)
+                        )
+                        Text(
+                            text = "$duration menit",
+                            style = OutfitTypography.labelMedium
+                        )
+                    }
+                }
+            }
+        }
+
+        if (!isUnlocked) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Filled.Lock,
+                        contentDescription = "Locked",
+                        tint = Color(0xFFED453A),
+                        modifier = Modifier.size(40.dp)
                     )
                     Text(
-                        text = "$duration menit",
-                        style = OutfitTypography.labelMedium
+                        text = "Terbuka di Level $requiredLevel",
+                        color = Color.Black,
+                        style = OutfitTypography.labelLarge,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }

@@ -1,7 +1,6 @@
 package com.example.bisamasak.home.todayRecipe
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,7 +31,7 @@ import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun TodayContent(navController: NavController, windowSize: WindowSizeClass) {
+fun TodayContent(navController: NavController, windowSize: WindowSizeClass, userLevel: Int) {
     val viewModel: RecipeContentViewModel = viewModel()
     val recipe = viewModel.recipeList.collectAsState().value
     val isLoading = viewModel.isLoading
@@ -113,12 +112,13 @@ fun TodayContent(navController: NavController, windowSize: WindowSizeClass) {
                     navController.navigate("recipe_detail/$recipeId")
                 }
                 if (recipe.isNotEmpty()) {
+                    val sortedRecipes = recipe.sortedBy { it.terbuka_di_level }
                     when(windowSize.widthSizeClass) {
                         WindowWidthSizeClass.Compact -> {
-                            Portrait(recipe, onRecipeClick)
+                            Portrait(sortedRecipes, onRecipeClick, userLevel)
                         }
                         WindowWidthSizeClass.Expanded -> {
-                            Landscape(recipe, onRecipeClick)
+                            Landscape(sortedRecipes, onRecipeClick, userLevel)
                         }
                     }
                 } else {
@@ -134,7 +134,7 @@ fun TodayContent(navController: NavController, windowSize: WindowSizeClass) {
 }
 
 @Composable
-fun Portrait(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+fun Portrait(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -146,6 +146,7 @@ fun Portrait(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit)
     ) {
         items(recipes.size) { index ->
             val recipe = recipes[index]
+            val unlocked = userLevel >= recipe.terbuka_di_level
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -155,9 +156,10 @@ fun Portrait(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit)
                     foodImg = recipe.imageUrl,
                     foodName = recipe.judul_konten,
                     duration = recipe.durasi.toString(),
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onRecipeClick(recipe.id_resep) }
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -166,7 +168,7 @@ fun Portrait(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit)
 
 
 @Composable
-fun Landscape(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+fun Landscape(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -178,6 +180,7 @@ fun Landscape(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit
     ) {
         items(recipes.size) { index ->
             val recipe = recipes[index]
+            val unlocked = userLevel >= recipe.terbuka_di_level
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -187,9 +190,10 @@ fun Landscape(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit
                     foodImg = recipe.imageUrl,
                     foodName = recipe.judul_konten,
                     duration = recipe.durasi.toString(),
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onRecipeClick(recipe.id_resep) }
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }

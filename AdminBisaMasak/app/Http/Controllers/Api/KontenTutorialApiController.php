@@ -65,19 +65,6 @@ class KontenTutorialApiController extends Controller
     public function storeRecipe(Request $request)
     {
         DB::beginTransaction();
-
-        Log::info('REQUEST RECEIVED');
-        Log::info('REQUEST SEMUA', $request->all());
-
-        if ($request->hasFile('video_tutorial')) {
-            Log::info('Video tutorial diterima.');
-            Log::info('Video Size: ' . $request->file('video_tutorial')->getSize());
-            Log::info('Video MIME: ' . $request->file('video_tutorial')->getMimeType());
-            Log::info('Video Original Name: ' . $request->file('video_tutorial')->getClientOriginalName());
-        } else {
-            Log::info('Video tutorial TIDAK diterima.');
-        }
-
         try {
             $validated = $request->validate([
                 'id_user' => 'required|integer|exists:users,id_user',

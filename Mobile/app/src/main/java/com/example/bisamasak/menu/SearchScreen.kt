@@ -2,7 +2,6 @@ package com.example.bisamasak.menu
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,11 +50,15 @@ import com.example.bisamasak.data.utils.imageUrl
 @Composable
 fun SearchScreen(
     navController: NavController,
-    windowSize: WindowSizeClass
+    windowSize: WindowSizeClass,
+    userLevel: Int
 ) {
     val viewModel: RecipeContentViewModel = viewModel()
     val searchQuery = rememberSaveable { mutableStateOf("") }
     val searchResult = viewModel.searchResult.collectAsState().value
+    val sortedSearchResult = searchResult
+        .filter { it.status_konten.equals("Terunggah", ignoreCase = true) }
+        .sortedBy { it.terbuka_di_level }
     val onRecipeClick: (Int) -> Unit = { recipeId ->
         navController.navigate("recipe_detail/$recipeId")
     }
@@ -188,14 +191,23 @@ fun SearchScreen(
                                 modifier = Modifier
                                     .background(Color.White)
                             ) {
-                                items(searchResult) { recipe ->
-                                    RecipeCard(
-                                        foodImg = recipe.imageUrl,
-                                        foodName = recipe.judul_konten,
-                                        duration = recipe.durasi.toString(),
+                                items(sortedSearchResult) { recipe ->
+                                    val unlocked = userLevel >= recipe.terbuka_di_level
+                                    Row(
                                         modifier = Modifier
-                                            .clickable{ onRecipeClick(recipe.id_resep) }
-                                    )
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        RecipeCard(
+                                            foodImg = recipe.imageUrl,
+                                            foodName = recipe.judul_konten,
+                                            duration = recipe.durasi.toString(),
+                                            isUnlocked = unlocked,
+                                            requiredLevel = recipe.terbuka_di_level,
+                                            onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -235,14 +247,20 @@ fun SearchScreen(
                             }
                         }
                     } else {
-                        val randomRecipes = viewModel.recipeList.collectAsState().value.shuffled().take(4)
+                        val specialRecipes = viewModel.recipeList
+                            .collectAsState().value
+                            .filter { it.status_konten.equals("Terunggah", ignoreCase = true) }
+                            .sortedBy { it.terbuka_di_level }
+                            .take(4)
+                            .shuffled()
+
                         when(windowSize.widthSizeClass) {
                             WindowWidthSizeClass.Compact -> {
-                                PortraitSpesial(randomRecipes, onRecipeClick)
+                                PortraitSpesial(specialRecipes, onRecipeClick, userLevel)
                             }
 
                             WindowWidthSizeClass.Expanded -> {
-                                LandscapeSpesial(randomRecipes, onRecipeClick)
+                                LandscapeSpesial(specialRecipes, onRecipeClick, userLevel)
                             }
                         }
                     }
@@ -253,7 +271,7 @@ fun SearchScreen(
 }
 
 @Composable
-fun PortraitSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+fun PortraitSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -263,19 +281,28 @@ fun PortraitSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -
             .background(Color.White)
     ) {
         items(recipes) { recipe ->
-            RecipeCard(
-                foodImg = recipe.imageUrl,
-                foodName = recipe.judul_konten,
-                duration = recipe.durasi.toString(),
+            val unlocked = userLevel >= recipe.terbuka_di_level
+            Row(
                 modifier = Modifier
-                    .clickable{ onRecipeClick(recipe.id_resep) }
-            )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = recipe.imageUrl,
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun LandscapeSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit) {
+fun LandscapeSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) -> Unit, userLevel: Int) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -286,13 +313,22 @@ fun LandscapeSpesial(recipes: List<RecipeContentResponse>, onRecipeClick: (Int) 
             .padding(horizontal = 24.dp)
     ) {
         items(recipes) { recipe ->
-            RecipeCard(
-                foodImg = recipe.imageUrl,
-                foodName = recipe.judul_konten,
-                duration = recipe.durasi.toString(),
+            val unlocked = userLevel >= recipe.terbuka_di_level
+            Row(
                 modifier = Modifier
-                    .clickable{ onRecipeClick(recipe.id_resep) }
-            )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecipeCard(
+                    foodImg = recipe.imageUrl,
+                    foodName = recipe.judul_konten,
+                    duration = recipe.durasi.toString(),
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }

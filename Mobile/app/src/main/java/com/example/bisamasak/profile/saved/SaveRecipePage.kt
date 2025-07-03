@@ -1,7 +1,6 @@
 package com.example.bisamasak.profile.saved
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,8 @@ import com.example.bisamasak.ui.theme.OutfitTypography
 fun SaveRecipeContent(
     navController: NavController,
     windowSize: WindowSizeClass,
-    savedRecipes: List<SavedRecipe>
+    savedRecipes: List<SavedRecipe>,
+    userLevel: Int
 ) {
     val onRecipeClick: (Int) -> Unit = { recipeId ->
         navController.navigate("recipe_detail/$recipeId")
@@ -44,10 +44,10 @@ fun SaveRecipeContent(
     if (combinedList.isNotEmpty()) {
         when (windowSize.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                PortraitSavedRecipeContent(combinedList, onRecipeClick)
+                PortraitSavedRecipeContent(combinedList, onRecipeClick, userLevel)
             }
             WindowWidthSizeClass.Expanded -> {
-                LandscapeSavedRecipeContent(combinedList, onRecipeClick)
+                LandscapeSavedRecipeContent(combinedList, onRecipeClick, userLevel)
             }
         }
     } else {
@@ -58,7 +58,8 @@ fun SaveRecipeContent(
 @Composable
 fun PortraitSavedRecipeContent(
     recipes: List<RecipeContentResponse>,
-    onRecipeClick: (Int) -> Unit
+    onRecipeClick: (Int) -> Unit,
+    userLevel: Int
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -85,6 +86,7 @@ fun PortraitSavedRecipeContent(
 
         items(recipes.size) { index ->
             val recipe = recipes[index]
+            val unlocked = userLevel >= recipe.terbuka_di_level
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -94,9 +96,10 @@ fun PortraitSavedRecipeContent(
                     foodImg = recipe.imageUrl,
                     foodName = recipe.judul_konten,
                     duration = recipe.durasi.toString(),
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onRecipeClick(recipe.id_resep) }
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -107,7 +110,8 @@ fun PortraitSavedRecipeContent(
 @Composable
 fun LandscapeSavedRecipeContent(
     recipes: List<RecipeContentResponse>,
-    onRecipeClick: (Int) -> Unit
+    onRecipeClick: (Int) -> Unit,
+    userLevel: Int
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
@@ -134,6 +138,7 @@ fun LandscapeSavedRecipeContent(
 
         items(recipes.size) { index ->
             val recipe = recipes[index]
+            val unlocked = userLevel >= recipe.terbuka_di_level
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -143,9 +148,10 @@ fun LandscapeSavedRecipeContent(
                     foodImg = recipe.imageUrl,
                     foodName = recipe.judul_konten,
                     duration = recipe.durasi.toString(),
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onRecipeClick(recipe.id_resep) }
+                    isUnlocked = unlocked,
+                    requiredLevel = recipe.terbuka_di_level,
+                    onClick = if (unlocked) { { onRecipeClick(recipe.id_resep) } } else null,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }

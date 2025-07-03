@@ -30,7 +30,8 @@ import kotlinx.coroutines.CoroutineScope
 fun AllContent(
     pagerState: PagerState,
     scope: CoroutineScope,
-    navController: NavController
+    navController: NavController,
+    userLevel: Int
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -82,7 +83,8 @@ fun AllContent(
                             recipes = recipes,
                             onRecipeClick = { id ->
                                 navController.navigate("recipe_detail/$id")
-                            }
+                            },
+                            userLevel = userLevel
                         )
                     }
                 }
