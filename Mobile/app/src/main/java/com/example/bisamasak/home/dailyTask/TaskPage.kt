@@ -6,21 +6,63 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.R
 import com.example.bisamasak.component.TaskItem
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.example.bisamasak.component.BackButton
-import com.example.bisamasak.data.provider.DataProvider.DailyTask
+import com.example.bisamasak.data.utils.DataStoreManager
+import com.example.bisamasak.data.viewModel.DailyTaskViewModel
+import com.example.bisamasak.data.viewModel.DailyTaskViewModelFactory
 
 @Composable
 fun DailyTaskContent(navController: NavController) {
+    val context = LocalContext.current
+    val dataStoreManager = remember { DataStoreManager(context) }
+    val factory = remember { DailyTaskViewModelFactory(dataStoreManager) }
+    val dailyTaskViewModel: DailyTaskViewModel = viewModel(factory = factory)
+    val taskList = dailyTaskViewModel.taskList.collectAsState().value
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val currentViewModel by rememberUpdatedState(dailyTaskViewModel)
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                currentViewModel.checkReadRecipeMissionClaimed()
+                currentViewModel.checkUploadRecipeMissionClaimed()
+            }
+        }
+        val lifecycle = lifecycleOwner.lifecycle
+        lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        dailyTaskViewModel.checkReadRecipeMissionClaimed()
+        dailyTaskViewModel.checkUploadRecipeMissionClaimed()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,12 +86,13 @@ fun DailyTaskContent(navController: NavController) {
             modifier = Modifier.padding(vertical = 10.dp)
         )
 
-        DailyTask.forEach { task ->
+        taskList.forEach { task ->
             TaskItem(
                 iconResId = task.iconResId,
                 title = task.title,
                 points = task.points,
-                onClaimClick = { /* TODO: Handle klaim */ }
+                isClaimed = task.isClaimed,
+                onClaimClick = { dailyTaskViewModel.claimTaskPoints(task) }
             )
         }
     }

@@ -51,7 +51,6 @@ interface BisaMasakService {
         @Body body: Map<String, Int>
     ): Pengguna
 
-
     @Multipart
     @POST("user/profile/{id_user}")
     suspend fun updateProfile(

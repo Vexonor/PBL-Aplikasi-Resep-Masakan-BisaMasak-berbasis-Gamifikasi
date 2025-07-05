@@ -6,8 +6,10 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.bisamasak.data.dataContainer.Pengguna
 import com.example.bisamasak.data.dataContainer.Users
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
@@ -18,6 +20,7 @@ class DataStoreManager(private val context: Context) {
         private val ONBOARDING_SHOW = booleanPreferencesKey("onboarding_show")
         private val IS_LOGIN = booleanPreferencesKey("is_login")
         private val LAST_ACTIVE = longPreferencesKey("last_active")
+        private val LAST_LOGIN_DATE = stringPreferencesKey("last_login_date")
         private val USER_ID = longPreferencesKey("user_id")
         private val USER_NAME = stringPreferencesKey("user_name")
         private val USER_EMAIL = stringPreferencesKey("user_email")
@@ -25,6 +28,10 @@ class DataStoreManager(private val context: Context) {
         private val USER_GENDER = stringPreferencesKey("user_gender")
         private val USER_PHOTO = stringPreferencesKey("user_photo")
         private val USER_LEVEL = longPreferencesKey("user_level")
+        private val USER_POINT = longPreferencesKey("user_point")
+        private val LOGIN_MISSION_DATE = stringPreferencesKey("login_mission_claimed_date")
+        private val RECIPE_MISSION_CLAIMED_DATE = stringPreferencesKey("recipe_mission_claimed_date")
+        private val UPLOAD_RECIPE_CLAIMED_KEY = stringPreferencesKey("upload_recipe_claimed_date")
     }
 
 //    Onboarding State
@@ -50,6 +57,18 @@ class DataStoreManager(private val context: Context) {
     suspend fun isLogin(): Boolean {
         return context.dataStore.data
             .map { it[IS_LOGIN] ?: false }
+            .first()
+    }
+
+    suspend fun setLastLoginDate(date: String) {
+        context.dataStore.edit { prefs ->
+            prefs[LAST_LOGIN_DATE] = date
+        }
+    }
+
+    suspend fun getLastLoginDate(): String? {
+        return context.dataStore.data
+            .map { it[LAST_LOGIN_DATE] }
             .first()
     }
 
@@ -157,6 +176,7 @@ class DataStoreManager(private val context: Context) {
         }.first()
     }
 
+//    Daily Task
     suspend fun setUserLevel(level: Int) {
         context.dataStore.edit { prefs ->
             prefs[USER_LEVEL] = level.toLong()
@@ -169,6 +189,55 @@ class DataStoreManager(private val context: Context) {
             .first()
     }
 
+    suspend fun setUserPoint(point: Int) {
+        context.dataStore.edit { prefs ->
+            prefs[USER_POINT] = point.toLong()
+        }
+    }
+
+    suspend fun getUserPoint(): Int {
+        return context.dataStore.data
+            .map { it[USER_POINT]?.toInt() ?: 0 }
+            .first()
+    }
+
+    suspend fun setLoginMissionClaimed(date: String) {
+        context.dataStore.edit { prefs ->
+            prefs[LOGIN_MISSION_DATE] = date
+        }
+    }
+
+    suspend fun getLoginMissionClaimed(): String? {
+        return context.dataStore.data
+            .map { it[LOGIN_MISSION_DATE] }
+            .firstOrNull()
+    }
+
+    suspend fun setRecipeMissionClaimed(date: String) {
+        context.dataStore.edit { prefs ->
+            prefs[RECIPE_MISSION_CLAIMED_DATE] = date
+        }
+    }
+
+    suspend fun getRecipeMissionClaimed(): String {
+        return context.dataStore.data
+            .map { it[RECIPE_MISSION_CLAIMED_DATE] ?: "" }
+            .first()
+    }
+
+    suspend fun getUploadRecipeMissionClaimed(): String {
+        return context.dataStore.data
+            .map { it[UPLOAD_RECIPE_CLAIMED_KEY] ?: "" }
+            .first()
+    }
+
+    suspend fun setUploadRecipeMissionClaimed(date: String) {
+        context.dataStore.edit { prefs -> prefs[UPLOAD_RECIPE_CLAIMED_KEY] = date }
+    }
+
     val userLevelFlow = context.dataStore.data
         .map { it[USER_LEVEL]?.toInt() ?: 1 }
+
+    val userPointFlow = context.dataStore.data
+        .map { it[USER_POINT]?.toInt() ?: 0 }
 }

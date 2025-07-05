@@ -46,6 +46,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -70,6 +71,8 @@ import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.data.utils.videoUrl
 import com.example.bisamasak.data.viewModel.CommentViewModel
+import com.example.bisamasak.data.viewModel.DailyTaskViewModel
+import com.example.bisamasak.data.viewModel.DailyTaskViewModelFactory
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.data.viewModel.ReportViewModel
 import com.example.bisamasak.data.viewModel.SaveRecipeViewModel
@@ -77,6 +80,9 @@ import com.example.bisamasak.ui.theme.OutfitTypography
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,6 +104,44 @@ fun MenuDetailScreen(
     var userId by remember { mutableStateOf(-1L) }
     var isUserLoaded by remember { mutableStateOf(false) }
     val userName = remember { mutableStateOf("") }
+
+//    Daily Task
+    val dailyTaskVMFactory = remember { DailyTaskViewModelFactory(dataStoreManager) }
+    val dailyTaskViewModel: DailyTaskViewModel = viewModel(factory = dailyTaskVMFactory)
+    var secondsRead by remember { mutableLongStateOf(0L) }
+    var isReadMissionClaimed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(recipeId) {
+        secondsRead = 0L
+        isReadMissionClaimed = false
+    }
+
+    LaunchedEffect(recipeId) {
+        while (true) {
+            kotlinx.coroutines.delay(1000L)
+            secondsRead++
+            if (isReadMissionClaimed) break
+        }
+    }
+
+    LaunchedEffect(recipeId, secondsRead) {
+        if (!isReadMissionClaimed && secondsRead >= 120) {
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val today = sdf.format(Date())
+            val claimedDate = dataStoreManager.getRecipeMissionClaimed()
+            if (claimedDate != today) {
+                val bacaTask = dailyTaskViewModel.taskList.value
+                    .find { it.title.equals("Baca resep", ignoreCase = true) }
+                bacaTask?.let {
+                    dailyTaskViewModel.claimTaskPoints(it)
+                    dataStoreManager.setRecipeMissionClaimed(today)
+                    dailyTaskViewModel.checkReadRecipeMissionClaimed()
+                    Toast.makeText(context, "Misi baca resep berhasil diklaim!", Toast.LENGTH_SHORT).show()
+                }
+                isReadMissionClaimed = true
+            }
+        }
+    }
 
 //    Saved Recipe
     val saveRecipeViewModel: SaveRecipeViewModel = viewModel()
@@ -163,6 +207,17 @@ fun MenuDetailScreen(
 
     LaunchedEffect(uploadSuccessMessage) {
         uploadSuccessMessage?.let {
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val today = sdf.format(Date())
+
+            val uploadTask = dailyTaskViewModel.taskList.value
+                .find { it.title.equals("Unggah resep", ignoreCase = true) }
+            uploadTask?.let {
+                dailyTaskViewModel.claimTaskPoints(it)
+                dataStoreManager.setUploadRecipeMissionClaimed(today)
+                dailyTaskViewModel.checkUploadRecipeMissionClaimed()
+            }
+
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             navController.navigate("profile_screen?tab=recipe") {
                 popUpTo("recipe_detail/$recipeId") { inclusive = true }

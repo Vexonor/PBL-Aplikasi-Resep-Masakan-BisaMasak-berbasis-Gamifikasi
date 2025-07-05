@@ -16,10 +16,21 @@ class LevelingApiController extends Controller
         ]);
 
         $pengguna = PenggunaModel::where('id_user', $id_user)->firstOrFail();
-        $pengguna->poin_level = $request->poin_level;
-        $pengguna->level_pengguna = $request->level_pengguna;
+        $reward = $request->poin_level;
+        $pengguna->poin_level += $reward;
+        while ($pengguna->poin_level >= $this->getMaxExp($pengguna->level_pengguna)) {
+            $pengguna->poin_level -= $this->getMaxExp($pengguna->level_pengguna);
+            $pengguna->level_pengguna += 1;
+        }
         $pengguna->save();
 
         return response()->json(['message' => 'Level dan poin berhasil diperbarui', 'pengguna' => $pengguna]);
+    }
+
+    private function getMaxExp($level)
+    {
+        $baseExp = 1000;
+        $increment = 500;
+        return $baseExp + ($level - 1) * $increment;
     }
 }

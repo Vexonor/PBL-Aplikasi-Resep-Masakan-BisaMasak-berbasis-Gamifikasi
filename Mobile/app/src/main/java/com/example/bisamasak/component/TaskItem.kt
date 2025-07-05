@@ -17,6 +17,7 @@ fun TaskItem(
     iconResId: Int,
     title: String,
     points: Int,
+    isClaimed: Boolean,
     onClaimClick: () -> Unit
 ) {
     Row(
@@ -55,13 +56,14 @@ fun TaskItem(
 
         Button(
             onClick = onClaimClick,
+            enabled = !isClaimed,
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC6A0)),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
             modifier = Modifier.height(32.dp)
         ) {
             Text(
-                text = "Klaim",
+                text = if (isClaimed) "Sudah Diklaim" else "Klaim",
                 style = OutfitTypography.titleMedium,
                 color = Color(0xFFED453A)
             )

@@ -1,11 +1,13 @@
 package com.example.bisamasak
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -23,16 +25,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.component.Navigation
 import com.example.bisamasak.data.utils.DataStoreManager
+import com.example.bisamasak.data.viewModel.DailyTaskViewModel
+import com.example.bisamasak.data.viewModel.DailyTaskViewModelFactory
 import com.example.bisamasak.ui.theme.BisaMasakTheme
 import com.example.bisamasak.ui.theme.OutfitTypography
 import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +63,9 @@ fun SplashScreen (navController: NavController, modifier: Modifier = Modifier, d
     val scale = remember {
         Animatable(0f)
     }
+    val context = LocalContext.current
+    val dailyTaskViewModelFactory = remember { DailyTaskViewModelFactory(DataStoreManager(context)) }
+    val dailyTaskViewModel: DailyTaskViewModel = viewModel(factory = dailyTaskViewModelFactory)
 
     Column(
         modifier = modifier
@@ -97,6 +110,21 @@ fun SplashScreen (navController: NavController, modifier: Modifier = Modifier, d
 
         val isShown = dataStore.isOnboardingShow()
         val isLogin = dataStore.isLogin()
+
+        if (isLogin) {
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val today = sdf.format(Date())
+            val lastLoginDate = dataStore.getLastLoginDate()
+            if (lastLoginDate != today) {
+                dataStore.setLastLoginDate(today)
+
+                val loginTask = dailyTaskViewModel.taskList.value
+                    .find { it.title.equals("Login hari ini", ignoreCase = true) }
+                loginTask?.let {
+                    dailyTaskViewModel.claimTaskPoints(it)
+                }
+            }
+        }
 
         when {
             !isShown -> {
