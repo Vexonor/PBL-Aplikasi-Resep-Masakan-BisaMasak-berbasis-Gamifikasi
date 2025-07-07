@@ -19,6 +19,7 @@ Route::get('/user', function (Request $request) {
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('/pengguna/{id_user}', [AuthController::class, 'getPenggunaByUser']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
 // User
 Route::post('/user/profile/{id_user}', [ProfileApiController::class, 'updateProfile']);

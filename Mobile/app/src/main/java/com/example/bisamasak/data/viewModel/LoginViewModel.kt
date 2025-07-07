@@ -47,4 +47,15 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
+    fun logout(dataStoreManager: DataStoreManager, onLogout: () -> Unit) {
+        viewModelScope.launch {
+            dataStoreManager.clearUserData()
+            isLoginSuccess = false
+            loggedInUserName = ""
+            responseMessage = ""
+            onLogout()
+        }
+    }
+
 }

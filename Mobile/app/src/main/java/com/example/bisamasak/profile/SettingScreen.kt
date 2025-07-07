@@ -11,16 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.R
 import com.example.bisamasak.component.BackButton
+import com.example.bisamasak.data.utils.DataStoreManager
+import com.example.bisamasak.data.viewModel.LoginViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
 fun SettingContent(navController: NavController) {
+    val context = LocalContext.current
+    val dataStoreManager = remember { DataStoreManager(context) }
     var isNotificationEnabled by remember { mutableStateOf(false) }
+    val loginViewModel: LoginViewModel = viewModel()
+
 
     Box(
         modifier = Modifier
@@ -92,20 +100,14 @@ fun SettingContent(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             SettingRow(
-                iconRes = R.drawable.ic_history,
-                title = "Resep terakhir dilihat",
-                onClick = {
-                    navController.navigate("recently_screen")
-                }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            SettingRow(
                 iconRes = R.drawable.ic_logout,
                 title = "Keluar Akun",
                 onClick = {
-                    navController.navigate("login_screen")
+                    loginViewModel.logout(dataStoreManager) {
+                        navController.navigate("login_screen") {
+                            popUpTo(0)
+                        }
+                    }
                 }
             )
         }

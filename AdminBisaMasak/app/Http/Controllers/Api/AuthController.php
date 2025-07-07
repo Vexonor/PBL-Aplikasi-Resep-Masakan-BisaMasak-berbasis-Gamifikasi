@@ -66,4 +66,16 @@ class AuthController extends Controller
         $pengguna = PenggunaModel::where('id_user', $id_user)->with('UserTable')->first();
         return response()->json($pengguna);
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'message' => 'Logout Successful'
+        ]);
+    }
 }

@@ -13,7 +13,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('Admin')->insert([
+        DB::table('admin')->insert([
             'id_user' => 1,
             'id_admin' => 1,
             'peran_admin' => 'Master Admin',

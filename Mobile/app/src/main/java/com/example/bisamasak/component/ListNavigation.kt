@@ -46,7 +46,6 @@ import com.example.bisamasak.profile.ProfileScreen
 import com.example.bisamasak.profile.SettingContent
 import com.example.bisamasak.profile.add_content.AddContentScreen
 import com.example.bisamasak.profile.setting.account.AccountContent
-import com.example.bisamasak.profile.setting.recently.RecentlyContent
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -127,7 +126,6 @@ fun Navigation() {
             //          Profil Setting
             composable("setting_screen") { SettingContent(navController = navController) }
             composable("account_screen") { AccountContent(navController = navController, dataStoreManager = dataStore) }
-            composable("recently_screen") { RecentlyContent(navController = navController) }
             composable("add_content_screen?mode={mode}&id={id}" ,
                 arguments = listOf(
                     navArgument("mode") { defaultValue = "create" },
