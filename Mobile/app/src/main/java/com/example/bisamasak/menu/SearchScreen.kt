@@ -29,11 +29,16 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,15 +49,22 @@ import com.example.bisamasak.data.dataContainer.RecipeContentResponse
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.example.bisamasak.R
+import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.utils.imageUrl
+import com.example.bisamasak.data.viewModel.UsersViewModel
 
 
 @Composable
 fun SearchScreen(
     navController: NavController,
     windowSize: WindowSizeClass,
-    userLevel: Int
 ) {
+    val context = LocalContext.current
+    val dataStore = remember { DataStoreManager(context) }
+    val penggunaViewModel: UsersViewModel = viewModel()
+    val pengguna by penggunaViewModel.pengguna.collectAsState()
+    var idUser by remember { mutableLongStateOf(-1L) }
+    val userLevel = pengguna?.levelPengguna ?: 1
     val viewModel: RecipeContentViewModel = viewModel()
     val searchQuery = rememberSaveable { mutableStateOf("") }
     val searchResult = viewModel.searchResult.collectAsState().value
@@ -166,6 +178,10 @@ fun SearchScreen(
 
                         LaunchedEffect(Unit) {
                             viewModel.recipe()
+                            idUser = dataStore.getUserId()
+                            if (idUser != -1L) {
+                                penggunaViewModel.fetchPengguna(idUser)
+                            }
                         }
 
                         if (isLoading) {
@@ -230,6 +246,10 @@ fun SearchScreen(
 
                     LaunchedEffect(Unit) {
                         viewModel.recipe()
+                        idUser = dataStore.getUserId()
+                        if (idUser != -1L) {
+                            penggunaViewModel.fetchPengguna(idUser)
+                        }
                     }
 
                     if (isLoading) {

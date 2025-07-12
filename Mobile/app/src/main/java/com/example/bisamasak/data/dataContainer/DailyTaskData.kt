@@ -6,7 +6,8 @@ data class TaskItemData(
     val iconResId: Int,
     val title: String,
     val points: Int,
-    val isClaimed: Boolean = false
+    val isClaimed: Boolean = false,
+    val onClaim: Boolean = false
 )
 
 data class UpdateLevelRequest(

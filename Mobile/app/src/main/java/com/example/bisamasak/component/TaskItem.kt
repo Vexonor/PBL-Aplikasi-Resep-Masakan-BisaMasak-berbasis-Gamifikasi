@@ -18,7 +18,8 @@ fun TaskItem(
     title: String,
     points: Int,
     isClaimed: Boolean,
-    onClaimClick: () -> Unit
+    onClaimClick: () -> Unit,
+    onClaim: Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -54,16 +55,23 @@ fun TaskItem(
             )
         }
 
+        val buttonEnabled = title == "Login hari ini" && !isClaimed && onClaim
+        val buttonLabel = when {
+            isClaimed -> "Sudah Diklaim"
+            title != "Login hari ini" -> "Belum Dikerjakan"
+            else -> "Klaim"
+        }
+
         Button(
             onClick = onClaimClick,
-            enabled = !isClaimed,
+            enabled = buttonEnabled,
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC6A0)),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
             modifier = Modifier.height(32.dp)
         ) {
             Text(
-                text = if (isClaimed) "Sudah Diklaim" else "Klaim",
+                text = buttonLabel,
                 style = OutfitTypography.titleMedium,
                 color = Color(0xFFED453A)
             )

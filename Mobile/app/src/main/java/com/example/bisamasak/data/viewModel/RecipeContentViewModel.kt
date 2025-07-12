@@ -99,7 +99,6 @@ class RecipeContentViewModel : ViewModel() {
 
     fun similarRecipe(recipeId: Int, ingredient: List<BahanResep>): List<RecipeContentResponse> {
         val allRecipes = _recipeList.value.filter { it.id_resep != recipeId }
-
         val currentIngredient = ingredient.map {
             it.bahan_masak_table?.nama_bahan?.lowercase() ?: ""
         }.filter { it.isNotBlank() }.toSet()
@@ -509,5 +508,4 @@ enum class LoadingState {
     Idle,
     Loading,
     Editing,
-    Uploading
 }

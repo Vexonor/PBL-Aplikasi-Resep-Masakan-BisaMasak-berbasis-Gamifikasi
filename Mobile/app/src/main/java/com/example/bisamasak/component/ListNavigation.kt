@@ -34,9 +34,7 @@ import com.example.bisamasak.home.practiceRecipe.PracticeContent
 import com.example.bisamasak.home.todayRecipe.TodayContent
 import com.example.bisamasak.ingredient.IngredientActivity
 import com.example.bisamasak.ingredient.IngredientDetailScreen
-import com.example.bisamasak.login_register.ForgotScreen
 import com.example.bisamasak.login_register.LoginScreen
-import com.example.bisamasak.login_register.NewPasswordScreen
 import com.example.bisamasak.login_register.RegisterScreen
 import com.example.bisamasak.menu.MenuActivity
 import com.example.bisamasak.menu.menu_detail.MenuDetailScreen
@@ -84,11 +82,9 @@ fun Navigation() {
             }
             composable("login_screen") { LoginScreen(navController = navController) }
             composable("register_screen") { RegisterScreen(navController = navController) }
-            composable("forgot_screen") { ForgotScreen(navController = navController) }
-            composable("new_password_screen") { NewPasswordScreen(navController = navController) }
-            composable("practice_content") { PracticeContent(navController = navController, windowSize = windowSizeClass, userLevel = userLevel) }
-            composable("today_content") { TodayContent(navController = navController, windowSize = windowSizeClass, userLevel = userLevel) }
-            composable("latest_content") { LatestContent(navController = navController, windowSize = windowSizeClass, userLevel = userLevel) }
+            composable("practice_content") { PracticeContent(navController = navController, windowSize = windowSizeClass) }
+            composable("today_content") { TodayContent(navController = navController, windowSize = windowSizeClass) }
+            composable("latest_content") { LatestContent(navController = navController, windowSize = windowSizeClass) }
             composable("notification_screen") { NotificationContent(navController = navController) }
             composable("detailNotification_screen") {
                 NotificationDetailContent(navController = navController)
@@ -96,7 +92,7 @@ fun Navigation() {
             composable("daily_screen") { DailyTaskContent(navController = navController) }
 
             composable("search_screen") {
-                SearchScreen(navController = navController, windowSize = windowSizeClass, userLevel = userLevel)
+                SearchScreen(navController = navController, windowSize = windowSizeClass)
             }
             //        Main Screen
             composable("home_screen") { HomeActivity(navController = navController) }
@@ -118,8 +114,7 @@ fun Navigation() {
                 }
                 ProfileScreen(
                     navController = navController,
-                    initialTab = initialTab,
-                    userLevel = userLevel
+                    initialTab = initialTab
                 )
             }
 
@@ -153,7 +148,7 @@ fun Navigation() {
             //        Recipe Detail Screen
             composable("recipe_detail/{id}") { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
-                id?.let { MenuDetailScreen(recipeId = it, navController = navController, userLevel = userLevel) }
+                id?.let { MenuDetailScreen(recipeId = it, navController = navController) }
             }
         }
     }

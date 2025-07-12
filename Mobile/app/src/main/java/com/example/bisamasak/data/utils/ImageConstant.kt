@@ -1,5 +1,5 @@
 package com.example.bisamasak.data.utils
 
 object ImageConstant {
-    const val BASE_IMAGE_URL = "http://192.168.100.179:8000/storage/"
+    const val BASE_IMAGE_URL = "https://adminbisamasak.site/storage/"
 }

@@ -117,19 +117,6 @@ fun LoginScreen(navController: NavController) {
                 onVisibilityChange = { passwordVisible = !passwordVisible }
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Lupa Kata Sandi?",
-                style = OutfitTypography.labelLarge,
-                color = Color(0xFFED453A),
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .clickable {
-                        navController.navigate("forgot_screen")
-                    }
-            )
-
             Spacer(modifier = Modifier.weight(1f))
 
             if (viewModel.responseMessage.isNotEmpty()) {

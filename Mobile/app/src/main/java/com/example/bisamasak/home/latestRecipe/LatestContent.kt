@@ -14,9 +14,14 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -24,13 +29,21 @@ import com.example.bisamasak.component.BackButton
 import com.example.bisamasak.component.RecipeCard
 import com.example.bisamasak.component.ShimmerCard
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.utils.createdToday
 import com.example.bisamasak.data.utils.imageUrl
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
+import com.example.bisamasak.data.viewModel.UsersViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 
 @Composable
-fun LatestContent(navController: NavController, windowSize: WindowSizeClass, userLevel: Int) {
+fun LatestContent(navController: NavController, windowSize: WindowSizeClass) {
+    val context = LocalContext.current
+    val dataStore = remember { DataStoreManager(context) }
+    val penggunaViewModel: UsersViewModel = viewModel()
+    val pengguna by penggunaViewModel.pengguna.collectAsState()
+    var idUser by remember { mutableLongStateOf(-1L) }
+    val userLevel = pengguna?.levelPengguna ?: 1
     val viewModel: RecipeContentViewModel = viewModel()
     val recipes = viewModel.recipeList.collectAsState().value
     val latestRecipe = recipes
@@ -40,6 +53,10 @@ fun LatestContent(navController: NavController, windowSize: WindowSizeClass, use
 
     LaunchedEffect(Unit) {
         viewModel.recipe()
+        idUser = dataStore.getUserId()
+        if (idUser != -1L) {
+            penggunaViewModel.fetchPengguna(idUser)
+        }
     }
 
     Scaffold(

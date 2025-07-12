@@ -76,10 +76,12 @@ import com.example.bisamasak.data.viewModel.DailyTaskViewModelFactory
 import com.example.bisamasak.data.viewModel.RecipeContentViewModel
 import com.example.bisamasak.data.viewModel.ReportViewModel
 import com.example.bisamasak.data.viewModel.SaveRecipeViewModel
+import com.example.bisamasak.data.viewModel.UsersViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -96,7 +98,6 @@ fun MenuDetailScreen(
     navController: NavController,
     viewModel: RecipeContentViewModel = viewModel(),
     reportViewModel: ReportViewModel = viewModel(),
-    userLevel: Int
 ) {
 //    User Data
     val context = LocalContext.current
@@ -104,6 +105,9 @@ fun MenuDetailScreen(
     var userId by remember { mutableStateOf(-1L) }
     var isUserLoaded by remember { mutableStateOf(false) }
     val userName = remember { mutableStateOf("") }
+    val penggunaViewModel: UsersViewModel = viewModel()
+    val pengguna by penggunaViewModel.pengguna.collectAsState()
+    val userLevel = pengguna?.levelPengguna ?: 1
 
 //    Daily Task
     val dailyTaskVMFactory = remember { DailyTaskViewModelFactory(dataStoreManager) }
@@ -118,7 +122,7 @@ fun MenuDetailScreen(
 
     LaunchedEffect(recipeId) {
         while (true) {
-            kotlinx.coroutines.delay(1000L)
+            delay(1000L)
             secondsRead++
             if (isReadMissionClaimed) break
         }
@@ -174,11 +178,15 @@ fun MenuDetailScreen(
     val reportError = reportViewModel.errorMessage
 
     LaunchedEffect(Unit) {
+        viewModel.recipe()
         val id = dataStoreManager.getUserId()
         val name = dataStoreManager.getUserName()
         userId = id
         userName.value = name
         isUserLoaded = true
+        if (userId != -1L) {
+            penggunaViewModel.fetchPengguna(userId)
+        }
     }
 
     LaunchedEffect(menudetails) {
@@ -551,7 +559,7 @@ fun MenuDetailScreen(
 //                     Similar Recipe
                             item {
                                 if (menudetails?.status_konten == "Terunggah") {
-                                SimilarRecipeSection(
+                                    SimilarRecipeSection(
                                     similarRecipes = similarRecipes,
                                     onRecipeClick = { recipeId ->
                                         navController.navigate("recipe_detail/$recipeId")

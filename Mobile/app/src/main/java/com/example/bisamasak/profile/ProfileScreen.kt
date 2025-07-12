@@ -67,7 +67,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun ProfileScreen(navController: NavController, initialTab: ProfileTabs = ProfileTabs.Recipe, userLevel: Int) {
+fun ProfileScreen(navController: NavController, initialTab: ProfileTabs = ProfileTabs.Recipe) {
     val context = LocalContext.current
     val activity = context as Activity
     val windowSizeClass = calculateWindowSizeClass(activity = activity)
@@ -75,14 +75,13 @@ fun ProfileScreen(navController: NavController, initialTab: ProfileTabs = Profil
     ProfileComponent(
         navController = navController,
         windowSize = windowSizeClass,
-        initialTab = initialTab,
-        userLevel = userLevel
+        initialTab = initialTab
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, initialTab: ProfileTabs = ProfileTabs.Recipe, userLevel: Int) {
+fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, initialTab: ProfileTabs = ProfileTabs.Recipe) {
     val context = LocalContext.current
     val recipeViewModel: RecipeContentViewModel = viewModel(viewModelStoreOwner = LocalContext.current as ViewModelStoreOwner)
     val saveRecipeViewModel: SaveRecipeViewModel = viewModel(viewModelStoreOwner = LocalContext.current as ViewModelStoreOwner)
@@ -95,6 +94,7 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
     val penggunaViewModel: UsersViewModel = viewModel()
     val pengguna by penggunaViewModel.pengguna.collectAsState()
     var idUser by remember { mutableLongStateOf(-1L) }
+    val userLevel = pengguna?.levelPengguna ?: 1
 
     val scope = rememberCoroutineScope()
     val pagerState = key(initialTab) {

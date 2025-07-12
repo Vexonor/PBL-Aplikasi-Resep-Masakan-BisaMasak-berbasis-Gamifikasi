@@ -34,9 +34,11 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -44,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bisamasak.component.BottomBar
@@ -51,6 +54,7 @@ import com.example.bisamasak.component.LandscapeTab
 import com.example.bisamasak.component.MenuTabs
 import com.example.bisamasak.component.PortraitTab
 import com.example.bisamasak.data.utils.DataStoreManager
+import com.example.bisamasak.data.viewModel.UsersViewModel
 import com.example.bisamasak.menu.all_content.AllContent
 import com.example.bisamasak.menu.breakfast.BreakfastContent
 import com.example.bisamasak.menu.dinner.DinnerContent
@@ -79,7 +83,17 @@ fun MenuActivity(navController: NavController) {
     val activity = context as Activity
     val windowSizeClass = calculateWindowSizeClass(activity = activity)
     val dataStore = remember { DataStoreManager(context) }
-    val userLevel by dataStore.userLevelFlow.collectAsState(initial = 1)
+
+    val penggunaViewModel: UsersViewModel = viewModel()
+    val pengguna by penggunaViewModel.pengguna.collectAsState()
+    var idUser by remember { mutableLongStateOf(-1L) }
+
+    LaunchedEffect(Unit) {
+        idUser = dataStore.getUserId()
+        if (idUser != -1L) {
+            penggunaViewModel.fetchPengguna(idUser)
+        }
+    }
 
     Surface(
         modifier = Modifier
@@ -88,7 +102,7 @@ fun MenuActivity(navController: NavController) {
         MenuComponent(
             navController = navController,
             windowSize = windowSizeClass,
-            userLevel = userLevel
+            userLevel = pengguna?.levelPengguna ?: 1
         )
     }
 }

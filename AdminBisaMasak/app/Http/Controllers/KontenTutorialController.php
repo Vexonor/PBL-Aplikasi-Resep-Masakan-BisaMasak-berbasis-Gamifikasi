@@ -192,6 +192,7 @@ class KontenTutorialController extends Controller
             $data->update([
                 'judul_konten' => $request->judul_konten,
                 'deskripsi_konten' => $request->deskripsi_konten,
+                'durasi' => $request->durasi,
                 'terbuka_di_level' => $request->terbuka_di_level,
                 'kategori' => $request->kategori,
                 'thumbnail' => $thumbnail,

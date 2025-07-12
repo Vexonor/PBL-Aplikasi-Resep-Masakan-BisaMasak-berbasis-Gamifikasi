@@ -38,7 +38,7 @@ class DailyTaskViewModel(private val dataStoreManager: DataStoreManager) : ViewM
             _userLevel.value = level
 
             _taskList.value = listOf(
-                TaskItemData(R.drawable.ic_coin, "Login hari ini", 200),
+                TaskItemData(R.drawable.ic_coin, "Login hari ini", 200, true),
                 TaskItemData(R.drawable.ic_coin, "Baca resep", 300),
                 TaskItemData(R.drawable.ic_coin, "Unggah resep", 500)
             )

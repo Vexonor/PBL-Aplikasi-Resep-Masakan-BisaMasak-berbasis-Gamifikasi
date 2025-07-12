@@ -10,8 +10,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +41,7 @@ fun DailyTaskContent(navController: NavController) {
     val factory = remember { DailyTaskViewModelFactory(dataStoreManager) }
     val dailyTaskViewModel: DailyTaskViewModel = viewModel(factory = factory)
     val taskList = dailyTaskViewModel.taskList.collectAsState().value
+    var userName by remember { mutableStateOf("") }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val currentViewModel by rememberUpdatedState(dailyTaskViewModel)
@@ -61,6 +64,7 @@ fun DailyTaskContent(navController: NavController) {
     LaunchedEffect(Unit) {
         dailyTaskViewModel.checkReadRecipeMissionClaimed()
         dailyTaskViewModel.checkUploadRecipeMissionClaimed()
+        userName = dataStoreManager.getUserName()
     }
 
     Column(
@@ -74,7 +78,7 @@ fun DailyTaskContent(navController: NavController) {
         TopBar(navController)
         Spacer(modifier = Modifier.height(8.dp))
 
-        Header()
+        Header(userName = userName)
         Spacer(modifier = Modifier.height(24.dp))
 
         HeroSection()
@@ -119,13 +123,13 @@ fun TopBar(navController: NavController) {
 }
 
 @Composable
-fun Header(modifier: Modifier = Modifier) {
+fun Header(modifier: Modifier = Modifier, userName: String) {
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = "Hi Shafiq,",
+            text = "Hi ${if (userName.isNotBlank()) userName.replaceFirstChar { it.uppercase() } else "Chef"},",
             style = OutfitTypography.titleMedium,
             color = Color(0xFF748189)
         )
