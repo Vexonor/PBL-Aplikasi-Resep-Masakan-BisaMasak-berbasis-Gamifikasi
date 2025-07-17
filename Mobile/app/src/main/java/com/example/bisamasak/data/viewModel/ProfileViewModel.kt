@@ -1,6 +1,5 @@
 package com.example.bisamasak.data.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +25,8 @@ class ProfileViewModel(private val dataStoreManager: DataStoreManager) : ViewMod
         tanggalLahir: String?,
         jenisKelamin: String?,
         password: String?,
-        photoFile: File?
+        photoFile: File?,
+        onPasswordUpdated: () -> Unit
     ) {
         viewModelScope.launch {
             isLoading.value = true
@@ -61,6 +61,10 @@ class ProfileViewModel(private val dataStoreManager: DataStoreManager) : ViewMod
                     isSuccess.value = true
 
                     dataStoreManager.setUser(user)
+
+                    if (password != null && password.isNotEmpty()) {
+                        onPasswordUpdated()
+                    }
                 } else {
                     responseMessage.value = response.errorBody()?.string() ?: "Gagal update profile"
                 }
@@ -71,4 +75,5 @@ class ProfileViewModel(private val dataStoreManager: DataStoreManager) : ViewMod
             }
         }
     }
+
 }

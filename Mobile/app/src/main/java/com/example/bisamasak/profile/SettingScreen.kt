@@ -28,7 +28,7 @@ fun SettingContent(navController: NavController) {
     val dataStoreManager = remember { DataStoreManager(context) }
     var isNotificationEnabled by remember { mutableStateOf(false) }
     val loginViewModel: LoginViewModel = viewModel()
-
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -102,20 +102,64 @@ fun SettingContent(navController: NavController) {
             SettingRow(
                 iconRes = R.drawable.ic_logout,
                 title = "Keluar Akun",
+                arrow = false,
                 onClick = {
-                    loginViewModel.logout(dataStoreManager) {
-                        navController.navigate("login_screen") {
-                            popUpTo(0)
+                    showLogoutDialog = true
+                }
+            )
+        }
+
+        if (showLogoutDialog) {
+            AlertDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                title = {
+                    Text(
+                        text = "Keluar Akun",
+                        style = OutfitTypography.titleLarge
+                    ) },
+                text = {
+                    Text(
+                        text = "Apakah Anda yakin ingin keluar dari akun?",
+                        style = OutfitTypography.bodyLarge
+                    ) },
+                containerColor = Color.White,
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showLogoutDialog = false
+                            loginViewModel.logout(dataStoreManager) {
+                                navController.navigate("login_screen") {
+                                    popUpTo(0)
+                                }
+                            }
                         }
+                    ) {
+                        Text(
+                            text = "Ya",
+                            style = OutfitTypography.labelLarge,
+                            color = Color(0xFFED453A)
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showLogoutDialog = false }
+                    ) {
+                        Text(
+                            text = "Batal",
+                            style = OutfitTypography.labelLarge,
+                            color = Color.Gray
+                        )
                     }
                 }
             )
         }
+
     }
 }
 
 @Composable
-fun SettingRow(iconRes: Int, title: String, onClick: () -> Unit) {
+fun SettingRow(iconRes: Int, title: String, onClick: () -> Unit, arrow: Boolean = true) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,11 +179,13 @@ fun SettingRow(iconRes: Int, title: String, onClick: () -> Unit) {
             style = OutfitTypography.titleMedium,
             modifier = Modifier.weight(1f)
         )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_arrow_right),
-            contentDescription = "Next",
-            tint = Color.Black,
-            modifier = Modifier.size(20.dp)
-        )
+        if (arrow) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_right),
+                contentDescription = "Next",
+                tint = Color.Black,
+                modifier = Modifier.size(20.dp)
+            )
+        }
     }
 }

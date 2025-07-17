@@ -2,6 +2,7 @@ package com.example.bisamasak.data.utils
 
 import com.example.bisamasak.data.dataContainer.Langkah
 import com.example.bisamasak.data.dataContainer.RecipeContentResponse
+import com.example.bisamasak.data.dataContainer.UserComment
 import com.example.bisamasak.data.dataContainer.Users
 
 val RecipeContentResponse.imageUrl: String
@@ -20,3 +21,14 @@ val Users.photoUrl: String
         val cleanPath = (this.fotoProfil ?: "").removePrefix("storage/")
         ImageConstant.BASE_IMAGE_URL + cleanPath
     }
+
+val UserComment.photoCommentUrl: String?
+    get() = if (this.fotoProfil.isNullOrBlank() || this.fotoProfil == "null") {
+        null
+    } else if (this.fotoProfil.startsWith("http")) {
+        this.fotoProfil
+    } else {
+        val cleanPath = this.fotoProfil.removePrefix("storage/")
+        ImageConstant.BASE_IMAGE_URL + cleanPath
+    }
+

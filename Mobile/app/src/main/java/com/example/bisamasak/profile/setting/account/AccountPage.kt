@@ -15,9 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.utils.photoUrl
+import com.example.bisamasak.data.viewModel.LoginViewModel
 import com.example.bisamasak.data.viewModel.ProfileViewModel
 import com.example.bisamasak.ui.theme.OutfitTypography
 import java.io.File
@@ -29,6 +31,7 @@ import java.util.Date
 @Composable
 fun AccountContent(navController: NavController, dataStoreManager: DataStoreManager) {
     val profileViewModel = remember { ProfileViewModel(dataStoreManager) }
+    val loginViewModel: LoginViewModel = viewModel()
     val isLoading by profileViewModel.isLoading
     val responseMessage by profileViewModel.responseMessage
     val isSuccess by profileViewModel.isSuccess
@@ -44,6 +47,11 @@ fun AccountContent(navController: NavController, dataStoreManager: DataStoreMana
     var photo by remember { mutableStateOf("") }
     var idUser by remember { mutableLongStateOf(-1L) }
     var photoFile by remember { mutableStateOf<File?>(null) }
+
+    var showChangePasswordDialog by remember { mutableStateOf(false) }
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
 
     LaunchedEffect(Unit) {
         idUser = dataStoreManager.getUserId()
@@ -105,7 +113,14 @@ fun AccountContent(navController: NavController, dataStoreManager: DataStoreMana
                                 tanggalLahir = if (birthdate.isNotEmpty()) birthdate else null,
                                 jenisKelamin = if (gender.isNotEmpty()) gender else null,
                                 password = if (password.isNotEmpty()) password else null,
-                                photoFile = photoFile
+                                photoFile = photoFile,
+                                onPasswordUpdated = {
+                                    loginViewModel.logout(dataStoreManager) {
+                                        navController.navigate("login_screen") {
+                                            popUpTo(0)
+                                        }
+                                    }
+                                }
                             )
                         }
                     ) {
@@ -142,7 +157,6 @@ fun AccountContent(navController: NavController, dataStoreManager: DataStoreMana
 
                 NameField(name, onNameChange = { name = it })
                 EmailField(email, onEmailChange = { email = it })
-                PasswordField(password, onPasswordChange = { password = it }, passwordVisible, { passwordVisible = !passwordVisible })
                 BirthdateField(birthdate, onBirthdateClick = { showDatePicker = true })
                 if (showDatePicker) {
                     val datePickerState = rememberDatePickerState()
@@ -179,6 +193,16 @@ fun AccountContent(navController: NavController, dataStoreManager: DataStoreMana
                     }
                 }
                 GenderDropdownField(gender, onGenderChange = { gender = it })
+                TextButton(
+                    onClick = { showChangePasswordDialog = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Ubah Kata Sandi",
+                        style = OutfitTypography.bodyMedium.copy(color = Color(0xFFED453A)),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
 
             if (isLoading) {
@@ -193,6 +217,64 @@ fun AccountContent(navController: NavController, dataStoreManager: DataStoreMana
                     )
                 }
             }
+
+            if (showChangePasswordDialog) {
+                AlertDialog(
+                    onDismissRequest = { showChangePasswordDialog = false },
+                    containerColor = Color.White,
+                    title = { Text("Ubah Kata Sandi") },
+                    text = {
+                        Column {
+                            Text(
+                                text = "Masukkan kata sandi baru yang kuat dan mudah diingat. Pastikan kata sandi memiliki minimal 6 karakter.",
+                                style = OutfitTypography.bodyMedium
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            PasswordField(
+                                password = newPassword,
+                                onPasswordChange = { newPassword = it },
+                                passwordVisible = passwordVisible,
+                                onVisibilityChange = { passwordVisible = !passwordVisible }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            ConfirmPasswordField(
+                                confirmPassword = confirmPassword,
+                                onConfirmPasswordChange = { confirmPassword = it },
+                                passwordVisible = passwordVisible,
+                                onVisibilityChange = { passwordVisible = !passwordVisible }
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                if (newPassword == confirmPassword && newPassword.length >= 6) {
+                                    profileViewModel.updateProfile(idUser, nama = name, email = email, tanggalLahir = birthdate, jenisKelamin = gender, password = newPassword, photoFile = photoFile, onPasswordUpdated = {
+                                        loginViewModel.logout(dataStoreManager) {
+                                            navController.navigate("login_screen") {
+                                                popUpTo(0)
+                                            }
+                                        }
+                                    })
+                                    showChangePasswordDialog = false
+                                } else {
+                                    Toast.makeText(context, "Password tidak cocok atau kurang dari 6 karakter", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        ) {
+                            Text("Simpan", color = Color(0xFFED453A))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showChangePasswordDialog = false }
+                        ) {
+                            Text("Batal")
+                        }
+                    }
+                )
+            }
+
         }
     }
 }

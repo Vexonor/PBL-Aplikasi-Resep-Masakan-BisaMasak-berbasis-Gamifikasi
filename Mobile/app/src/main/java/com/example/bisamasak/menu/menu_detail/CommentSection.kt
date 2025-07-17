@@ -41,11 +41,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.bisamasak.data.dataContainer.CommentStore
+import com.example.bisamasak.data.utils.photoCommentUrl
 import com.example.bisamasak.data.viewModel.CommentViewModel
 import com.example.bisamasak.ui.theme.OutfitFont
 import com.example.bisamasak.ui.theme.OutfitTypography
@@ -60,7 +63,8 @@ fun CommentSection(
     recipeId: Int,
     userId: Int,
     userName: String,
-    viewModel: CommentViewModel = CommentViewModel()
+    viewModel: CommentViewModel = CommentViewModel(),
+    userPhotoUrl: String? = null
 ) {
     val comments by viewModel.comments.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -96,13 +100,14 @@ fun CommentSection(
 
         comments.take(2).forEach { comment ->
             CommentPreview(
-                userInitial = comment.user_table?.nama?.take(1)?.uppercase() ?: "U",
+                userInitial = comment.user_table?.nama?.takeIf { !it.isBlank() }?.take(1)?.uppercase() ?: "U",
                 userName = comment.user_table?.nama ?: "User",
                 commentText = comment.isi_komentar,
                 date = formatCommentDate(comment.created_at ?: ""),
                 commentUserId = comment.id_user,
                 currentUserId = userId,
-                onDeleteClick = { viewModel.deleteComment(comment.id_komentar) }
+                onDeleteClick = { viewModel.deleteComment(comment.id_komentar) },
+                photoUrl = comment.user_table?.photoCommentUrl
             )
         }
 
@@ -129,6 +134,7 @@ fun CommentSection(
             onTextChange = { commentText = it },
             isLoading = isLoading,
             userInitial = userName.take(1).uppercase(),
+            photoUrl = userPhotoUrl,
             onSend = {
                 val comment = CommentStore(
                     id_user = userId.toInt(),
@@ -180,13 +186,14 @@ fun CommentSection(
                             } else {
                                 comments.forEach { comment ->
                                     CommentPreview(
-                                        userInitial = comment.user_table?.nama?.take(1)?.uppercase() ?: "U",
+                                        userInitial = comment.user_table?.nama?.takeIf { !it.isBlank() }?.take(1)?.uppercase() ?: "U",
                                         userName = comment.user_table?.nama ?: "User",
                                         commentText = comment.isi_komentar,
                                         date = formatCommentDate(comment.created_at ?: ""),
                                         commentUserId = comment.id_user,
                                         currentUserId = userId,
-                                        onDeleteClick = { viewModel.deleteComment(comment.id_komentar) }
+                                        onDeleteClick = { viewModel.deleteComment(comment.id_komentar) },
+                                        photoUrl = comment.user_table?.photoCommentUrl
                                     )
                                 }
                             }
@@ -199,6 +206,7 @@ fun CommentSection(
                             onTextChange = { commentText = it },
                             isLoading = isLoading,
                             userInitial = userName.take(1).uppercase(),
+                            photoUrl = userPhotoUrl,
                             onSend = {
                                 val comment = CommentStore(
                                     id_user = userId.toInt(),
@@ -223,7 +231,8 @@ fun CommentInputField(
     onTextChange: (String) -> Unit,
     isLoading: Boolean,
     onSend: (String) -> Unit,
-    userInitial: String
+    userInitial: String,
+    photoUrl: String? = null
 ) {
     Row(
         modifier = Modifier
@@ -233,19 +242,31 @@ fun CommentInputField(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Avatar
-        Box(
-            modifier = Modifier
-                .weight(0.4f)
-                .size(50.dp)
-                .clip(RoundedCornerShape(50.dp))
-                .background(Color(0xFFED453A)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = userInitial,
-                style = OutfitTypography.displaySmall,
-                color = Color.White
+        if (!photoUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = photoUrl,
+                contentDescription = "User Profile Photo",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(RoundedCornerShape(50.dp))
+                    .background(Color(0xFFED453A)),
             )
+        } else {
+            Box(
+                modifier = Modifier
+                    .weight(0.4f)
+                    .size(50.dp)
+                    .clip(RoundedCornerShape(50.dp))
+                    .background(Color(0xFFED453A)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = userInitial,
+                    style = OutfitTypography.displaySmall,
+                    color = Color.White
+                )
+            }
         }
 
         // Text Field
@@ -305,7 +326,8 @@ fun CommentPreview(
     date: String,
     commentUserId: Int,
     currentUserId: Int,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    photoUrl: String? = null
 ) {
     Row (
         modifier = Modifier
@@ -313,18 +335,30 @@ fun CommentPreview(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(30.dp)
-                .clip(RoundedCornerShape(50.dp))
-                .background(Color(0xFFED453A)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = userInitial,
-                style = OutfitTypography.bodyMedium,
-                color = Color.White
+        if (!photoUrl.isNullOrBlank() && photoUrl != "null") {
+            AsyncImage(
+                model = photoUrl,
+                contentDescription = "User Profile Photo",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(RoundedCornerShape(50.dp))
+                    .background(Color(0xFFED453A)),
             )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(RoundedCornerShape(50.dp))
+                    .background(Color(0xFFED453A)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = userInitial,
+                    style = OutfitTypography.bodyMedium,
+                    color = Color.White
+                )
+            }
         }
 
         Column (
@@ -405,6 +439,7 @@ fun formatCommentDate(createdAt: String): String {
         }
     } catch (e: Exception) {
         createdAt
+        e.localizedMessage
     }
 }
 

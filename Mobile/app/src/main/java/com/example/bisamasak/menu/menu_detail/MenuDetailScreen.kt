@@ -69,6 +69,8 @@ import coil.compose.AsyncImage
 import com.example.bisamasak.R
 import com.example.bisamasak.data.utils.DataStoreManager
 import com.example.bisamasak.data.utils.imageUrl
+import com.example.bisamasak.data.utils.photoCommentUrl
+import com.example.bisamasak.data.utils.photoUrl
 import com.example.bisamasak.data.utils.videoUrl
 import com.example.bisamasak.data.viewModel.CommentViewModel
 import com.example.bisamasak.data.viewModel.DailyTaskViewModel
@@ -545,7 +547,8 @@ fun MenuDetailScreen(
                                         recipeId = recipeId,
                                         userId = userId.toInt(),
                                         userName = userName.value,
-                                        viewModel = commentViewModel
+                                        viewModel = commentViewModel,
+                                        userPhotoUrl = pengguna?.user?.photoUrl
                                     )
                                     HorizontalDivider(
                                         modifier = Modifier

@@ -44,9 +44,9 @@ fun RecipeCard(
     foodImg: String,
     foodName: String,
     duration: String,
+    modifier: Modifier = Modifier,
     isUnlocked: Boolean,
     requiredLevel: Int,
-    modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
     val alpha = if (isUnlocked) 1f else 0.15f
@@ -130,20 +130,27 @@ fun RecipeCard(
                 ) {
                     Row (
                         modifier = Modifier
-                            .wrapContentWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .matchParentSize(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_timer),
-                            contentDescription = "Timer",
+                        Row (
                             modifier = Modifier
-                                .size(16.dp)
-                        )
-                        Text(
-                            text = "$duration menit",
-                            style = OutfitTypography.labelMedium
-                        )
+                                .wrapContentWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_timer),
+                                contentDescription = "Timer",
+                                modifier = Modifier
+                                    .size(16.dp)
+                            )
+                            Text(
+                                text = "$duration menit",
+                                style = OutfitTypography.labelMedium
+                            )
+                        }
                     }
                 }
             }

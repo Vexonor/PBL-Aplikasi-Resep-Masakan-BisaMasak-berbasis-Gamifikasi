@@ -65,3 +65,51 @@ fun PasswordField(
         )
     )
 }
+
+@Composable
+fun ConfirmPasswordField(
+    confirmPassword: String,
+    onConfirmPasswordChange: (String) -> Unit,
+    passwordVisible: Boolean,
+    onVisibilityChange: () -> Unit
+) {
+    Text(
+        text = "Konfirmasi Kata Sandi Baru",
+        style = OutfitTypography.titleMedium,
+        color = Color.Black,
+        textAlign = TextAlign.Start,
+        modifier = Modifier
+            .padding(bottom = 4.dp)
+            .fillMaxWidth()
+    )
+
+    OutlinedTextField(
+        value = confirmPassword,
+        onValueChange = onConfirmPasswordChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(8.dp),
+        keyboardOptions = KeyboardOptions.Default,
+        textStyle = OutfitTypography.titleMedium,
+        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            IconButton(onClick = onVisibilityChange) {
+                Icon(
+                    painter = painterResource(
+                        id = if (passwordVisible)
+                            R.drawable.ic_password_on
+                        else
+                            R.drawable.ic_password_off
+                    ),
+                    contentDescription = "Toggle Password Visibility"
+                )
+            }
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedBorderColor = Color(0xFFED453A),
+            focusedBorderColor = Color(0xFFED453A)
+        )
+    )
+}
+

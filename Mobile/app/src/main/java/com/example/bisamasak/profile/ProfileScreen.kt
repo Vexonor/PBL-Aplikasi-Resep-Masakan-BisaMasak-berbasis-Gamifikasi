@@ -231,7 +231,7 @@ fun ProfileComponent(navController: NavController, windowSize: WindowSizeClass, 
             HeroSection(
                 level = pengguna?.levelPengguna ?: 1,
                 exp = pengguna?.poinLevel?.toFloat() ?: 0f,
-                maxExp = 1000f,
+                maxExp = pengguna?.levelPengguna?.toFloat()?.times(500f) ?: 1000f,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
 

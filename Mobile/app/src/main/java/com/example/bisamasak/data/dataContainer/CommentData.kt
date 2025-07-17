@@ -1,5 +1,7 @@
 package com.example.bisamasak.data.dataContainer
 
+import com.google.gson.annotations.SerializedName
+
 data class CommentResponse(
     val id_komentar: Int,
     val id_user: Int,
@@ -19,7 +21,9 @@ data class CommentStore(
 
 data class UserComment(
     val id_user: Int,
-    val nama: String
+    val nama: String,
+    @SerializedName("foto_profil")
+    val fotoProfil: String?
 )
 
 data class Resep(
